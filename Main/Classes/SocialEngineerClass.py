@@ -8,7 +8,7 @@ class SocialEngineerClass:
 
         self.Attacks = {
             "Internal Access": self.Defense + 40,
-            "Phishing": self.stun + 2,
+            "Phishing": self.Defense + 20,
             "Pretexting": 50,
             "Baiting": self.Defense + 20,
             "God's Hand": 50000000,
@@ -20,4 +20,8 @@ class SocialEngineerClass:
     
     def MostraAtaques(self):
         return list(self.Attacks.keys())
+    
+    def Damage(self, D, Defense) :
+        # print("Available attacks:", list(self.Attacks.keys()))
+        return D * (1 - Defense / 100)
     
