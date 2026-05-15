@@ -5,11 +5,14 @@ from Classes.SocialEngineerClass import SocialEngineerClass
 from Classes.Classes import Classes 
 from Classes.SecretClasses.Hatsune import HatsuneMikuClass
 import Player
+from Player import integrity_bar
+from Player import defense_bar
 from Enemy import Enemy
 import sys
 from COBALT import COBALT
 from time import sleep
 from colorama import Fore, Back, Style, init
+from Color import cText
 
 COBALT = COBALT()
 Classes = Classes()
@@ -22,30 +25,12 @@ Player = Player.Player()
 init(autoreset=True)
 
 #pra but q n souber, cText é Colored Text (abreviei pq é games e seco filho, liso liso liso)
-def cText(message, type="info"):
-    match type:
-        case "red":
-            print(f"{Fore.RED}{message}")
-        case "yellow":
-            print(f"{Fore.YELLOW}{message}")
-        case "green":
-            print(f"{Fore.GREEN}{message}")
-        case "blue":
-            print(f"{Fore.BLUE}{message}")
-        case "cyan":
-            print(f"{Fore.CYAN}{message}")
-        case "black":
-            print(f"{Fore.BLACK}{message}")
-        case "error":
-            print(f"{Fore.RED}[!] {message}")
-        case "warn":
-            print(f"{Fore.YELLOW}[!]{message}")
-        case "positive":
-            print(f"{Fore.GREEN}[✓]{message}")
+#isso tava aqui antes de eu colocar o cText em um arquivo diferente, fui moggado? games
 
 print(Classes.ClassesAttacks())
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
+clear()
 COBALT.Start()
 
 print(SecurityAnalytic.MostraAtaques())
@@ -120,6 +105,7 @@ sleep(2)
 clear()
 #print(Player.Name)
 print(f"Available attacks: {Player.Class.MostraAtaques()}")
+print(f"Integrity: {integrity_bar(Player.Class.Integrity, PlayerClass.Integrity)}")
 
 # ---- teste ataques ----
 
@@ -148,26 +134,26 @@ while True :
             PlayerClass.Defense = 0
             while i < 100:
                 clear()
-                if i < 30:
+                if i < 50:
                     cText(f"Miku Miku Beam is charging... {i}%", "red")
-                elif i < 60:
-                    cText(f"Miku Miku Beam is charging... {i}%", "yellow")
+                elif i < 80:
+                    cText(f"Miku Miku Beam is charging... {i}%", "yellow") # tentei usar case mas fiquei com preguiça, ent vai ficar assim mesmo (pq vc ta lendo isso, thalles?)
                 elif i <= 100:
                     cText(f"Miku Miku Beam is charging... {i}%", "green")
                 sleep(0.03)
                 i += 1
             if i >= 100:
                 clear()
-                print("Miku Miku Beam is fully charged!")
+                cText("Miku Miku Beam is fully charged!", "positive")
                 sleep(1)
                 clear()
                 x = 0
                 while x <= 100:
                     clear()
                     final_damage = Damage(Attack_Info, Player.Class.Defense)
-                    print(cText(f"-{final_damage} life! ({x}%)", "red"))
-                    Player.Class.Integrity -= final_damage
-                    print(f"Life left: {Player.Class.MostraVida():.1f}")
+                    cText(f"-{final_damage} life! ({x}%)", "red")
+                    Player.Integrity -= final_damage
+                    print(f"Integrity: {integrity_bar(Player.Integrity, Player.Class.Integrity)}")
                     sleep(0.03)
                     x += 1
 
@@ -175,45 +161,56 @@ while True :
             Player.Class.Defense += Attack_Info[0]
             Player.Class.Regen += Attack_Info[1]
             clear()
+            print(f"Available attacks: {Player.Class.MostraAtaques()}")
             print(f"Defense increased to {Player.Class.Defense}%.")
             print(f"Regen increased to {Player.Class.Regen}.")
 
         case "Firewall":
             Player.Class.Defense += Attack_Info
             clear()
-            print(f"Defense increased to {Player.Class.Defense}%.")
+            print(f"Available attacks: {Player.Class.MostraAtaques()}")
+            print(f"Defense: {defense_bar(Player.Defense)}")
 
         case "Security Patch":
             Player.Class.Regen += Attack_Info 
             clear()
+            print(f"Available attacks: {Player.Class.MostraAtaques()}")
             print(f"Regen increased to {Player.Class.Regen}.")
 
         case "Pneumoultramicroscopicsilicovolcanoconiotic":
             print("U just got ball cancer, gng how u managed to do that is beyond me ngl")
             sleep(3)
             final_damage = Damage(100000000, Player.Class.Defense)
-            Player.Class.Integrity -= final_damage
+            Player.Integrity -= final_damage
             clear()
-            print(f"Integrity left after the attack '{Attack}': {Player.Class.Integrity:.1f}")
+            print(f"Integrity: {integrity_bar(Player.Integrity, Player.Class.Integrity)}")
             sleep(3)
             clear()
 
         case _:
+            print(f"integrity: {PlayerClass.Integrity}")
             final_damage = Damage(Attack_Info, Player.Class.Defense)
-            Player.Class.Integrity -= final_damage
+            Player.Integrity -= final_damage
             clear()
             print(f"Available attacks: {Player.Class.MostraAtaques()}")
-            print(f"Integrity left after the attack '{Attack}': {Player.Class.Integrity:.1f}")
+            print(f"Integrity: {integrity_bar(Player.Integrity, Player.Class.Integrity)}")
 
     if Player.Class.Regen > 0:
-        Player.Class.Integrity += Player.Class.Regen
-        print(f"Integrity regenerated to {Player.Class.Integrity}.")
+        Player.Integrity += Player.Class.Regen
+       # Player.Class.Integrity += Player.Class.Regen
+        print(f"Available attacks: {Player.Class.MostraAtaques()}")
+        print(f"Integrity: {integrity_bar(Player.Integrity, Player.Class.Integrity)}")
+        if Player.Integrity >= Player.Class.Integrity: 
+            Player.Integrity = Player.Class.Integrity
         Player.Class.Regen = 0
-        
-    if Player.Class.Integrity <= 0:
+
+    if Player.Class.Defense >= 100:
+        Player.Class.Defense = 99
+
+    if Player.Integrity <= 0:
         sleep(2)
         clear()
-        print(f"\n           Error 404 \n < -- You have been hacked. -- >\n")
+        cText(f"\n         [!]Error 404[!] \n < -- You have been hacked. -- >\n", "red")
         sleep(2)
         clear()
         break

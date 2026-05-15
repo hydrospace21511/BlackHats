@@ -1,4 +1,5 @@
 from Player import Player
+from Player import integrity_bar
 Player = Player()
 
 class Enemy:
@@ -18,4 +19,4 @@ class Enemy:
     def give_damage(self, damage):
         final_damage = damage * (1 - Player.Integrity / 100)
         Player.Integrity -= final_damage
-        print(f"{Player.Name} took {final_damage:.1f} damage and has {Player.Integrity:.1f} integrity left.")
+        print(f"{Player.Name} took {final_damage:.1f} damage. Integrity: {integrity_bar(Player.Integrity)}")
