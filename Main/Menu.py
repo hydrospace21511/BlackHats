@@ -13,8 +13,8 @@ from COBALT import COBALT
 from time import sleep
 from colorama import Fore, Back, Style, init
 from Color import cText
-
-
+from AttacksFX import slash_animation
+ 
 
 COBALT = COBALT()
 Classes = Classes()
@@ -168,7 +168,8 @@ while True :
             print(f"Regen increased to {Player.Class.Regen}.")
 
         case "Firewall":
-            Player.Defense += Attack_Info
+            slash_animation()
+            Player.Defense += Attack_Info 
             if Player.Defense >= 100:
                 Player.Defense = 99
                 Player.Class.Defense = 99

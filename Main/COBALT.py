@@ -1,4 +1,5 @@
 import keyboard
+from time import sleep
 from colorama import Fore, Style, init
 init(autoreset=True)
 class COBALT:
@@ -23,5 +24,6 @@ class COBALT:
             """)
             while True:
                 if keyboard.is_pressed('space'):
-                    print("Starting COBALT...")
+                    print(f"{Fore.GREEN}                              Starting COBALT...")
+                    sleep(2)
                     break
