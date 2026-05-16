@@ -14,6 +14,8 @@ from time import sleep
 from colorama import Fore, Back, Style, init
 from Color import cText
 
+
+
 COBALT = COBALT()
 Classes = Classes()
 Enemy = Enemy("a", 100, 1, 0)
@@ -47,7 +49,7 @@ ClassesOptions = {
 
 while True:
     while True:
-        PlayerClass = input("Choose your class: ")
+        PlayerClass = str(input("Choose your class: ").strip().upper())
         match PlayerClass:
 
             case "Exit":
@@ -60,19 +62,19 @@ while True:
                 clear()
                 sys.exit()
 
-            case "Security Analytic" | "2":
+            case "SECURITY ANALYTIC" | "2":
                 PlayerClass = SecurityAnalytic
                 break
 
-            case "Hacker" | "1":
+            case "HACKER" | "1":
                 PlayerClass = Hacker
                 break
 
-            case "Social Engineer" | "3":
+            case "SOCIAL ENGINEER" | "3":
                 PlayerClass = SocialEngineer
                 break
 
-            case "Hatsune Miku" | "CV01":
+            case "HATSUNE MIKU" | "CV01":
                 PlayerClass = HatsuneMiku
                 break
                 
