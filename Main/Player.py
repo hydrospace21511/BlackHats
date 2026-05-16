@@ -10,14 +10,15 @@ def integrity_bar(current_integrity, max_integrity):
     return f"[{bar}] {percent*100:.0f}%"
 
 def defense_bar(current_defense):
-    max_defense = 99
-    percent = max(0, min(0.99, current_defense / max_defense)) # Trava em 0.99
+    max_val = 100
+    visual_defense = 100 if current_defense == 99 else current_defense
+    percent = max(0, min(1, visual_defense / max_val))
     
     num_full = int(percent * 15)
     num_empty = 15 - num_full
     
-    bar = Fore.BLUE + '|' * num_full + Fore.WHITE + '·' * num_empty + Style.RESET_ALL
-    return f"[{bar}] {percent*100:.0f}%"
+    bar1 = Fore.CYAN + '|' * num_full + Fore.BLUE + '·' * num_empty + Style.RESET_ALL
+    return f"[{bar1}] {percent*100:.0f}%"
 
 class Player :
     def __init__(self):

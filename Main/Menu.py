@@ -166,7 +166,10 @@ while True :
             print(f"Regen increased to {Player.Class.Regen}.")
 
         case "Firewall":
-            Player.Class.Defense += Attack_Info
+            Player.Defense += Attack_Info
+            if Player.Defense >= 100:
+                Player.Defense = 99
+                Player.Class.Defense = 99
             clear()
             print(f"Available attacks: {Player.Class.MostraAtaques()}")
             print(f"Defense: {defense_bar(Player.Defense)}")
@@ -204,7 +207,8 @@ while True :
             Player.Integrity = Player.Class.Integrity
         Player.Class.Regen = 0
 
-    if Player.Class.Defense >= 100:
+    if Player.Defense >= 100:
+        Player.Defense = 99
         Player.Class.Defense = 99
 
     if Player.Integrity <= 0:
