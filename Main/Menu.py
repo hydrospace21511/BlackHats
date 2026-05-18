@@ -9,20 +9,24 @@ from Player import integrity_bar
 from Player import defense_bar
 from Enemy import Enemy
 import sys
+from Classes.SecretClasses.Rimuru import RimuruClass
+import Test
 from COBALT import COBALT
 from time import sleep
 from colorama import Fore, Back, Style, init
 from Color import cText
+from UI import display_battle_ui
 
-
+ 
 
 COBALT = COBALT()
 Classes = Classes()
 Enemy = Enemy("a", 100, 1, 0)
 Hacker = HackerClass()
+Rimuru = RimuruClass()
 SecurityAnalytic = SecurityAnalyticClass()
 SocialEngineer = SocialEngineerClass()
-HatsuneMiku = HatsuneMikuClass()
+Vocaloid = HatsuneMikuClass()
 Player = Player.Player()
 init(autoreset=True)
 
@@ -32,24 +36,26 @@ init(autoreset=True)
 print(Classes.ClassesAttacks())
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
-clear()
-COBALT.Start()
+clear() 
+COBALT._Start() 
 
 print(SecurityAnalytic.MostraAtaques())
 print(Hacker.MostraAtaques())
 print(SocialEngineer.MostraAtaques())
-print(HatsuneMiku.MostraAtaques())
+print(Vocaloid.MostraAtaques())
+print(Rimuru.MostraAtaques())
 clear()
-print(Classes.Classes())
+Classes._Classes() 
 ClassesOptions = {
     "SecurityAnalytic": SecurityAnalytic,
     "Hacker": Hacker,
     "Social Engineer": SocialEngineer
-}
+} 
 
 while True:
     while True:
-        PlayerClass = str(input("Choose your class: ").strip().upper())
+        cText("▶  Choose your class >>","green")
+        PlayerClass =  str(input("").strip().upper())
         match PlayerClass:
 
             case "Exit":
@@ -75,7 +81,10 @@ while True:
                 break
 
             case "HATSUNE MIKU" | "CV01":
-                PlayerClass = HatsuneMiku
+                PlayerClass = Vocaloid
+                break
+            case "RIMURU" | "SLIME":
+                PlayerClass = Rimuru
                 break
                 
 
@@ -84,7 +93,8 @@ while True:
                 print("Invalid class. Please choose again.")
                 continue
 
-    Player.Name = input("Enter your name: ")
+    cText("▶  Enter your name >>","green")            
+    Player.Name = input(" ")
     match Player.Name :
 
         case "Return" :
@@ -100,9 +110,9 @@ Player.Integrity = Player.Class.Integrity
 Player.Defense = Player.Class.Defense
 Player.Regen = Player.Class.Regen
 clear()
-print(f"Welcome, {Player.Name}!")
+cText(f">> Welcome {Player.Name}!","green")
 sleep(2)
-print(f"Your class is: {Player.Class.RaceName()}")
+cText(f">> Your class is: {Player.Class.RaceName()}","green")
 sleep(2)
 clear()
 #print(Player.Name)
@@ -114,13 +124,19 @@ print(f"Integrity: {integrity_bar(Player.Class.Integrity, PlayerClass.Integrity)
 def Damage(D, Defense) :
     return D * (1 - Defense / 100)
 #print("Available attacks:", list(Player.Class.Attacks.keys()))
+clear()
+display_battle_ui(Player.Integrity, Player.Class.Integrity, Player.Defense, Player.Class.Attacks.keys())
 
 while True :
-    Attack = input("Choose an attack: ")
+    cText("▶  Choose an exploit >>","green")
+    Attack = input("")
     
     if Attack not in Player.Class.Attacks:
         clear()
         print("Invalid attack, please choose a valid attack.")
+        sleep(1.5)
+        clear()
+        display_battle_ui(Player.Integrity, Player.Class.Integrity, Player.Defense, Player.Class.Attacks.keys())
         continue
 
     Attack_Info = Player.Class.Attacks[Attack]
@@ -192,6 +208,18 @@ while True :
             sleep(3)
             clear()
 
+        case "Desintegration":
+            clear()
+            cText("I summon the DeepWeb slimes", "red")
+            sleep(2)
+            for i in range(100):
+                final_damage = Damage(80, Player.Class.Defense)
+                Player.Integrity -= final_damage
+                clear()
+                display_battle_ui(Player.Integrity, Player.Class.Integrity, Player.Defense, Player.Class.Attacks.keys())
+    
+                sleep(0.03)
+                
         case _:
             print(f"integrity: {PlayerClass.Integrity}")
             final_damage = Damage(Attack_Info, Player.Class.Defense)
@@ -212,7 +240,9 @@ while True :
     if Player.Defense >= 100:
         Player.Defense = 99
         Player.Class.Defense = 99
-
+    clear()
+    display_battle_ui(Player.Integrity, Player.Class.Integrity, Player.Defense, Player.Class.Attacks.keys())
+    
     if Player.Integrity <= 0:
         sleep(2)
         clear()

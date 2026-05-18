@@ -1,3 +1,4 @@
+from colorama import Fore, Back, Style, init
 class HackerClass:
      
     def __init__(self):

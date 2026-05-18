@@ -1,11 +1,11 @@
-class HatsuneMikuClass:
+class RimuruClass:
     def __init__(self):
-        self.raceName = "Vocaloid"
-        self.Integrity = 2007
+        self.raceName = "Rimuru"
+        self.Integrity = 999
         self.Regen = 0
-        self.Defense = 45
+        self.Defense = 75
         self.Attacks = {
-            "World is Mine": 201,
+            "Desintegration": "nan",
             "Tell Your World": 75,
             "Miku Miku Beam": 80,
             "Miku Iwa Koi": 46
