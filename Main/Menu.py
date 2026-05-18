@@ -17,7 +17,7 @@ from colorama import Fore, Back, Style, init
 from Color import cText
 from UI import display_battle_ui
 
- 
+
 
 COBALT = COBALT()
 Classes = Classes()
@@ -123,6 +123,7 @@ print(f"Integrity: {integrity_bar(Player.Class.Integrity, PlayerClass.Integrity)
 
 def Damage(D, Defense) :
     return D * (1 - Defense / 100)
+
 #print("Available attacks:", list(Player.Class.Attacks.keys()))
 clear()
 display_battle_ui(Player.Integrity, Player.Class.Integrity, Player.Defense, Player.Class.Attacks.keys())
@@ -184,7 +185,7 @@ while True :
             print(f"Regen increased to {Player.Class.Regen}.")
 
         case "Firewall":
-            Player.Defense += Attack_Info
+            Player.Defense += Attack_Info 
             if Player.Defense >= 100:
                 Player.Defense = 99
                 Player.Class.Defense = 99
