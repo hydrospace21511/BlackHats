@@ -1,5 +1,4 @@
 from colorama import Fore, Back, Style, init
-
 init(autoreset=True)
 
 def color(message, type="info"):
@@ -10,9 +9,9 @@ def color(message, type="info"):
             print(f"{Fore.Yellow}[!]{message}")
 color("OI", "red")
 print("OIE 2")
-
+from Color import cText
 def Hats():
-        print("""
+        print(f""" {Fore.CYAN}
     ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⠠⠤⠤⣾⣶⡐⡶⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
     ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⢔⣾⠟⠉⠀⠀⢀⠀⠀⣝⣿⣇⡘⣦⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
     ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡜⠈⢿⡇⠀⠀⣧⡀⠀⡧⡄⠈⢽⢿⣽⡿⠿⢆⢀⣤⣶⡆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀

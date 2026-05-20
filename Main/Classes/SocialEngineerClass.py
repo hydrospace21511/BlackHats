@@ -7,10 +7,10 @@ class SocialEngineerClass:
         self.stun = 0
 
         self.Attacks = {
-            "Internal Access": self.Defense + 40,
-            "Phishing": self.Defense + 20,
+            "Internal Access": 5,
+            "Phishing": 30,
             "Pretexting": 50,
-            "Baiting": self.Defense + 20,
+            "Baiting": 5,
             "God's Hand": 50000000,
         #   "God's Wrath": [Regen + 100000000, 1]
         }

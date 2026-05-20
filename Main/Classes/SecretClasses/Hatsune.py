@@ -5,10 +5,10 @@ class HatsuneMikuClass:
         self.Regen = 0
         self.Defense = 45
         self.Attacks = {
-            "World is Mine": 201,
+            "World Is Mine": 201,
             "Tell Your World": 75,
             "Miku Miku Beam": 80,
-            "Miku Iwa Koi": 46
+            "Microphone Throw": 80
         }
 
     def RaceName(self):
