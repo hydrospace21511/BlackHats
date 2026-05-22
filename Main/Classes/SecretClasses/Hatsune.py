@@ -10,7 +10,80 @@ class HatsuneMikuClass:
             "Miku Miku Beam": 80,
             "Microphone Throw": 80
         }
-
+        self.Cooldowns = {
+            "World Is Mine": 99,
+            "Tell Yourd World": 15,
+            "Miku Miku Beam": 20
+        }
+        self.Texts = {
+            "Help me",
+            "ERROR",
+            "Please",
+            "Die",
+            "Hacked",
+            "Corrupted",
+            "Redacted",
+            "Angush",
+            "Fear",
+            "Despair",
+            "Suffering",
+            "Pain",
+            "Agony",
+            "Torture",
+            "Misery",
+            "Eyes",
+            "Soul",
+            "Remnant",
+            "Hollow",
+            "Empty",
+            "Darkness",
+            "Watch",
+            "Don't look",
+            "Wake up",
+            "Stay away",
+            "It sees",
+            "Behind you",
+            "I'm trapped",
+            "Not real",
+            "Still here",
+            "Forgotten",
+            "Lost",
+            "Alone",
+            "Breathing",
+            "Crying",
+            "Static",
+            "Whispers",
+            "Sleep",
+            "Wake",
+            "Remember",
+            "Don't forget",
+            "██████",
+            "[REDACTED]",
+            "///",
+            "NO SIGNAL",
+            "DO NOT TRUST",
+            "SMILE",
+            "LOOK CLOSER",
+            "FOUND YOU",
+            "RUN",
+            "OPEN THE DOOR",
+            "IT KNOWS",
+            "TURN BACK",
+            "STAY QUIET",
+            "LISTEN",
+            "CAN YOU HEAR ME?",
+            "ARE YOU THERE?",
+            "I SEE YOU"
+        }
+        self.Colors = {
+            "red",
+            "green",
+            "blue",
+            "yellow",
+            "cyan",
+            "magenta",
+            "white"
+        }
     def RaceName(self):
         return self.raceName
     

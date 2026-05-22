@@ -1,3 +1,4 @@
-from Test import Hats
+from Test import slash_animation
 
-Hats()
+
+slash_animation()

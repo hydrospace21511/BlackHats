@@ -11,8 +11,16 @@ class SocialEngineerClass:
             "Phishing": 30,
             "Pretexting": 50,
             "Baiting": 5,
+            "Punch": 50,
             "God's Hand": 50000000,
         #   "God's Wrath": [Regen + 100000000, 1]
+        }
+
+        self.Cooldowns = {
+            "Internal Access": 1,
+            "Phishing": 3, 
+            "Pretexting": 5,
+            "Baiting": 1   
         }
     
     def RaceName(self):

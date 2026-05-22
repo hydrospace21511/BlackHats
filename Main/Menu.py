@@ -26,7 +26,6 @@ def user():
 
 COBALT = COBALT()
 Classes = Classes()
-Enemy = Enemy("a", 100, 1, 0)
 Hacker = HackerClass()
 Rimuru = RimuruClass()
 SecurityAnalytic = SecurityAnalyticClass()
@@ -135,7 +134,7 @@ while True:
                 continue
 
     cText("▶  Enter your name >>","green")            
-    Player.Name = input(" ")
+    Player.Name = input("")
     match Player.Name :
 
         case "Return" :
@@ -160,7 +159,14 @@ clear()
 print(f"Available attacks: {Player.Class.MostraAtaques()}")
 print(f"Integrity: {integrity_bar(Player.Class.Integrity, PlayerClass.Integrity)}")
 
-# ---- teste ataques ----
+enemy_attacks = {
+    "Shadow Strike": 20,
+    "Inferno Blast": 60,
+    "Phantom Slash": 70,
+    "Chaos Roar": 100
+}
+current_enemy = Enemy(name="filth", max_health=500, defense=15, regen=0, attacks=enemy_attacks)
+active_cooldowns = {}
 
 def Damage(D, Defense) :
     return D * (1 - Defense / 100)
@@ -176,8 +182,14 @@ while True :
     if Attack not in Player.Class.Attacks:
         clear()
         display_battle_ui(Player.Integrity, Player.Class.Integrity, Player.Defense, Player.Class.Attacks.keys())
-        cText("⚠  ERROR 04: Attack not found", "red")
+        cText("⚠  ERROR 04: Exploit not found", "red")
         continue
+
+    if Attack in active_cooldowns and active_cooldowns[Attack] > 0:
+            clear()
+            display_battle_ui(Player.Integrity, Player.Class.Integrity, Player.Defense, Player.Class.Attacks.keys())
+            cText(f"⚠  ACCESS DENIED: '{Attack}' is cooling down! ({active_cooldowns[Attack]} turns left)", "yellow")
+            continue
 
     Attack_Info = Player.Class.Attacks[Attack]
 
@@ -189,6 +201,7 @@ while True :
             clear()
             print(f"Available attacks: {Player.Class.MostraAtaques()}")
             print(f"Defense: {defense_bar(Player.Defense)}")
+
         case "Miku Miku Beam":
             i = 0
             PlayerClass.Defense = 0
@@ -210,12 +223,13 @@ while True :
                 x = 0
                 while x <= 100:
                     clear()
-                    final_damage = Damage(Attack_Info, Player.Class.Defense)
+                    final_damage = Damage(Attack_Info, current_enemy.Defense)
                     cText(f"-{final_damage} life! ({x}%)", "red")
-                    Player.Integrity -= final_damage
+                    current_enemy.Health -= final_damage
                     print(f"Integrity: {integrity_bar(Player.Integrity, Player.Class.Integrity)}")
                     sleep(0.03)
                     x += 1
+
         case "Tell Your World":
             clear()
             sleep(0.5)
@@ -236,7 +250,6 @@ while True :
             sleep(2)
             clear()
 
-            print("placeholder")
         case "World Is Mine":
             sleep(4)
             clear()
@@ -293,7 +306,7 @@ while True :
                 cText("⚠  ERROR 666: Permission not conceded", "red")
                 sleep(2)
                 cText("⚠  ErRoR 3o2. cLaS...", "red")
-                sleep(2)
+                sleep(0.5)
                 clear()
                 sleep(2)
                 while True:
@@ -314,69 +327,82 @@ while True :
                             clear()
                             cText("⚠  Anomaly Connected ", "red")
                             sleep(4)
+                            def corrupt(text):
+                                chars = ["#", "@", "%", "&", "█", "/", "▓"]
+
+                                return "".join(
+                                    random.choice(chars) if random.random() < 0.20 else c
+                                    for c in text
+                                )
+                            
+                            for _ in range(150):
+                               msg = random.choice(list(Vocaloid.Texts))
+
+                               if random.random() < 0.35:
+                                    msg = corrupt(msg)
+
+                               spaces = " " * random.randint(0, 50)
+                               color = random.choice(list(Vocaloid.Colors))
+                               cText(f"{spaces}{msg}", color)
+                               sleep(0.075)
+                               clear()
+
+                            sleep(4)
                             clear()
-                            cText(f"You can't escape from me, dear {user()}", "cyan") # sujeito a mudar para o nome do boss/npc ao invés do nome (pode ser que mude, pode ser que nao, mudada de schrodinger)
+                            cText(f"⚠  You can't escape from me, dear {user()}", "red") # sujeito a mudar para o nome do boss/npc ao invés do nome (pode ser que mude, pode ser que nao, mudada de schrodinger)
                             sleep(3)
                             clear()
                             fake_damage = 0 #pq ta aq e nao no inicio? pra separar os bagui ali (poderia ter colocado outro? s, soq sla, deixa ai msm)
                             fake_defense = 100
                             fake_integrity = 2001
                             fake_npcdefense = 0
+
                             for i in range(10):
                                 fake_damage += random.randint(3000, 400000)
                                 cText(f"⚠  UNKNOWN ERROR: Player Damage Increasing >> {fake_damage}", "red")
                                 sleep(0.2)
                                 clear()
+
+                            cText(f"⚠  UNKNOWN ERROR: Player Damage Increasing >> {fake_damage}", "red")
                             sleep(2)
+                            
                             for i in range(10):
                                 fake_integrity -= random.randint(41, 160)
                                 if fake_integrity <= 0:
                                     fake_integrity = 0
-                            sleep(2)
-                            cText(f"⚠  UNKNOWN ERROR: Player Integrity Decreasing >> {fake_integrity}", "red")
+                            cText(f"⚠  UNKNOWN ERROR: Player Integrity Decreased >> {fake_integrity}", "red")
+
                             for i in range(10):
                                 fake_defense -= random.randint(4, 16)
                                 if fake_defense <= 0:
                                     fake_defense = 0
                             sleep(2)
-                            cText(f"⚠  UNKNOWN ERROR: Player Defense Decreasing >> {fake_defense}%", "red")                            
+
+                            cText(f"⚠  UNKNOWN ERROR: Player Defense Decreased >> {fake_defense}%", "red")                            
 
                             for i in range(10):
                                 fake_npcdefense += random.randint(4, 16)
                                 if fake_npcdefense <= 0:
                                     fake_npcdefense = 0
-                                cText(f"⚠  UNKNOWN ERROR: Enemy Defense Increasing >> {fake_npcdefense}%", "red")
-                                sleep(0.2)
-                                clear()
+                            sleep(2)
+                            cText(f"⚠  UNKNOWN ERROR: Enemy Defense Increased >> {fake_npcdefense}%", "red")   
                             sleep(2)
 
-
-
+                            current_enemy.Health -= 999999999999999
+                            cText(f"Enemy took 999999999999999 damage, and now it's with {current_enemy.Health} life (that text will change in future btw)", "red")
+                            sleep(4)
                             clear()
                             break
+                        
                         case "NO" | "N" :
                             clear()
                             cText("⚠  You can't refuse", "red")
                             continue
+
                         case _:
                             clear()
                             cText("⚠  Wrong response", "red")
                             continue
-
-                        
-
-                
-
-
-
-
-
-
-
-
-
-
-
 
 
         case "Baiting":
@@ -426,12 +452,38 @@ while True :
                 sleep(0.03)
                 
         case _:
-            print(f"integrity: {PlayerClass.Integrity}")
-            final_damage = Damage(Attack_Info, Player.Class.Defense)
-            Player.Integrity -= final_damage
+            final_damage = Damage(Attack_Info, current_enemy.Defense)
+            current_enemy.Health -= final_damage
             clear()
-            print(f"Available attacks: {Player.Class.MostraAtaques()}")
-            print(f"Integrity: {integrity_bar(Player.Integrity, Player.Class.Integrity)}")
+            cText(f">> You executed {Attack}! {current_enemy.Name} took {final_damage:.1f} damage!", "positive")
+
+    if hasattr(Player.Class, 'Cooldowns') and Attack in Player.Class.Cooldowns:
+        active_cooldowns[Attack] = Player.Class.Cooldowns[Attack]
+
+    if current_enemy.Health <= 0:
+        sleep(1.5)
+        clear()
+        cText(f"\n   [>> NODE COMPROMISED <<]\n < -- {current_enemy.Name} Defeated! -- >\n", "green")
+        break
+
+    sleep(1.5)
+
+    enemy_attack_name, enemy_attack_dmg = current_enemy.random_attack()
+    enemy_final_damage = Damage(enemy_attack_dmg, Player.Defense)
+    Player.Integrity -= enemy_final_damage
+    
+    cText(f">> {current_enemy.Name} retaliates with [{enemy_attack_name}]! You took {enemy_final_damage:.1f} damage!", "red")
+    sleep(2.5)
+
+    if Player.Integrity <= 0:
+        clear()
+        cText(f"\n        [!]Error 404[!] \n < -- You have been hacked. -- >\n", "red")
+        sleep(2)
+        break
+
+    for skill in active_cooldowns:
+        if active_cooldowns[skill] > 0:
+            active_cooldowns[skill] -= 1
 
     if Player.Regen > 0:
         Player.Integrity += Player.Regen
@@ -444,15 +496,7 @@ while True :
 
     if Player.Defense >= 100:
         Player.Defense = 99
+        
     clear()
     display_battle_ui(Player.Integrity, Player.Class.Integrity, Player.Defense, Player.Class.Attacks.keys())
-    
-    if Player.Integrity <= 0:
-        sleep(2)
-        clear()
-        cText(f"\n         [!]Error 404[!] \n < -- You have been hacked. -- >\n", "red")
-        sleep(2)
-        clear()
-        break
-
     

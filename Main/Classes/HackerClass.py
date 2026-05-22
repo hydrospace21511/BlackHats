@@ -14,7 +14,12 @@ class HackerClass:
         #    "God's Wrath": Regen + 100000000,
         "Pneumoultramicroscopicsilicovolcanoconiotic": 'ball cancer'
         }
-        
+        self.active_cooldowns = {
+            "SQL Injection": 1,
+            "Cross-Site Scripting": 3, 
+            "Buffer Overflow": 5,
+            "Denial of Service": 6   
+        }
     def RaceName(self):
         return self.raceName
     

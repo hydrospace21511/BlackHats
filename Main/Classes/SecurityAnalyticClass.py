@@ -14,6 +14,13 @@ class SecurityAnalyticClass:
         #    "God's Wrath": Regen + 100000000,
         "Pneumoultramicroscopicsilicovolcanoconiotic": 'ball cancer'
         }
+
+        self.Cooldowns = {
+            "Firewall": 8,
+            "Security Patch": 3, 
+            "Weakness View": 3,
+            "God's Hand": 999999   
+        }
         
     def RaceName(self):
         return self.raceName
