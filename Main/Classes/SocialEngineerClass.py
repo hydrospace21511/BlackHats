@@ -1,3 +1,4 @@
+from colorama import Fore
 class SocialEngineerClass:
     def __init__(self):
         self.raceName = "Social Engineer"
@@ -5,7 +6,7 @@ class SocialEngineerClass:
         self.Defense = 45
         self.Regen = 0
         self.stun = 0
-
+        self.ui_color = Fore.GREEN
         self.Attacks = {
             "Internal Access": 5,
             "Phishing": 30,

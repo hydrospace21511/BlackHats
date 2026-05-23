@@ -44,7 +44,7 @@ def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
 clear() 
 
-#COBALT._Start() 
+COBALT._Start() 
 
 print(SecurityAnalytic.MostraAtaques())
 print(Hacker.MostraAtaques())
@@ -360,7 +360,7 @@ while True :
                                 cText(f"⚠  You can't escape from me, dear {user()}", "red") # sujeito a mudar para o nome do boss/npc ao invés do nome (pode ser que mude, pode ser que nao, mudada de schrodinger)
                                 sleep(3)
                                 clear()
-
+                                
                                 fake_damage = 0 #pq ta aq e nao no inicio? pra separar os bagui ali (poderia ter colocado outro? s, soq sla, deixa ai msm)
 
                                 for i in range(10):
@@ -376,7 +376,7 @@ while True :
 
                                 sleep(2)
 
-                                cText(f"⚠  UNKNOWN ERROR: Player Defense Increased >> 99%", "red")                            
+                                cText(f"⚠  UNKNOWN ERROR: Player Defense Increased >> 100%", "red")                            
 
                                 sleep(2)
                                 cText(f"⚠  UNKNOWN ERROR: Enemy Defense Decreased >> -10%", "red")   

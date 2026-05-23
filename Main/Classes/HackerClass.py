@@ -6,6 +6,7 @@ class HackerClass:
         self.Integrity = 85
         self.Defense = 15
         self.Regen = 0
+        self.ui_color = Fore.GREEN        
         self.Attacks = {
             "SQL Injection": 40,
             "Cross-Site Scripting": 30,

@@ -1,3 +1,4 @@
+from colorama import Fore
 class SecurityAnalyticClass:
      
     def __init__(self):
@@ -5,6 +6,7 @@ class SecurityAnalyticClass:
         self.Integrity = 125
         self.Defense = 0
         self.Regen = 0
+        self.ui_color = Fore.GREEN        
         self.Attacks = {
             "Firewall": self.Defense + 30,
             "Security Patch": self.Regen + 30,
