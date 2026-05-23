@@ -6,6 +6,7 @@ from Classes.HackerClass import HackerClass
 from Classes.SocialEngineerClass import SocialEngineerClass
 from Classes.Classes import Classes 
 from Classes.SecretClasses.Hatsune import HatsuneMikuClass
+from Classes.SecretClasses.CorruptedHatsune import CorruptedHatsuneMikuClass
 import Player
 from Player import integrity_bar
 from Player import defense_bar
@@ -31,6 +32,7 @@ Rimuru = RimuruClass()
 SecurityAnalytic = SecurityAnalyticClass()
 SocialEngineer = SocialEngineerClass()
 Vocaloid = HatsuneMikuClass()
+CorruptedHatsuneMiku = CorruptedHatsuneMikuClass()
 Player = Player.Player()
 init(autoreset=True)
 
@@ -41,6 +43,7 @@ print(Classes.ClassesAttacks())
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
 clear() 
+
 #COBALT._Start() 
 
 print(SecurityAnalytic.MostraAtaques())
@@ -173,21 +176,24 @@ def Damage(D, Defense) :
 
 #print("Available attacks:", list(Player.Class.Attacks.keys()))
 clear()
-display_battle_ui(Player.Integrity, Player.Class.Integrity, Player.Defense, Player.Class.Attacks.keys())
+display_battle_ui(Player.Integrity, Player.Class.Integrity, Player.Defense, Player.Class.Attacks.keys(), Player.Class.ui_color)
 
 while True :
-    cText("▶  Choose an exploit >>","green")
+    if Player.Class == CorruptedHatsuneMiku:
+        cText("▶  Choose an exploit >>","red")
+    else:
+        cText("▶  Choose an exploit >>","green")
     Attack = input("")
 
     if Attack not in Player.Class.Attacks:
         clear()
-        display_battle_ui(Player.Integrity, Player.Class.Integrity, Player.Defense, Player.Class.Attacks.keys())
+        display_battle_ui(Player.Integrity, Player.Class.Integrity, Player.Defense, Player.Class.Attacks.keys(), Player.Class.ui_color)
         cText("⚠  ERROR 04: Exploit not found", "red")
         continue
 
     if Attack in active_cooldowns and active_cooldowns[Attack] > 0:
             clear()
-            display_battle_ui(Player.Integrity, Player.Class.Integrity, Player.Defense, Player.Class.Attacks.keys())
+            display_battle_ui(Player.Integrity, Player.Class.Integrity, Player.Defense, Player.Class.Attacks.keys(), Player.Class.ui_color)
             cText(f"⚠  ACCESS DENIED: '{Attack}' is cooling down! ({active_cooldowns[Attack]} turns left)", "yellow")
             continue
 
@@ -251,158 +257,203 @@ while True :
             clear()
 
         case "World Is Mine":
-            sleep(4)
-            clear()
-            d1 = 0
-            d2 = 0
-            d3 = 0
-            while d1 <= 3:
-                cText("World.", "cyan")
-                sleep(0.5)
-                d1+=1
+            if Player.Integrity <= 207:
+                sleep(4)
                 clear()
-                cText("World..", "cyan")
-                sleep(0.5)
-                d1+=1
-                clear()
-                cText("World...", "cyan") # dava pra fazer de um jeito melhor? dava, eu queria? s, fiquei com preguiça? definitivamente, funciona? s, ctz? s, ent deixa do jeito q ta
-                sleep(0.5)
-                d1+=1
-                clear()
-                break
-            while d2 <= 3:
-                cText("Is.", "cyan")
-                sleep(0.5)
-                d2+=1
-                clear()
-                cText("Is..", "cyan")
-                sleep(0.5)
-                d2+=1
-                clear()         
-                cText("Is...", "cyan")
-                sleep(0.5)
-                d2+=1
-                clear()
-                break
-            while d3 <= 3:
-                cText("Mine.", "cyan")
-                sleep(0.5)
-                d3+=1
-                clear()
-                cText("Mine..", "cyan")
-                sleep(0.5)
-                d3+=1
-                clear() 
-                cText("Mine...", "cyan")
-                sleep(0.5)
-                d3+=1
-                clear()      
-                break
-            if d3 == 3:
-                cText("⚠  ERROR 404: Attack not found", "red")
-                sleep(2)
-                cText("⚠  ERROR 201: Attack not loaded", "red")
-                sleep(2)
-                cText("⚠  ERROR 666: Permission not conceded", "red")
-                sleep(2)
-                cText("⚠  ErRoR 3o2. cLaS...", "red")
-                sleep(0.5)
-                clear()
-                sleep(2)
-                while True:
-                    cText("⚠  Anomaly detected, would you like to remove it?", "yellow")
+                d1 = 0
+                d2 = 0
+                d3 = 0
+                while d1 <= 3:
+                    cText("World.", "cyan")
+                    sleep(0.5)
+                    d1+=1
+                    clear()
+                    cText("World..", "cyan")
+                    sleep(0.5)
+                    d1+=1
+                    clear()
+                    cText("World...", "cyan") # dava pra fazer de um jeito melhor? dava, eu queria? s, fiquei com preguiça? definitivamente, funciona? s, ctz? s, ent deixa do jeito q ta
+                    sleep(0.5)
+                    d1+=1
+                    clear()
+                    break
+                while d2 <= 3:
+                    cText("Is.", "cyan")
+                    sleep(0.5)
+                    d2+=1
+                    clear()
+                    cText("Is..", "cyan")
+                    sleep(0.5)
+                    d2+=1
+                    clear()         
+                    cText("Is...", "cyan")
+                    sleep(0.5)
+                    d2+=1
+                    clear()
+                    break
+                while d3 <= 3:
+                    cText("Mine.", "cyan")
+                    sleep(0.5)
+                    d3+=1
+                    clear()
+                    cText("Mine..", "cyan")
+                    sleep(0.5)
+                    d3+=1
+                    clear() 
+                    cText("Mine...", "cyan")
+                    sleep(0.5)
+                    d3+=1
+                    clear()      
+                    break
+                if d3 == 3:
+                    cText("⚠  ERROR 404: Attack not found", "red")
                     sleep(2)
-                    cText("Y/N", "blue")
-                    R = str(input("").strip().upper())
-                    match R:
-                        case "YES" | "Y":
-                            clear()
-                            sleep(2)
-                            cText("⚠  Fatal ERROR, anomaly couldn't be removed.", "red") 
-                            sleep(3)
-                            cText("⚠  Deleting API...", "red")
-                            sleep(4)
-                            cText("⚠  API couldn't be deleted, the application is gone.", "red")
-                            sleep(5)
-                            clear()
-                            cText("⚠  Anomaly Connected ", "red")
-                            sleep(4)
-                            def corrupt(text):
-                                chars = ["#", "@", "%", "&", "█", "/", "▓"]
+                    cText("⚠  ERROR 201: Attack not loaded", "red")
+                    sleep(2)
+                    cText("⚠  ERROR 666: Permission not conceded", "red")
+                    sleep(2)
+                    cText("⚠  ErRoR 3o2. cLaS...", "red")
+                    sleep(0.5)
+                    clear()
+                    sleep(2)
+                    while True:
+                        cText("⚠  Anomaly detected, would you like to remove it?", "yellow")
+                        sleep(2)
+                        cText("Y/N", "blue")
+                        R = str(input("").strip().upper())
+                        match R:
+                            case "YES" | "Y":
+                                clear()
+                                sleep(2)
+                                cText("⚠  Fatal ERROR, anomaly couldn't be removed.", "red") 
+                                sleep(3)
+                                cText("⚠  Deleting API...", "red")
+                                sleep(4)
+                                cText("⚠  API couldn't be deleted, the application is gone.", "red")
+                                sleep(5)
+                                clear()
+                                cText("⚠  Anomaly Connected ", "red")
+                                sleep(4)
+                                def corrupt(text):
+                                    chars = ["#", "@", "%", "&", "█", "/", "▓"]
 
-                                return "".join(
-                                    random.choice(chars) if random.random() < 0.20 else c
-                                    for c in text
-                                )
-                            
-                            for _ in range(150):
-                               msg = random.choice(list(Vocaloid.Texts))
+                                    return "".join(
+                                        random.choice(chars) if random.random() < 0.20 else c
+                                        for c in text
+                                    )
+                                
+                                for _ in range(150):
+                                 msg = random.choice(list(Vocaloid.Texts))
 
-                               if random.random() < 0.35:
-                                    msg = corrupt(msg)
+                                 if random.random() < 0.35:
+                                        msg = corrupt(msg)
 
-                               spaces = " " * random.randint(0, 50)
-                               color = random.choice(list(Vocaloid.Colors))
-                               cText(f"{spaces}{msg}", color)
-                               sleep(0.075)
-                               clear()
+                                        spaces = " " * random.randint(0, 65)
+                                        breaks = "\n" * random.randint(0, 6)
+                                        color = random.choice(list(Vocaloid.Colors))
+                                        cText(f"{breaks}{spaces}{msg}", color)
+                                        sleep(0.075)
+                                        clear()
 
-                            sleep(4)
-                            clear()
-                            cText(f"⚠  You can't escape from me, dear {user()}", "red") # sujeito a mudar para o nome do boss/npc ao invés do nome (pode ser que mude, pode ser que nao, mudada de schrodinger)
-                            sleep(3)
-                            clear()
-                            fake_damage = 0 #pq ta aq e nao no inicio? pra separar os bagui ali (poderia ter colocado outro? s, soq sla, deixa ai msm)
-                            fake_defense = 100
-                            fake_integrity = 2001
-                            fake_npcdefense = 0
-
-                            for i in range(10):
-                                fake_damage += random.randint(3000, 400000)
-                                cText(f"⚠  UNKNOWN ERROR: Player Damage Increasing >> {fake_damage}", "red")
-                                sleep(0.2)
+                                sleep(4)
+                                clear()
+                                cText(f"⚠  You can't escape from me, dear {user()}", "red") # sujeito a mudar para o nome do boss/npc ao invés do nome (pode ser que mude, pode ser que nao, mudada de schrodinger)
+                                sleep(3)
                                 clear()
 
-                            cText(f"⚠  UNKNOWN ERROR: Player Damage Increasing >> {fake_damage}", "red")
-                            sleep(2)
+                                fake_damage = 0 #pq ta aq e nao no inicio? pra separar os bagui ali (poderia ter colocado outro? s, soq sla, deixa ai msm)
+
+                                for i in range(10):
+                                    fake_damage += random.randint(3000, 400000)
+                                    cText(f"⚠  UNKNOWN ERROR: Player Damage Increasing >> {fake_damage}", "red")
+                                    sleep(0.2)
+                                    clear()
+
+                                cText(f"⚠  UNKNOWN ERROR: Player Damage Increasing >> {fake_damage}", "red")
+                                sleep(2)
+                                
+                                cText(f"⚠  UNKNOWN ERROR: Player Integrity Increased >> 12.500", "red")
+
+                                sleep(2)
+
+                                cText(f"⚠  UNKNOWN ERROR: Player Defense Increased >> 99%", "red")                            
+
+                                sleep(2)
+                                cText(f"⚠  UNKNOWN ERROR: Enemy Defense Decreased >> -10%", "red")   
+                                sleep(2)
+                                cText(f"⚠  UNKNOWN ERROR: Class changed >> {CorruptedHatsuneMiku.raceName}", "red")
+                                sleep(2)
+                
+                                PlayerClass = CorruptedHatsuneMiku
+                                Player.Class = PlayerClass
+                                Player.Integrity = Player.Class.Integrity
+                                Player.Defense = Player.Class.Defense
+                                sleep(4)
+                                clear()
+                                break
                             
-                            for i in range(10):
-                                fake_integrity -= random.randint(41, 160)
-                                if fake_integrity <= 0:
-                                    fake_integrity = 0
-                            cText(f"⚠  UNKNOWN ERROR: Player Integrity Decreased >> {fake_integrity}", "red")
+                            case "NO" | "N" :
+                                clear()
+                                cText("⚠  You can't refuse", "red")
+                                continue
 
-                            for i in range(10):
-                                fake_defense -= random.randint(4, 16)
-                                if fake_defense <= 0:
-                                    fake_defense = 0
-                            sleep(2)
-
-                            cText(f"⚠  UNKNOWN ERROR: Player Defense Decreased >> {fake_defense}%", "red")                            
-
-                            for i in range(10):
-                                fake_npcdefense += random.randint(4, 16)
-                                if fake_npcdefense <= 0:
-                                    fake_npcdefense = 0
-                            sleep(2)
-                            cText(f"⚠  UNKNOWN ERROR: Enemy Defense Increased >> {fake_npcdefense}%", "red")   
-                            sleep(2)
-
-                            current_enemy.Health -= 999999999999999
-                            cText(f"Enemy took 999999999999999 damage, and now it's with {current_enemy.Health} life (that text will change in future btw)", "red")
-                            sleep(4)
-                            clear()
-                            break
-                        
-                        case "NO" | "N" :
-                            clear()
-                            cText("⚠  You can't refuse", "red")
-                            continue
-
-                        case _:
-                            clear()
-                            cText("⚠  Wrong response", "red")
-                            continue
+                            case _:
+                                clear()
+                                cText("⚠  Wrong response", "red")
+                                continue
+            else:
+                clear()
+                d1 = 0
+                d2 = 0
+                d3 = 0
+                while d1 <= 3:
+                    cText("World.", "cyan")
+                    sleep(0.5)
+                    d1+=1
+                    clear()
+                    cText("World..", "cyan")
+                    sleep(0.5)
+                    d1+=1
+                    clear()
+                    cText("World...", "cyan") # dava pra fazer de um jeito melhor? dava, eu queria? s, fiquei com preguiça? definitivamente, funciona? s, ctz? s, ent deixa do jeito q ta
+                    sleep(0.5)
+                    d1+=1
+                    clear()
+                    break
+                while d2 <= 3:
+                    cText("Is.", "cyan")
+                    sleep(0.5)
+                    d2+=1
+                    clear()
+                    cText("Is..", "cyan")
+                    sleep(0.5)
+                    d2+=1
+                    clear()         
+                    cText("Is...", "cyan")
+                    sleep(0.5)
+                    d2+=1
+                    clear()
+                    break
+                while d3 <= 3:
+                    cText("Mine.", "cyan")
+                    sleep(0.5)
+                    d3+=1
+                    clear()
+                    cText("Mine..", "cyan")
+                    sleep(0.5)
+                    d3+=1
+                    clear() 
+                    cText("Mine...", "cyan")
+                    sleep(0.5)
+                    d3+=1
+                    clear()      
+                    break
+                if d3 == 3:
+                    final_damage = Damage(Attack_Info, current_enemy.Defense)
+                    current_enemy.Health -= final_damage
+                    cText(f"  >> You executed {Attack}! {current_enemy.Name} took {final_damage:.1f} damage!", "positive")
+                    sleep(2)
+                    clear() 
 
 
         case "Baiting":
@@ -447,21 +498,44 @@ while True :
                 final_damage = Damage(80, Player.Class.Defense)
                 Player.Integrity -= final_damage
                 clear()
-                display_battle_ui(Player.Integrity, Player.Class.Integrity, Player.Defense, Player.Class.Attacks.keys())
+                display_battle_ui(Player.Integrity, Player.Class.Integrity, Player.Defense, Player.Class.Attacks.keys(), Player.Class.ui_color)
     
                 sleep(0.03)
-                
+        
+        case "Give Damage":
+            clear()
+            Player.Integrity -= Attack_Info
+            cText("Why would you do that? R u dumb?", "red") # só pra testa a classe e os bagui
+            sleep(2)
+            clear()
+
+        case "Negative Space":
+            clear()
+            sleep(1)
+            cText("Corrupting the space", "error")
+            sleep(2)
+            clear()
+            cText("Everything will be white...", "error")
+            sleep(2)
+            clear()
+            CorruptedHatsuneMiku.trigger_negative_space()
+            final_damage = Damage(Attack_Info, current_enemy.Defense)
+            current_enemy.Health -= final_damage
+            display_battle_ui(Player.Integrity, Player.Class.Integrity, Player.Defense, Player.Class.Attacks.keys(), Player.Class.ui_color)
+            cText(f">> The attack corrupted the space! {current_enemy.Name} took {final_damage:.1f} damage!", "positive")
+
         case _:
+            display_battle_ui(Player.Integrity, Player.Class.Integrity, Player.Defense, Player.Class.Attacks.keys(), Player.Class.ui_color)
             final_damage = Damage(Attack_Info, current_enemy.Defense)
             current_enemy.Health -= final_damage
             clear()
-            cText(f">> You executed {Attack}! {current_enemy.Name} took {final_damage:.1f} damage!", "positive")
+            cText(f" >> You executed {Attack}! {current_enemy.Name} took {final_damage:.1f} damage!", "positive")
 
     if hasattr(Player.Class, 'Cooldowns') and Attack in Player.Class.Cooldowns:
         active_cooldowns[Attack] = Player.Class.Cooldowns[Attack]
 
     if current_enemy.Health <= 0:
-        sleep(1.5)
+        sleep(1.5)                                          #-
         clear()
         cText(f"\n   [>> NODE COMPROMISED <<]\n < -- {current_enemy.Name} Defeated! -- >\n", "green")
         break
@@ -472,7 +546,8 @@ while True :
     enemy_final_damage = Damage(enemy_attack_dmg, Player.Defense)
     Player.Integrity -= enemy_final_damage
     
-    cText(f">> {current_enemy.Name} retaliates with [{enemy_attack_name}]! You took {enemy_final_damage:.1f} damage!", "red")
+    #-
+    cText(f" >> {current_enemy.Name} retaliates with [{enemy_attack_name}]! You took {enemy_final_damage:.1f} damage!", "error")
     sleep(2.5)
 
     if Player.Integrity <= 0:
@@ -497,6 +572,6 @@ while True :
     if Player.Defense >= 100:
         Player.Defense = 99
         
-    clear()
-    display_battle_ui(Player.Integrity, Player.Class.Integrity, Player.Defense, Player.Class.Attacks.keys())
+    clear() 
+    display_battle_ui(Player.Integrity, Player.Class.Integrity, Player.Defense, Player.Class.Attacks.keys(), Player.Class.ui_color)
     

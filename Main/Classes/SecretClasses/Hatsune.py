@@ -1,17 +1,20 @@
+from colorama import Fore
 class HatsuneMikuClass:
     def __init__(self):
         self.raceName = "Vocaloid"
         self.Integrity = 2007
         self.Regen = 0
         self.Defense = 45
+        self.ui_color = Fore.GREEN
         self.Attacks = {
-            "World Is Mine": 201,
+            "World Is Mine": 50,
             "Tell Your World": 75,
             "Miku Miku Beam": 80,
-            "Microphone Throw": 80
+            "Microphone Throw": 80,
+            "Give Damage": 207 * 9
         }
         self.Cooldowns = {
-            "World Is Mine": 99,
+            "World Is Mine": 1,
             "Tell Yourd World": 15,
             "Miku Miku Beam": 20
         }
@@ -57,9 +60,7 @@ class HatsuneMikuClass:
             "Wake",
             "Remember",
             "Don't forget",
-            "██████",
             "[REDACTED]",
-            "///",
             "NO SIGNAL",
             "DO NOT TRUST",
             "SMILE",

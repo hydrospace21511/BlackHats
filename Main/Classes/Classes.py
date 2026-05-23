@@ -8,15 +8,14 @@ class Classes:
     def __init__(self):
         pass
     def _Classes(self):
-            # Paleta de cores do Mainframe
-            C_B = Fore.GREEN       # Borda
-            C_T = Fore.YELLOW     # Título
-            C_C = Fore.CYAN       # Nome das Classes
-            C_D = Fore.WHITE                     # Descrição
-            R = Style.RESET_ALL                  # Reset
+            C_B = Fore.GREEN      
+            C_T = Fore.YELLOW
+            C_C = Fore.CYAN      
+            C_D = Fore.WHITE                  
+            R = Style.RESET_ALL                
             C_R = Fore.RED
 
-            # Construção milimétrica para não quebrar a largura de 56 caracteres
+
             print(f"{C_B}╔{'═'*56}╗{R}")          
                                                                                        
             print(f"{C_B}║{C_D}{f'                         Classes                      {C_R}X ':^56}{C_B}║{R}")
