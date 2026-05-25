@@ -6,6 +6,7 @@ from Classes.HackerClass import HackerClass
 from Classes.SocialEngineerClass import SocialEngineerClass
 from Classes.ReverseEngineerClass import ReverseEngineerClass
 from Classes.Classes import Classes 
+from Classes.HardwareSpecialistClass import HardwareSpecialistClass
 from Classes.SecretClasses.Hatsune import HatsuneMikuClass
 from Classes.SecretClasses.CorruptedHatsune import CorruptedHatsuneMikuClass
 import Player
@@ -31,6 +32,7 @@ Classes = Classes()
 Hacker = HackerClass()
 Rimuru = RimuruClass()
 SecurityAnalytic = SecurityAnalyticClass()
+HardwareSpecialist = HardwareSpecialistClass()
 SocialEngineer = SocialEngineerClass()
 Vocaloid = HatsuneMikuClass()
 ReverseEngineer = ReverseEngineerClass()
@@ -92,6 +94,10 @@ while True:
 
             case "SOCIAL ENGINEER" | "3":
                 PlayerClass = SocialEngineer
+                break
+
+            case "HARDWARE SPECIALIST" | "5":
+                PlayerClass = HardwareSpecialist
                 break
 
             case "HATSUNE MIKU" | "CV01":
@@ -175,9 +181,10 @@ enemy_attacks = {
     "Phantom Slash": 70,
     "Chaos Roar": 100
 }
+
 current_enemy = Enemy(name="filth", max_health=500, defense=15, regen=0, attacks=enemy_attacks)
 active_cooldowns = {}
-
+#Protection
 def Damage(D, Defense) :
     return D * (1 - Defense / 100)
 
@@ -190,7 +197,7 @@ while True :
         cText("▶  Choose an exploit >>","red")
     else:
         cText("▶  Choose an exploit >>","green")
-    Attack = input("")
+    Attack = str(input("")).strip().upper()
     if Attack == "Reverse" and Player.Class.Decompiled == True:
         clear()
         display_battle_ui(Player.Integrity, Player.Class.Integrity, Player.Defense, Player.Class.Attacks.keys(), Player.Class.ui_color)
@@ -219,7 +226,7 @@ while True :
 
     match Attack:
 
-        case "Decompiler":
+        case "DECOMPILER":
             clear()
             final_damage = Damage(Attack_Info, current_enemy.Defense)
             display_battle_ui(Player.Integrity, Player.Class.Integrity, Player.Defense, Player.Class.Attacks.keys(), Player.Class.ui_color)
@@ -231,26 +238,28 @@ while True :
                 Player.Class.Decompiled = True
             else:
                 current_enemy.Health -= final_damage
-                cText(cText(f" >> You executed {Attack}! {current_enemy.Name} took {final_damage:.1f} damage!", "positive"))
+                cText(f" >> You executed {Attack}! {current_enemy.Name} took {final_damage:.1f} damage!", "positive")
                 sleep(3)
             clear()
 
-        case "Algorithm Clone":
+        case "ALGORITHM CLONE":
 
             clear()
             final_damage = Damage(Attack_Info, current_enemy.Defense)
             if PlayerClass.Decompiled == True:
                 display_battle_ui(Player.Integrity, Player.Class.Integrity, Player.Defense, Player.Class.Attacks.keys(), Player.Class.ui_color)
-                cText("Algorithm cloned! You copied the enemy!", "positive")
+                cText(cText(f" >> You executed {Attack}! {current_enemy.Name} took {final_damage:.1f} damage!", "positive"))
                 sleep(2)
+                cText(" Algorithm cloned! You copied the enemy!", "positive")
+                #Player.Class.Attacks["Reverse":10] = 0
                 Player.Class.Attacks = current_enemy.Attacks
                 Player.Class.Defense = current_enemy.Defense
                 Player.Class.Integrity = current_enemy.Health - (Player.Integrity - Player.Class.Integrity)
-                cText(cText(f" >> You executed {Attack}! {current_enemy.Name} took {final_damage:.1f} damage!", "positive"))
                 sleep(3)
                 clear()
                 current_enemy.Health -= final_damage
                 clear()
+
             elif PlayerClass.Decompiled == False:
                 current_enemy.Health -= final_damage
                 display_battle_ui(Player.Integrity, Player.Class.Integrity, Player.Defense, Player.Class.Attacks.keys(), Player.Class.ui_color)
@@ -258,13 +267,13 @@ while True :
                 sleep(3)
                 clear()
 
-        case "Protection Bypass":
+        case "PROTECTION BYPASS":
             #display_battle_ui(Player.Integrity, Player.Class.Integrity, Player.Defense, Player.Class.Attacks.keys(), Player.Class.ui_color)
             current_enemy.Health -= Attack_Info
             cText(cText(f" >> You executed {Attack}! {current_enemy.Name} took {final_damage:.1f} damage!", "positive"))
             clear()
 
-        case "Internal Access":
+        case "INTERNAL ACCESS":
             Player.Defense += Attack_Info 
             if Player.Defense >= 100:
                 Player.Defense = 99
@@ -272,7 +281,7 @@ while True :
             print(f"Available attacks: {Player.Class.MostraAtaques()}")
             print(f"Defense: {defense_bar(Player.Defense)}")
 
-        case "Miku Miku Beam":
+        case "MIKU MIKU BEAM" | "MMB":
             i = 0
             PlayerClass.Defense = 0
             while i < 100:
@@ -296,11 +305,11 @@ while True :
                     final_damage = Damage(Attack_Info, current_enemy.Defense)
                     cText(f"-{final_damage} life! ({x}%)", "red")
                     current_enemy.Health -= final_damage
-                    print(f"Integrity: {integrity_bar(Player.Integrity, Player.Class.Integrity)}")
+                    print(f"Integrity: {integrity_bar(current_enemy.Health, current_enemy.MaxHealth)}")
                     sleep(0.03)
                     x += 1
 
-        case "Tell Your World":
+        case "TELL YOUR WORLD":
             clear()
             sleep(0.5)
             cText("Could you tell me your world?", "cyan")
