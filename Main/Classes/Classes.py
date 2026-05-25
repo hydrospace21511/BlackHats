@@ -36,6 +36,11 @@ class Classes:
             print(f"{C_B}║  {C_B}▶ [3] SOCIAL ENGINEER{R}{C_B}{' '*33}║{R}")
             print(f"{C_B}║      {C_D}> Focus: Manipulation, regen & bypass.{R}{C_B}{' '*12}║{R}")
             print(f"{C_B}║{' '*56}║{R}")
+
+            #REVERSE ENGINEER
+            print(f"{C_B}║  {C_B}▶ [4] REVERSE ENGINEER{R}{C_B}{' '*32}║{R}")
+            print(f"{C_B}║      {C_D}> Focus: Decompilation & adaptive attacks.{R}{C_B}{' '*8}║{R}")
+            print(f"{C_B}║{' '*56}║{R}")
             
             print(f"{C_B}╚{'═'*56}╝{R}")
             

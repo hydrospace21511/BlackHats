@@ -4,6 +4,7 @@ import random
 from Classes.SecurityAnalyticClass import SecurityAnalyticClass
 from Classes.HackerClass import HackerClass
 from Classes.SocialEngineerClass import SocialEngineerClass
+from Classes.ReverseEngineerClass import ReverseEngineerClass
 from Classes.Classes import Classes 
 from Classes.SecretClasses.Hatsune import HatsuneMikuClass
 from Classes.SecretClasses.CorruptedHatsune import CorruptedHatsuneMikuClass
@@ -32,6 +33,7 @@ Rimuru = RimuruClass()
 SecurityAnalytic = SecurityAnalyticClass()
 SocialEngineer = SocialEngineerClass()
 Vocaloid = HatsuneMikuClass()
+ReverseEngineer = ReverseEngineerClass()
 CorruptedHatsuneMiku = CorruptedHatsuneMikuClass()
 Player = Player.Player()
 init(autoreset=True)
@@ -56,7 +58,8 @@ Classes._Classes()
 ClassesOptions = {
     "SecurityAnalytic": SecurityAnalytic,
     "Hacker": Hacker,
-    "Social Engineer": SocialEngineer
+    "Social Engineer": SocialEngineer,
+    "Reverse Engineer": ReverseEngineer
 } 
 
 while True:
@@ -78,7 +81,11 @@ while True:
             case "SECURITY ANALYTIC" | "2":
                 PlayerClass = SecurityAnalytic
                 break
-
+            
+            case "REVERSE ENGINEER" | "4": # ta aqui só pro diogo ficar com toque de q o 4 ta entre 2 e 1 ao inves de seguir a ordem numerica
+                PlayerClass = ReverseEngineer
+                break
+                
             case "HACKER" | "1":
                 PlayerClass = Hacker
                 break
@@ -155,11 +162,11 @@ Player.Regen = Player.Class.Regen
 clear()
 cText(f">> Welcome {Player.Name}!","green")
 sleep(2)
-cText(f">> Your class is: {Player.Class.RaceName()}","green")
+cText(f">> Your class is: {Player.Class.raceName}","green")
 sleep(2)
 clear()
-#print(Player.Name)
-print(f"Available attacks: {Player.Class.MostraAtaques()}")
+#print(Player.Name) 
+#print(f"Available attacks: {Player.Class.MostraAtaques()}")
 print(f"Integrity: {integrity_bar(Player.Class.Integrity, PlayerClass.Integrity)}")
 
 enemy_attacks = {
@@ -184,7 +191,18 @@ while True :
     else:
         cText("▶  Choose an exploit >>","green")
     Attack = input("")
-
+    if Attack == "Reverse" and Player.Class.Decompiled == True:
+        clear()
+        display_battle_ui(Player.Integrity, Player.Class.Integrity, Player.Defense, Player.Class.Attacks.keys(), Player.Class.ui_color)
+        cText(" Reversing the decompilation...", "warn")
+        sleep(2)
+        cText(" Decompilation reversed! Your original stats and attacks were restored!", "positive")
+        sleep(2)
+        Player.Class.Decompiled = False
+        Player.Class.Attacks = Player.Class.OriginalAttacks
+        Player.Class.Defense = Player.Class.DefenseBackup
+        Player.Class.Integrity = Player.Class.IntegrityBackup
+        clear()
     if Attack not in Player.Class.Attacks:
         clear()
         display_battle_ui(Player.Integrity, Player.Class.Integrity, Player.Defense, Player.Class.Attacks.keys(), Player.Class.ui_color)
@@ -200,6 +218,52 @@ while True :
     Attack_Info = Player.Class.Attacks[Attack]
 
     match Attack:
+
+        case "Decompiler":
+            clear()
+            final_damage = Damage(Attack_Info, current_enemy.Defense)
+            display_battle_ui(Player.Integrity, Player.Class.Integrity, Player.Defense, Player.Class.Attacks.keys(), Player.Class.ui_color)
+            if Player.Class.Decompiled == False:
+                cText(cText(f" >> You executed {Attack}! {current_enemy.Name} took {final_damage:.1f} damage!", "positive"))
+                cText("Enemy decompiled!", "positive")
+                sleep(2)
+                current_enemy.Health -= final_damage
+                Player.Class.Decompiled = True
+            else:
+                current_enemy.Health -= final_damage
+                cText(cText(f" >> You executed {Attack}! {current_enemy.Name} took {final_damage:.1f} damage!", "positive"))
+                sleep(3)
+            clear()
+
+        case "Algorithm Clone":
+
+            clear()
+            final_damage = Damage(Attack_Info, current_enemy.Defense)
+            if PlayerClass.Decompiled == True:
+                display_battle_ui(Player.Integrity, Player.Class.Integrity, Player.Defense, Player.Class.Attacks.keys(), Player.Class.ui_color)
+                cText("Algorithm cloned! You copied the enemy!", "positive")
+                sleep(2)
+                Player.Class.Attacks = current_enemy.Attacks
+                Player.Class.Defense = current_enemy.Defense
+                Player.Class.Integrity = current_enemy.Health - (Player.Integrity - Player.Class.Integrity)
+                cText(cText(f" >> You executed {Attack}! {current_enemy.Name} took {final_damage:.1f} damage!", "positive"))
+                sleep(3)
+                clear()
+                current_enemy.Health -= final_damage
+                clear()
+            elif PlayerClass.Decompiled == False:
+                current_enemy.Health -= final_damage
+                display_battle_ui(Player.Integrity, Player.Class.Integrity, Player.Defense, Player.Class.Attacks.keys(), Player.Class.ui_color)
+                cText(cText(f" >> You executed {Attack}! {current_enemy.Name} took {final_damage:.1f} damage!", "positive"))
+                sleep(3)
+                clear()
+
+        case "Protection Bypass":
+            #display_battle_ui(Player.Integrity, Player.Class.Integrity, Player.Defense, Player.Class.Attacks.keys(), Player.Class.ui_color)
+            current_enemy.Health -= Attack_Info
+            cText(cText(f" >> You executed {Attack}! {current_enemy.Name} took {final_damage:.1f} damage!", "positive"))
+            clear()
+
         case "Internal Access":
             Player.Defense += Attack_Info 
             if Player.Defense >= 100:
@@ -342,7 +406,7 @@ while True :
                                         for c in text
                                     )
                                 
-                                for _ in range(150):
+                                for _ in range(400):
                                  msg = random.choice(list(Vocaloid.Texts))
 
                                  if random.random() < 0.35:

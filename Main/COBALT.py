@@ -45,7 +45,7 @@ class COBALT:
             self._print_menu()
             i += 1
             if i == 3:
-                cText("                          Acess Granted >> System Starting", "green")
+                cText("                          Access Granted >> System Starting", "green")
                 sleep(2)
                 break
         sleep(2)  
