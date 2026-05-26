@@ -40,21 +40,7 @@ ReverseEngineer = ReverseEngineerClass()
 CorruptedHatsuneMiku = CorruptedHatsuneMikuClass()
 Player = Player.Player()
 init(autoreset=True)
-from Attacks.Decompiler import DecompilerAttack
-from Attacks.AlgorithmClone import AlgorithmCloneAttack
-from Attacks.ProtectionBypass import ProtectionBypassAttack
-from Attacks.InternalAccess import InternalAccessAttack
-from Attacks.Baiting import BaitingAttack
-from Attacks.Firewall import FirewallAttack
-from Attacks.SecurityPatch import SecurityPatchAttack
-from Attacks.Desintegration import DesintegrationAttack
-from Attacks.GiveDamage import GiveDamageAttack
-from Attacks.MikuMikuBeam import MikuMikuBeamAttack
-from Attacks.NegativeSpace import NegativeSpaceAttack
-
-from Attacks.Pneumoultramicroscopicsilicovolcanoconiotic import PneumoultramicroscopicsilicovolcanoconioticAttack
-from Attacks.WorldIsMine import WorldIsMineAttack
-from Attacks.TellYourWorld import TellYourWorldAttack
+from Attacks.SpecialAttacks import DecompilerAttack, AlgorithmCloneAttack, ProtectionBypassAttack, InternalAccessAttack, BaitingAttack, FirewallAttack, SecurityPatchAttack, DesintegrationAttack, MikuMikuBeamAttack, NegativeSpaceAttack, GiveDamageAttack, PneumoultramicroscopicsilicovolcanoconioticAttack, WorldIsMineAttack, TellYourWorldAttack
 
 #pra but q n souber, cText é Colored Text (abreviei pq é games e seco filho, liso liso liso)
 #isso tava aqui antes de eu colocar o cText em um arquivo diferente, fui moggado? games
@@ -65,7 +51,7 @@ def clear():
 clear() 
 
 COBALT._Start() 
-
+clear()
 Classes._Classes() 
 ClassesOptions = {
     "SecurityAnalytic": SecurityAnalytic,
@@ -76,7 +62,10 @@ ClassesOptions = {
 
 while True:
     while True:
-        cText("▶  Choose your class >>","green")
+        if Player.Class == CorruptedHatsuneMiku:
+            cText("▶  Choose your class >>","red")
+        else:
+         cText("▶  Choose your class >>","green")
         PlayerClass =  str(input("").strip().upper())
         match PlayerClass:
 

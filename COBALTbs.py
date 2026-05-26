@@ -1,18 +1,12 @@
 import keyboard
 from time import sleep
-import os
 from colorama import Fore, Style, init
-import threading
-
-def clear():
-    os.system('cls' if os.name == 'nt' else 'clear')
 init(autoreset=True)
-
 class COBALT:
     def __init__(self):
         pass
 
-    def _ScreenMenu(self):
+    def Start(self):
             print(f"""{Fore.GREEN}
         ╔══════════════════════════════════════════════════════════╗
         ║                                                          ║
@@ -28,22 +22,11 @@ class COBALT:
         ║                                                          ║
         ╚══════════════════════════════════════════════════════════╝
             """)
-    
-    def _LoadCobalt(self):
-         for _ in [".", "..", "..."]:
-              print(f"\033[1A\033[2K", end="")
-              print(f"\n\n{Fore.GREEN}{'                              Starting COBALT' + _:^68}\n")
-              sleep(0.4)
-    clear()
+            while True:
+                if keyboard.is_pressed('space'):
+                    print(f"{Fore.GREEN}                              Starting COBALT...")
+                    sleep(2)
+                    break
 
-    def Start(self):
-         clear()
-         self._ScreenMenu()
-         while True:
-            if keyboard.is_pressed('space'):
-                 print(f"\n{Fore.GREEN}{'':^68}")
-                 loader = threading.Thread(target=self._LoadCobalt)
-                 loader.start()
-                 loader.join()
-                 break
-            sleep(0.05)
+
+

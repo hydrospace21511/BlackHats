@@ -20,6 +20,11 @@ def cText(message, type="info"):
             print(f"{Fore.YELLOW}[!]{message}")
          case "positive":
             print(f"{Fore.GREEN}[✓]{message}")
+         case "magenta":
+            print(f"{Fore.MAGENTA}{message}")
+         case "white":
+            print(f"{Fore.WHITE}{message}")
+
         
                 
     
