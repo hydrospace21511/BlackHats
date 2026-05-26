@@ -84,3 +84,15 @@ def Hats():
 #         live.update(Text(text, style="green"))
 
 #         time.sleep(0.03)
+
+
+import keyboard
+# from time import sleep
+# for i in range(2):
+#      keyboard.press_and_release("shift + 4")
+#      keyboard.press_and_release('h')
+
+#      sleep(0.1)
+#      keyboard.press_and_release('enter')
+ 
+
