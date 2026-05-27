@@ -213,11 +213,7 @@ while True :
         cText("▶  Choose an exploit >>","red")
     else:
         cText("▶  Choose an exploit >>","green")
-    Attack = input("")
-    Attack_Info = Player.Class.Attacks[Attack]
-    context = Player, current_enemy, Attack_Info, display_battle_ui, integrity_bar, defense_bar, Damage, Attack, Player.Class
-    
-
+    Attack = input("")    
     
     if Attack == "Reverse" and Player.Class.Decompiled == True:
         clear()
@@ -243,6 +239,9 @@ while True :
             display_battle_ui(Player.Integrity, Player.Class.Integrity, Player.Defense, Player.Class.Attacks.keys(), Player.Class.ui_color)
             cText(f"⚠  ACCESS DENIED: '{Attack}' is cooling down! ({active_cooldowns[Attack]} turns left)", "yellow")
             continue
+
+    Attack_Info = Player.Class.Attacks[Attack]
+    context = Player, current_enemy, Attack_Info, display_battle_ui, integrity_bar, defense_bar, Damage, Attack, Player.Class
 
     if Attack in attack_functions:
         attack_functions[Attack](*context)
