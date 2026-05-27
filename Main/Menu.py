@@ -15,7 +15,7 @@ from Player import defense_bar
 from Enemy import Enemy
 import sys
 from Classes.SecretClasses.Rimuru import RimuruClass
-import Test
+#import Test
 import getpass
 from COBALT import COBALT
 from time import sleep
