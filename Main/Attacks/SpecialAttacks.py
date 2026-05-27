@@ -3,6 +3,7 @@ from time import sleep
 from Classes.SecretClasses.Hatsune import HatsuneMikuClass
 from Classes.SecretClasses.CorruptedHatsune import CorruptedHatsuneMikuClass
 CorruptedHatsuneMiku = CorruptedHatsuneMikuClass()
+NegativeSpaceT = CorruptedHatsuneMikuClass.trigger_negative_space
 import getpass
 def user():
     return getpass.getuser()                                                                                                                                                                                                                                                    # ignora isso, é a maldade q quebra a quarta parede po
@@ -47,7 +48,7 @@ def BaitingAttack(Player, current_enemy, Attack_Info, display_battle_ui, integri
             print(f"Available attacks: {Player.Class.MostraAtaques()}")
             print(f"Defense: {defense_bar(Player.Defense)}")
 
-def DecompilerAttack(Player, current_enemy, Attack_Info, display_battle_ui, integrity_bar, defense_bar, Damage, Attack, PlayerClass):
+def DecompilerAttack(Player, current_enemy, Attack_Info, display_battle_ui, integrity_bar, defense_bar, Damage, Attack):
     clear()
     final_damage = Damage(Attack_Info, current_enemy.Defense)
     display_battle_ui(Player.Integrity, Player.Class.Integrity, Player.Defense, Player.Class.Attacks.keys(), Player.Class.ui_color)
@@ -136,7 +137,7 @@ def NegativeSpaceAttack(Player, current_enemy, Attack_Info, display_battle_ui, i
             cText("Everything will be white...", "error")
             sleep(2)
             clear()
-            CorruptedHatsuneMikuClass.trigger_negative_space()
+            NegativeSpaceT()
             final_damage = Damage(Attack_Info, current_enemy.Defense)
             current_enemy.Health -= final_damage
             display_battle_ui(Player.Integrity, Player.Class.Integrity, Player.Defense, Player.Class.Attacks.keys(), Player.Class.ui_color)

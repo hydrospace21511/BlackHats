@@ -209,7 +209,7 @@ clear()
 display_battle_ui(Player.Integrity, Player.Class.Integrity, Player.Defense, Player.Class.Attacks.keys(), Player.Class.ui_color)
 
 while True :
-    if Player.Class == CorruptedHatsuneMiku:
+    if type(Player.Class) == CorruptedHatsuneMikuClass:
         cText("▶  Choose an exploit >>","red")
     else:
         cText("▶  Choose an exploit >>","green")
