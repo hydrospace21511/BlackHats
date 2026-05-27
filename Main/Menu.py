@@ -41,6 +41,23 @@ CorruptedHatsuneMiku = CorruptedHatsuneMikuClass()
 Player = Player.Player()
 init(autoreset=True)
 from Attacks.SpecialAttacks import DecompilerAttack, AlgorithmCloneAttack, ProtectionBypassAttack, InternalAccessAttack, BaitingAttack, FirewallAttack, SecurityPatchAttack, DesintegrationAttack, MikuMikuBeamAttack, NegativeSpaceAttack, GiveDamageAttack, PneumoultramicroscopicsilicovolcanoconioticAttack, WorldIsMineAttack, TellYourWorldAttack
+attack_functions = {
+    "Decompiler": DecompilerAttack,
+    "Algorithm Clone": AlgorithmCloneAttack,
+    "Protection Bypass": ProtectionBypassAttack,
+    "Internal Access": InternalAccessAttack,
+    "Miku Miku Beam": MikuMikuBeamAttack,
+    "MMB": MikuMikuBeamAttack,
+    "Tell Your World": TellYourWorldAttack,
+    "World Is Mine": WorldIsMineAttack,
+    "Baiting": BaitingAttack,
+    "Firewall": FirewallAttack,
+    "Security Patch": SecurityPatchAttack,
+    "Pneumoultramicroscopicsilicovolcanoconiotic": PneumoultramicroscopicsilicovolcanoconioticAttack,
+    "Desintegration": DesintegrationAttack,
+    "Give Damage": GiveDamageAttack,
+    "Negative Space": NegativeSpaceAttack
+}
 
 #pra but q n souber, cText é Colored Text (abreviei pq é games e seco filho, liso liso liso)
 #isso tava aqui antes de eu colocar o cText em um arquivo diferente, fui moggado? games
@@ -197,6 +214,10 @@ while True :
     else:
         cText("▶  Choose an exploit >>","green")
     Attack = input("")
+    Attack_Info = Player.Class.Attacks[Attack]
+    context = Player, current_enemy, Attack_Info, display_battle_ui, integrity_bar, defense_bar, Damage, Attack, Player.Class
+    
+
     
     if Attack == "Reverse" and Player.Class.Decompiled == True:
         clear()
@@ -210,6 +231,7 @@ while True :
         Player.Class.Defense = Player.Class.DefenseBackup
         Player.Class.Integrity = Player.Class.IntegrityBackup
         clear()
+
     if Attack not in Player.Class.Attacks:
         clear()
         display_battle_ui(Player.Integrity, Player.Class.Integrity, Player.Defense, Player.Class.Attacks.keys(), Player.Class.ui_color)
@@ -222,60 +244,15 @@ while True :
             cText(f"⚠  ACCESS DENIED: '{Attack}' is cooling down! ({active_cooldowns[Attack]} turns left)", "yellow")
             continue
 
-    Attack_Info = Player.Class.Attacks[Attack]
-    
-    match Attack:
+    if Attack in attack_functions:
+        attack_functions[Attack](*context)
+    else:
+        clear()
+        display_battle_ui(Player.Integrity, Player.Class.Integrity, Player.Defense, Player.Class.Attacks.keys(), Player.Class.ui_color)
+        final_damage = Damage(Attack_Info, current_enemy.Defense)
+        current_enemy.Health -= final_damage
+        cText(f" >> You executed [{Attack}]! {current_enemy.Name} took {final_damage:.1f} damage!", "positive")
 
-        case "Decompiler":
-            DecompilerAttack(Player, current_enemy, Attack_Info, display_battle_ui, integrity_bar, defense_bar, Damage, Attack, Player.Class)
-
-        case "Algorithm Clone":
-            AlgorithmCloneAttack(Player, current_enemy, Attack_Info, display_battle_ui, integrity_bar, defense_bar, Damage, Attack, Player.Class)
-        
-        case "Protection Bypass":
-            ProtectionBypassAttack(Player, current_enemy, Attack_Info, display_battle_ui, integrity_bar, defense_bar, Damage, Attack, Player.Class)
-
-        case "Internal Access":
-            InternalAccessAttack(Player, current_enemy, Attack_Info, display_battle_ui, integrity_bar, defense_bar, Damage, Attack, PlayerClass)
-
-        case "Miku Miku Beam" | "MMB":
-            MikuMikuBeamAttack(Player, current_enemy, Attack_Info, display_battle_ui, integrity_bar, defense_bar, Damage, Attack, PlayerClass)
-
-        case "Tell Your World":
-            TellYourWorldAttack(Player, current_enemy, Attack_Info, display_battle_ui, integrity_bar, defense_bar, Damage, Attack, PlayerClass)
-
-
-        case "World Is Mine":
-            WorldIsMineAttack(Player, current_enemy, Attack_Info, display_battle_ui, integrity_bar, defense_bar, Damage, Attack, PlayerClass)
-
-
-        case "Baiting":
-            BaitingAttack(Player, current_enemy, Attack_Info, display_battle_ui, integrity_bar, defense_bar, Damage, Attack, PlayerClass)
-
-        case "Firewall":
-            FirewallAttack(Player, current_enemy, Attack_Info, display_battle_ui, integrity_bar, defense_bar, Damage, Attack, PlayerClass)
-
-        case "Security Patch":
-            SecurityPatchAttack(Player, current_enemy, Attack_Info, display_battle_ui, integrity_bar, defense_bar, Damage, Attack, PlayerClass)
-
-        case "Pneumoultramicroscopicsilicovolcanoconiotic":
-            PneumoultramicroscopicsilicovolcanoconioticAttack(Player, current_enemy, Attack_Info, display_battle_ui, integrity_bar, defense_bar, Damage, Attack, PlayerClass)
-
-        case "Desintegration":
-            DesintegrationAttack(Player, current_enemy, Attack_Info, display_battle_ui, integrity_bar, defense_bar, Damage, Attack, PlayerClass)
-        
-        case "Give Damage":
-            GiveDamageAttack(Player, current_enemy, Attack_Info, display_battle_ui, integrity_bar, defense_bar, Damage, Attack, PlayerClass)
-
-        case "Negative Space":
-            NegativeSpaceAttack(Player, current_enemy, Attack_Info, display_battle_ui, integrity_bar, defense_bar, Damage, Attack, PlayerClass)
-        
-        case _:
-            display_battle_ui(Player.Integrity, Player.Class.Integrity, Player.Defense, Player.Class.Attacks.keys(), Player.Class.ui_color)
-            final_damage = Damage(Attack_Info, current_enemy.Defense)
-            current_enemy.Health -= final_damage
-            clear()
-            cText(f" >> You executed {Attack}! {current_enemy.Name} took {final_damage:.1f} damage!", "positive")
 
     if hasattr(Player.Class, 'Cooldowns') and Attack in Player.Class.Cooldowns:
         active_cooldowns[Attack] = Player.Class.Cooldowns[Attack]

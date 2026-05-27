@@ -47,7 +47,7 @@ def BaitingAttack(Player, current_enemy, Attack_Info, display_battle_ui, integri
             print(f"Available attacks: {Player.Class.MostraAtaques()}")
             print(f"Defense: {defense_bar(Player.Defense)}")
 
-def DecompilerAttack(Player, current_enemy, Attack_Info, display_battle_ui, integrity_bar, defense_bar, Damage, Attack):
+def DecompilerAttack(Player, current_enemy, Attack_Info, display_battle_ui, integrity_bar, defense_bar, Damage, Attack, PlayerClass):
     clear()
     final_damage = Damage(Attack_Info, current_enemy.Defense)
     display_battle_ui(Player.Integrity, Player.Class.Integrity, Player.Defense, Player.Class.Attacks.keys(), Player.Class.ui_color)
