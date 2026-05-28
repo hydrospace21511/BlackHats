@@ -1,19 +1,18 @@
 import os
 import sys
-import playsound
-import threading
+import pygame
 from time import sleep
 from Classes.SecretClasses.Hatsune import HatsuneMikuClass
 from Classes.SecretClasses.CorruptedHatsune import CorruptedHatsuneMikuClass
 CorruptedHatsuneMiku = CorruptedHatsuneMikuClass()
 #NegativeSpaceT = CorruptedHatsuneMikuClass.trigger_negative_space
+pygame.mixer.init()
 import getpass
 from colorama import Fore, Back, Style
 def user():
     return getpass.getuser()
                                                                                                                                                                                                                                                     # ignora isso, é a maldade q quebra a quarta parede po
-def MMB():
-    playsound.playsound("C:/Users/Admin/Desktop/BlackHats/Main/Sounds/miku-miku-beam.mp3")
+
 
 from colorama import init
 import random
@@ -141,12 +140,15 @@ def InternalAccessAttack(Player, current_enemy, Attack_Info, display_battle_ui, 
                 print(f"Defense: {defense_bar(Player.Defense)}")
 
 def MikuMikuBeamAttack(Player, current_enemy, Attack_Info, display_battle_ui, integrity_bar, defense_bar, Damage, Attack, PlayerClass):
+            attack_archive = os.path.dirname(os.path.abspath(__file__))
+            root_archive = os.path.dirname(attack_archive)
+            MMB_sound = os.path.join(root_archive, "Sounds", "miku-miku-beam.mp3")
             i = 0
             time = 0.06
-            som_thread = threading.Thread(target=playsound.playsound, args=("C:/Users/Admin/Desktop/BlackHats/Main/Sounds/miku-miku-beam.mp3",))
-            som_thread.start()
+            pygame.mixer.music.load(MMB_sound)
+            pygame.mixer.music.play()
             PlayerClass.Defense = 0
-            
+            #sleep(990)
             while i < 100:
                 clear()
                 if i < 50:

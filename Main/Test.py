@@ -1,9 +1,5 @@
 from colorama import Fore, Back, Style, init
 init(autoreset=True)
-import playsound
-
-def testsom():
-    playsound.playsound("C:/Users/Admin/Desktop/BlackHats/Main/Sounds/im-very-angry-goku.mp3")
 
     
 def color(message, type="info"):
