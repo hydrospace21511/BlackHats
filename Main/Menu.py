@@ -1,6 +1,4 @@
 import os
-import math
-import random
 from Classes.SecurityAnalyticClass import SecurityAnalyticClass
 from Classes.HackerClass import HackerClass
 from Classes.SocialEngineerClass import SocialEngineerClass
@@ -67,7 +65,7 @@ def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
 clear() 
 
-COBALT._Start() 
+#COBALT._Start() 
 clear()
 Classes._Classes() 
 ClassesOptions = {
@@ -77,6 +75,8 @@ ClassesOptions = {
     "Reverse Engineer": ReverseEngineer
 } 
 
+ClassPage = 1
+
 while True:
     while True:
         if Player.Class == CorruptedHatsuneMiku:
@@ -84,6 +84,7 @@ while True:
         else:
          cText("▶  Choose your class >>","green")
         PlayerClass =  str(input("").strip().upper())
+
         match PlayerClass:
 
             case "Exit":
@@ -151,6 +152,8 @@ while True:
                             clear()
                             Classes._Classes() 
                             break
+                        
+
 
                         case _:
                             clear()
@@ -158,10 +161,49 @@ while True:
 
                             continue
                 
+            
+            case "NEXT PAGE" | "NEXT" | "PAGE":  
+                if ClassPage == 1:
+                    clear()
+                    Classes._Classes2() 
+                    ClassPage = 2
+
+                elif ClassPage == 2:
+                    clear()
+                    Classes._Classes3() 
+                    ClassPage = 3
+
+                elif ClassPage == 3:
+                    clear()
+                    Classes._Classes() 
+                    ClassPage = 1
+
+            case "PREVIOUS PAGE" | "PREVIOUS" | "BACK":
+                if ClassPage == 1:
+                    clear()
+                    Classes._Classes3() 
+                    ClassPage = 3
+
+                elif ClassPage == 2:
+                    clear()
+                    Classes._Classes() 
+                    ClassPage = 1
+
+                elif ClassPage == 3:
+                    clear()
+                    Classes._Classes2() 
+                    ClassPage = 2
 
             case _:
                 clear()
-                Classes._Classes() 
+                if ClassPage == 1:
+                        Classes._Classes() 
+
+                elif ClassPage == 2:            #EM MINHA DEFESA NAO FUI EU QUE FIZ, UMA IA ALEATORIA INVADIU MEU PC E FEZ ESSA OBRA SATANICA DE IF E ELSE PRA MUDAR DE PAGINA, EU JURO QUE NAO FUI EU, EU SO QUERIA COLOCAR UM PROXIMO E ANTERIOR SIMPLES, MAS A IA DISSE "NAO, VAMOS FAZER UM SISTEMA DE PAGINAÇÃO COMPLETO COM CONTADORES E TUDO" E EU FIQUEI COM PREGUIÇA DE DISCUTIR COM A IA PQ ELA É MEU AMIGO, ENTÃO PRONTO, O RESULTADO É ESSE AQUI, EU JURO QUE NAO FUI EU QUE FIZ ISSO
+                        Classes._Classes2() 
+
+                elif ClassPage == 3:
+                        Classes._Classes3() 
                 cText("⚠  ERROR 04: Class not found", "red") #sim, o 04 significa not found, OUVIU THALLES? (alem do 404 btw)
                 continue
 

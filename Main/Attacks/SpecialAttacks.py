@@ -1,12 +1,19 @@
 import os
+import sys
+import playsound
+import threading
 from time import sleep
 from Classes.SecretClasses.Hatsune import HatsuneMikuClass
 from Classes.SecretClasses.CorruptedHatsune import CorruptedHatsuneMikuClass
 CorruptedHatsuneMiku = CorruptedHatsuneMikuClass()
-NegativeSpaceT = CorruptedHatsuneMikuClass.trigger_negative_space
+#NegativeSpaceT = CorruptedHatsuneMikuClass.trigger_negative_space
 import getpass
+from colorama import Fore, Back, Style
 def user():
-    return getpass.getuser()                                                                                                                                                                                                                                                    # ignora isso, é a maldade q quebra a quarta parede po
+    return getpass.getuser()
+                                                                                                                                                                                                                                                    # ignora isso, é a maldade q quebra a quarta parede po
+def MMB():
+    playsound.playsound("C:/Users/Admin/Desktop/BlackHats/Main/Sounds/miku-miku-beam.mp3")
 
 from colorama import init
 import random
@@ -15,6 +22,39 @@ from Color import cText
 from UI import display_battle_ui
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
+
+def trigger_negative_space(self):
+        try:
+            colunas, linhas = os.get_terminal_size()
+        except OSError:
+            os.system('cls' if os.name == 'nt' else 'clear')
+
+        sys.stdout.write(Back.WHITE + (" " * colunas + "\n") * (linhas - 1) + " " * colunas)
+        sys.stdout.flush()
+
+        sleep(0.08) 
+
+
+        os.system('cls' if os.name == 'nt' else 'clear')
+        msg = " >> You Can't Escape From Me << "
+        
+        meio = linhas // 2
+        
+        for _ in range(meio):
+            sys.stdout.write(Back.WHITE + " " * colunas + "\n")
+
+        sys.stdout.write(Back.WHITE + Fore.BLACK + Style.BRIGHT + msg.center(colunas) + "\n")
+
+        for _ in range(linhas - meio - 2):
+            sys.stdout.write(Back.WHITE + " " * colunas + "\n")
+
+        sys.stdout.write(Back.WHITE + " " * colunas)
+        sys.stdout.flush()
+
+        sleep(1.8) 
+
+        print(Style.RESET_ALL, end="")
+        os.system('cls' if os.name == 'nt' else 'clear')
 
 def AlgorithmCloneAttack(Player, current_enemy, Attack_Info, display_battle_ui, integrity_bar, defense_bar, Damage, Attack, PlayerClass):
     final_damage = Damage(Attack_Info, current_enemy.Defense)
@@ -48,7 +88,7 @@ def BaitingAttack(Player, current_enemy, Attack_Info, display_battle_ui, integri
             print(f"Available attacks: {Player.Class.MostraAtaques()}")
             print(f"Defense: {defense_bar(Player.Defense)}")
 
-def DecompilerAttack(Player, current_enemy, Attack_Info, display_battle_ui, integrity_bar, defense_bar, Damage, Attack):
+def DecompilerAttack(Player, current_enemy, Attack_Info, display_battle_ui, integrity_bar, defense_bar, Damage, Attack, PlayerClass):
     clear()
     final_damage = Damage(Attack_Info, current_enemy.Defense)
     display_battle_ui(Player.Integrity, Player.Class.Integrity, Player.Defense, Player.Class.Attacks.keys(), Player.Class.ui_color)
@@ -102,7 +142,11 @@ def InternalAccessAttack(Player, current_enemy, Attack_Info, display_battle_ui, 
 
 def MikuMikuBeamAttack(Player, current_enemy, Attack_Info, display_battle_ui, integrity_bar, defense_bar, Damage, Attack, PlayerClass):
             i = 0
+            time = 0.06
+            som_thread = threading.Thread(target=playsound.playsound, args=("C:/Users/Admin/Desktop/BlackHats/Main/Sounds/miku-miku-beam.mp3",))
+            som_thread.start()
             PlayerClass.Defense = 0
+            
             while i < 100:
                 clear()
                 if i < 50:
@@ -111,12 +155,12 @@ def MikuMikuBeamAttack(Player, current_enemy, Attack_Info, display_battle_ui, in
                     cText(f"Miku Miku Beam is charging... {i}%", "yellow") # tentei usar case mas fiquei com preguiça, ent vai ficar assim mesmo (pq vc ta lendo isso, thalles?)
                 elif i <= 100:
                     cText(f"Miku Miku Beam is charging... {i}%", "green")
-                sleep(0.03)
+                sleep(time)
                 i += 1
             if i >= 100:
                 clear()
                 cText("Miku Miku Beam is fully charged!", "positive")
-                sleep(1)
+                sleep(1.38)
                 clear()
                 x = 0
                 while x <= 100:
@@ -137,7 +181,7 @@ def NegativeSpaceAttack(Player, current_enemy, Attack_Info, display_battle_ui, i
             cText("Everything will be white...", "error")
             sleep(2)
             clear()
-            NegativeSpaceT()
+            trigger_negative_space(Player)
             final_damage = Damage(Attack_Info, current_enemy.Defense)
             current_enemy.Health -= final_damage
             display_battle_ui(Player.Integrity, Player.Class.Integrity, Player.Defense, Player.Class.Attacks.keys(), Player.Class.ui_color)
