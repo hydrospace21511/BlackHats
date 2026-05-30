@@ -69,18 +69,18 @@ If you see an error about permissions:
 
 2. To modify them, you can simply alterate the name, damage or attack itself, Example:
 
-    class ExampleClass:                                 class ExampleClass:    
-    def __init__(self):                                 def __init__(self):
-        self.raceName = "Example Name"                      self.raceName = "Modded Class"
-        self.Integrity = 85                                 self.Integrity = 201
-        etc...                                              etc...
-        self.Attacks = {                     --->           self.Attacks = {   
-            "Example Attack": 40,                                "Modded Attack": 90,
-            etc...                                               etc...
-        }                                                   }
-        self.active_cooldowns = {                           self.active_cooldowns = {
-            "Example Attack": 1                                 "Modded Attack": 4    -- in rounds      
-        }                                                   }    
+    class ExampleClass:        
+    def __init__(self):  
+        self.raceName = "Example Name"
+        self.Integrity = 85  
+        etc...    
+        self.Attacks = {  
+            "Example Attack": 40, 
+            etc... 
+        }   
+        self.active_cooldowns = {
+            "Example Attack": 1  
+        }    
 
 * *Note:* Never modify the ClassName (class ExampleClass) without changing or adding it on the Menu archive.
 * The same repeats for SpecialAttacks
