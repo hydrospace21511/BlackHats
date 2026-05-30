@@ -45,6 +45,7 @@ Player = Player.Player()
 TestItem = TestItemClass()
 init(autoreset=True)
 from Game.Attacks.SpecialAttacks import DecompilerAttack, AlgorithmCloneAttack, ProtectionBypassAttack, InternalAccessAttack, BaitingAttack, FirewallAttack, SecurityPatchAttack, DesintegrationAttack, MikuMikuBeamAttack, NegativeSpaceAttack, GiveDamageAttack, PneumoultramicroscopicsilicovolcanoconioticAttack, WorldIsMineAttack, TellYourWorldAttack, SystemOverrideAttack
+
 attack_functions = {
     "Decompiler": DecompilerAttack,
     "Algorithm Clone": AlgorithmCloneAttack,
@@ -59,7 +60,7 @@ attack_functions = {
     "Security Patch": SecurityPatchAttack,
     "Pneumoultramicroscopicsilicovolcanoconiotic": PneumoultramicroscopicsilicovolcanoconioticAttack,
     "Desintegration": DesintegrationAttack,
-    "Give Damage": GiveDamageAttack,
+   # "Give Damage": GiveDamageAttack,
     "Negative Space": NegativeSpaceAttack,
     "System Override": SystemOverrideAttack
 }
@@ -261,7 +262,8 @@ def Damage(D, Defense) :
 
 #print("Available attacks:", list(Player.Class.Attacks.keys()))
 clear()
-
+if PlayerClass == Vocaloid:
+    Player.Integrity -= 207 * 9
 if PlayerClass == Hacker:
     cText(" To só debuggando mesmo, pode escolher o ataque tranquilo", "warn")
     if Player.Class.Item == "None":
@@ -303,12 +305,17 @@ while True :
             display_battle_ui(Player.Integrity, Player.Class.Integrity, Player.Defense, Player.Class.Attacks.keys(), Player.Class.ui_color)
             cText(f"⚠  ACCESS DENIED: '{Attack}' is cooling down! ({active_cooldowns[Attack]} turns left)", "yellow")
             continue
-
+    
+    #base_damage, damage_per_level = Player.Class.Attacks[Attack]
+    #Attack_Info = base_damage + (damage_per_level * (Player.Level - 1))
     Attack_Info = Player.Class.Attacks[Attack]
     context = Player, current_enemy, Attack_Info, display_battle_ui, integrity_bar, defense_bar, Damage, Attack, Player.Class
 
     if Attack in attack_functions:
         attack_functions[Attack](*context)
+
+    if Attack == "Give Damage":
+        Player.Integrity -= Attack_Info
 
     if hasattr(current_enemy, "SkipTurn") and current_enemy.SkipTurn == True:
         cText(">> Enemy turn skipped!", "yellow")

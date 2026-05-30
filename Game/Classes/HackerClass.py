@@ -7,12 +7,12 @@ class HackerClass:
         self.Defense = 15
         self.Regen = 0
         self.ui_color = Fore.GREEN        
-        self.Item = "None"
+        self.Item = {"None"}
         self.Attacks = {
-            "SQL Injection": 40,
-            "Cross-Site Scripting": 30,
-            "Buffer Overflow": 50,
-            "Denial of Service": 60,
+            "SQL Injection": (40, 10),
+            "Cross-Site Scripting": (30, 15),
+            "Buffer Overflow": (50, 8),
+            "Denial of Service": (60, 9),
         #    "God's Wrath": Regen + 100000000,
         "Pneumoultramicroscopicsilicovolcanoconiotic": 'ball cancer'
         }
