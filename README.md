@@ -59,13 +59,13 @@ If you see an error about permissions:
 
 # Developer Side
 
-# Modding Guide
+## Modding Guide
 
 > **Important:** Always back up your original game files before editing the files
 
 ---
 
-## How to Make Mods
+### How to Make Mods
 
 1. Inside the Game main folder, will have folders named such as Main, Classes, Items, etc. Inside them, will have all the archives that make the game works. (These folders contain the actual game logic **.py files**)
 
