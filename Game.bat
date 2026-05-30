@@ -41,7 +41,7 @@ echo ========================================
 echo.
 
 py -m pip install --upgrade pip
-py -m pip install -r requirements.txt
+py -m pip install -r Game\requirements.txt
 
 echo.
 echo ========================================
@@ -50,6 +50,6 @@ echo ========================================
 echo.
 
 cd /d "%~dp0.."
-py Game\Main\Menu.py
+py BlackHats\Game\Main\Menu.py
 
 pause
