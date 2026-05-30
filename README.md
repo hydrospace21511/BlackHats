@@ -55,7 +55,9 @@ If you see an error about permissions:
 
 **Enjoy the game!**
 
--- Developer Side
+---
+
+# Developer Side
 
 # Modding Guide
 
