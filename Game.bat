@@ -50,6 +50,6 @@ echo ========================================
 echo.
 
 cd /d "%~dp0.."
-py BlackHats\Game\Main\Menu.py
+py Game\Main\Menu.py
 
 pause
