@@ -7,7 +7,7 @@ class HackerClass:
         self.Defense = 15
         self.Regen = 0
         self.ui_color = Fore.GREEN        
-        self.Item = {"None"}
+        self.Items = "None"
         self.Attacks = {
             "SQL Injection": (40, 10),
             "Cross-Site Scripting": (30, 15),

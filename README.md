@@ -8,13 +8,15 @@ This package contains the game archives and the launch script. Follow the instru
 ## How to Play
 
 ### Prerequisites
-*   **OS**: This game is designed for Windows 10/11 or Linux Mint/Ubuntu/Fedora
-*   **CPU**: Required CPU: Intel Celeron N3060 or AMD E1-2100, Recommended: Pentium 4
-*   **RAM**: Required RAM: DDR 512MB, Recommended: DDR2 2GB
-*   **GPU**: Required GPU: Integrated Graphics, Recommended: GeForce 210
-*   **Storage**: Required Storage: 100MB, Recommended: 300MB
+*   **OS**: This game is designed for Windows 7/10/11 or Linux Mint/Ubuntu/Fedora/Arch
+*   **CPU**: Required CPU: Intel Celeron N3060 / AMD E1-2100 **(Linux recommended for best performance)** |Recommended: Pentium 4
+*   **RAM**: Required: 64 MB | Recommended: 128 / 256 MB
+*   **GPU**: Required: Intel HD Graphics / AMD Radeon R2 | Recommended: Any dedicated GPU with OpenGL 2.0+ support
+*   **Storage**: Required: 100 MB available space | Recommended: 300 MB available space
 
 ### Launch Guide
+
+*Windows*
 
 1.  **Open the Game Folder**:
     Navigate to the directory where you extracted the game files. You should see two main items:
@@ -30,6 +32,36 @@ This package contains the game archives and the launch script. Follow the instru
 
 4. **Executing it again**
     *   Once all requirements are downloaded, it will not install again
+
+*Linux / MacOs*
+
+1.  **Open the Game Folder**:
+    Navigate to the directory where you extracted the game files. You should see this main item:
+    *   A folder named `game`
+
+2. **Checking the game path**
+   After opening the Game folder, you should see those items:
+   *    7 folders named `__pycache__, Attacks, Backup, Classes, Items, Main, Sounds
+   *    4 Archives with one named requirements.txt
+   If you saw those items, then you are in the correct folder. After entering in the correct folder, click on the searchbar and copy the path. It should be like this:
+   *    /home/hydro/Workspace/DarkHats-1/Game (example)
+   Copy it.
+
+3. **Downloading the requirements**
+   After copying the game path, open your Terminal and type:
+*  $ sudo dnf install python3-pip
+*  $ cd Workspace/DarkHats-1/Game (example)
+*  $ python3 -m  pip install -r requirements.txt
+
+4. **Executing the game**
+   After downloading the requirements, type:
+*  $ cd Main
+*  $ python3 Menu.py
+
+5.  **Play**:
+*   Once the command is execute, the game should start
+
+*It's so easy to run on Windows...*
 
 ---
 

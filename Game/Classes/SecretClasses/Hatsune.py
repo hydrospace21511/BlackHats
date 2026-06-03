@@ -4,19 +4,21 @@ class HatsuneMikuClass:
         self.raceName = "Vocaloid"
         self.Integrity = 2007
         self.Regen = 0
+        self.Items = set()
         self.Defense = 45
         self.ui_color = Fore.GREEN
         self.Attacks = {
-            "World Is Mine": 50,
-            "Tell Your World": 75,
-            "Miku Miku Beam": 80,
-            "Microphone Throw": 80,
-            "Give Damage": 207 * 9
+            "World Is Mine": (50, 30),
+            "Tell Your World": (75, 50),
+            "Miku Miku Beam": (5, 0.3),
+            "Microphone Throw": (80, 20),
+            "Give Damage": 207 * 9,
+            "Arrebatamento": (9999, 0)
         }
         self.Cooldowns = {
-            "World Is Mine": 1,
-            "Tell Yourd World": 15,
-            "Miku Miku Beam": 20
+            "World Is Mine": 2,
+            "Tell Yourd World": 2, #15
+            "Miku Miku Beam": 2 #20
         }
         self.Texts = {
             "Help me",

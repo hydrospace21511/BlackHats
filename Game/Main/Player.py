@@ -24,7 +24,7 @@ class Player :
     def __init__(self):
         self.Name = ""
         self.Class = ""
-        self.Level = 1
+        self.Level = 1 #1
         self.Integrity = 0
         self.Defense = 0
         self.Regen = 0

@@ -1,5 +1,6 @@
 from colorama import Fore, Style
-
+from Game.Main.Color import cText
+import re
 def display_battle_ui(player_integrity, max_integrity, player_defense, available_attacks, ui_color):
 
     C_BORDER = ui_color
@@ -9,6 +10,7 @@ def display_battle_ui(player_integrity, max_integrity, player_defense, available
     C_TEXT   = Fore.WHITE                
     C_DATA   = Fore.CYAN                  
     RESET    = Style.RESET_ALL
+    
 
     l1_spaces = " " * 33 #l1 = linha 1 (ta centralizando titulo)
     title = f"{C_ALERT}COBALT MAINFRAME v1.0.4{RESET}{l1_spaces}{Style.DIM}SYSTEM NODE OVERVIEW{RESET}"
@@ -73,3 +75,33 @@ def display_battle_ui(player_integrity, max_integrity, player_defense, available
     print(C_BORDER + "╠" + "═" * 78 + "╣" + RESET)
     print(f"{C_BORDER}║ {RESET}{line_prompt}{C_BORDER} ║{RESET}")
     print(C_BORDER + "╚" + "═" * 78 + "╝" + RESET)
+
+def text_size(text):
+    ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
+    return len(ansi_escape.sub('', str(text)))
+
+def enemy_life(current_enemy, integrity_bar):
+
+    C_BORDER = Fore.GREEN           
+    C_ALERT  = Fore.RED            
+    C_TEXT   = Fore.WHITE                
+    C_DATA   = Fore.CYAN                  
+    RESET    = Style.RESET_ALL
+
+    print(f"{C_BORDER}╔{'═' * 78}╗{RESET}")
+    
+    print(f"{C_BORDER}║ {C_ALERT}COBALT VIRUS v1.0.2{C_BORDER}                                      {C_ALERT}VIRUS MODE OVERVIEW {C_BORDER}║{RESET}")
+    print(f"{C_BORDER}╠{'═' * 39}╦{'═' * 38}╣{RESET}")
+    
+    nome = str(current_enemy.Name)
+    if len(nome) > 20: 
+        nome = nome[:17] + "..."
+    espacos_esq = 39 - (15 + text_size(nome))
+    espacos_dir = 38 - (12 + text_size(integrity_bar(current_enemy.Health, current_enemy.MaxHealth)))
+
+    bloco_esquerdo = f" ANOMALY NAME: {C_DATA}{nome}{RESET}" + (" " * espacos_esq)
+    bloco_direito = f" INTEGRITY: {C_DATA}{integrity_bar(current_enemy.Health, current_enemy.MaxHealth)}{RESET}" + (" " * espacos_dir)
+
+    print(f"{C_BORDER}║{RESET}{bloco_esquerdo}{C_BORDER}║{RESET}{bloco_direito}{C_BORDER}║{RESET}")
+
+    print(f"{C_BORDER}╚{'═' * 39}╩{'═' * 38}╝{RESET}")

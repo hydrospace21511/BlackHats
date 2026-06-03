@@ -1,87 +1,109 @@
-from time import sleep
-from colorama import Fore, Style, init
 import os
 import sys
-from Game.Main.Color import cText
+from time import sleep
+from colorama import Fore, Style, init
+
+init(autoreset=True)
+
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
-init(autoreset=True)
+
+def get_key():
+    if os.name == 'nt':
+        import msvcrt
+        key = msvcrt.getch()
+        if key == b'\xe0': 
+            special = msvcrt.getch()
+            if special == b'H': return 'UP'
+            if special == b'P': return 'DOWN'
+        elif key in (b'\r', b'\n'):
+            return 'ENTER'
+        return None
+    else:
+        import tty, termios
+        fd = sys.stdin.fileno()         #ISSO TUDO É POR CAUSA DO SUPORTE DE LINUX, ME AGRADEÇAM (eu q to usando linux)
+        old_settings = termios.tcgetattr(fd)
+        try:
+            tty.setraw(sys.stdin.fileno())
+            ch = sys.stdin.read(1)
+            if ch == '\x1b': 
+                ch2 = sys.stdin.read(1)
+                if ch2 == '[':
+                    ch3 = sys.stdin.read(1)
+                    if ch3 == 'A': return 'UP'
+                    if ch3 == 'B': return 'DOWN'
+            elif ch in ('\r', '\n'):
+                return 'ENTER'
+            return None
+        finally:
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+
+
 class COBALT:
     def __init__(self):
-        pass
+        self.options = ["Play", "Help", "Exit"]
 
-    def _print_menu(self):
-            print(f"""{Fore.GREEN}
-            ╔══════════════════════════════════════════════════════════╗
-            ║                                                          ║
-            ║         ____             _    _   _       _              ║
-            ║        |  _ \  __ _ _ __| | _| | | | __ _| |_ ___        ║
-            ║        | | | |/ _` | '__| |/ / |_| |/ _` | __/ __|       ║
-            ║        | |_| | (_| | |  |   <|  _  | (_| | |_\__ \       ║
-            ║        |____/ \__,_|_|  |_|\_\_| |_|\__,_|\__|___/       ║
-            ║                                                          ║
-            ║            > SYSTEM BOOT SEQUENCE INITIATED...           ║
-            ║                                                          ║
-            ║                  [ PRESS SPACE TO HACK ]                 ║
-            ║                                                          ║
-            ╚══════════════════════════════════════════════════════════╝
+    def _print_menu(self, selected_idx):
+        clear()
+        print(f"""{Fore.GREEN}
+           ╔══════════════════════════════════════════════════════════╗
+           ║                                                          ║
+           ║         ____             _    _   _       _              ║
+           ║        |  _ \  __ _ _ __| | _| | | | __ _| |_ ___        ║
+           ║        | | | |/ _` | '__| |/ / |_| |/ _` | __/ __|       ║
+           ║        | |_| | (_| | |  |   <|  _  | (_| | |_\__ \       ║
+           ║        |____/ \__,_|_|  |_|\_\_| |_|\__,_|\__|___/       ║
+           ║                                                          ║
+           ║            > SYSTEM BOOT SEQUENCE INITIATED...           ║
+           ║                                                          ║
+           ║                  [ PRESS SPACE TO HACK ]                 ║
+           ║                                                          ║
+           ╚══════════════════════════════════════════════════════════╝
             """)
 
-    
+        for i, option in enumerate(self.options):
+            if i == selected_idx:
+                print(f"                                    {Fore.GREEN}>> {option} <<")
+            else:
+                print(f"                                       {option} ")
+        print()
+
     def _Load_Menu(self):
-        i = 0
+        for i in range(1, 4):
+            clear()
+            self._print_menu(0) 
+            print(f"{Fore.GREEN}                                  Starting COBALT" + ("." * i))
+            sleep(0.5)
+        print(f"\n{Fore.GREEN}                          Access Granted >> System Starting")
+        sleep(2)
+
+    def start(self):
+        current_selection = 0
+
         while True:
-            print(f"{Fore.GREEN}                                  Starting COBALT.")
-            sleep(0.5)
-            clear()
-            self._print_menu()
-            print(f"{Fore.GREEN}                                  Starting COBALT..")
-            sleep(0.5)
-            clear()
-            self._print_menu()
-            print(f"{Fore.GREEN}                                  Starting COBALT...")
-            sleep(0.5)
-            clear()
-            self._print_menu()
-            i += 1
-            if i == 3:
-                cText("                          Access Granted >> System Starting", "green")
-                sleep(2)
-                break
-        sleep(2)  
+            self._print_menu(current_selection)
 
-    def _wait_for_space(self):
-        if os.name == 'nt':
-            import msvcrt
-            print(f"{Fore.GREEN}Press SPACE to hack...")
-            while True:
-                if msvcrt.kbhit() and msvcrt.getch() == b' ':
-                    break
-        else:
-            try:
-                import tty
-                import termios
-            except ImportError:
-                input(f"{Fore.GREEN}Press SPACE then ENTER to hack...")
-                return
+            key = get_key()
 
-            print(f"{Fore.GREEN}Press SPACE to hack...")
-            fd = sys.stdin.fileno()
-            old_settings = termios.tcgetattr(fd)
-            try:
-                tty.setcbreak(fd)
-                while True:
-                    ch = sys.stdin.read(1)
-                    if ch == ' ':
-                        break
-            finally:
-                termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+            if key == 'UP':
+                current_selection = (current_selection - 1) % len(self.options)
+            elif key == 'DOWN':
+                current_selection = (current_selection + 1) % len(self.options) #deveria ter feito isso pra seleção de classe ne?
+            elif key == 'ENTER':
+                if current_selection == 0:    # jugar
+                    self._Load_Menu()
+                    break 
+                    
+                elif current_selection == 1:  # ayuda
+                    clear()
+                    print(f"{Fore.GREEN} Accessing COBALT Help System...\n [DarkHats Updater é lindo]")
+                    sleep(5)
+                    
+                elif current_selection == 2:  # salir (é salir msm? sla, corrige ai quem tiver lendo dps KKKKKKKKKKKKKKKKKKKKKKK)
+                    clear()
+                    print(f"{Fore.GREEN} Shutting down COBALT...")
+                    sleep(2)
+                    sys.exit()
 
-    def _Start(self):
-        self._print_menu()
-        self._wait_for_space()
-        self._Load_Menu()
-        sleep(0.05)
-            
-                 
-
+#game = COBALT()
+#game.start() #eita porra, funciono mesmo KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK (vou criar um backup do antigo pra vcs ver a bomba q era, pq to falando vcs sendo q provavelmente vc vai ta lendo solo? seco seco)

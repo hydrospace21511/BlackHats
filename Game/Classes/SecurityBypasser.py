@@ -8,11 +8,11 @@ class SecurityBypasserClass:
         self.Regen = 0
         self.ui_color = Fore.GREEN        
         self.Attacks = {
-            "Firewall Bypass": 0,
-            "System Override": 0,
-            "Backdoor Implant": 0,
-            "Stealth Access": 0,
-            "Punch": 50      
+            "Firewall Bypass": (20, 20),
+            "System Override": (15, 10),
+            "Backdoor Implant": ("regen", 10),
+            "Stealth Access": (30, 30),
+            "Punch": 40      
         }
         self.active_cooldowns = {
             "Firewall Bypass": 3,
