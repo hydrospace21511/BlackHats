@@ -25,39 +25,39 @@ import sys
 from Game.Classes.SecretClasses.Rimuru import RimuruClass
 #import Test #test inutil🤣
 import getpass
-import termios
-import tty
+#import termios
+#import tty
 from Game.Main.COBALT import COBALT
 from time import sleep
 from colorama import Fore, Back, Style, init
 from Game.Main.Color import cText
 from Game.Main.UI import display_battle_ui
-class _Getch:
-    def __call__(self):
-            fd = sys.stdin.fileno()
-            old_settings = termios.tcgetattr(fd)
-            try:
-                tty.setraw(sys.stdin.fileno())
-                ch = sys.stdin.read(3)
-            finally:
-                termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-            return ch
+# class _Getch:
+#     def __call__(self):
+#             fd = sys.stdin.fileno()
+#             old_settings = termios.tcgetattr(fd)
+#             try:
+#                 tty.setraw(sys.stdin.fileno())
+#                 ch = sys.stdin.read(3)
+#             finally:
+#                 termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+#             return ch
 
-def UA():
-        inkey = _Getch()
-        while(1):
-                k=inkey()
-                if k!='':break
-        if k=='\x1b[A':
-                print ("up")
+# def UA():
+#         inkey = _Getch()
+#         while(1):
+#                 k=inkey()
+#                 if k!='':break
+#         if k=='\x1b[A':
+#                 print ("up")
 
-def LA():
-        inkey = _Getch()
-        while(1):
-                k=inkey()
-                if k!='':break
-        if k=='\033[B':
-                print ("down")
+# def LA():
+#         inkey = _Getch()
+#         while(1):
+#                 k=inkey()
+#                 if k!='':break
+#         if k=='\033[B':
+#                 print ("down")
 
 ##### lista de erros q "criei": 04: Not found, 201: Not loaded, 302: Class so strong, 666: Secret Class
 def user():
