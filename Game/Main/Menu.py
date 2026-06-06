@@ -27,6 +27,7 @@ from Game.Classes.SecretClasses.Rimuru import RimuruClass
 import getpass
 #import termios
 #import tty
+from Game.Main.COBALT import COBALT_FS
 from Game.Main.COBALT import COBALT
 from time import sleep
 from colorama import Fore, Back, Style, init
@@ -66,6 +67,7 @@ def user():
 def funcaoextremamentegrandenaqualseupropositodevidaehjustamenteprintaronomedoplayerpelomotivomaisinexistentedouniversovirgulaelaexisteapenasparaissopontofinalfmaiusculoFoiquandojmaiusculoJairofinalmentepercebeuvirgulaninguemligapraelebrutasobranadaprobetinhakkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk():                                                                                                                                                                                                                                                    # ignora isso, é a maldade q quebra a quarta parede po
     return print(f"Player name: sla o nome dele, nem chegou nessa parte do script ainda, relaxa ai, {user.ip()}")
 
+COBALT_FS = COBALT_FS()
 COBALT = COBALT()
 Classes = Classes()
 Hacker = HackerClass()
@@ -130,6 +132,11 @@ clear()
 #     #     case 2|0:
 #     #         COBALT._Help_menu() 
 #     #         break
+
+
+COBALT._check_space()
+
+COBALT_FS.run()
 
 COBALT.start()
 clear()
@@ -411,7 +418,12 @@ while True:
             clear()
             Player.Level += 1
             current_enemy.Health += current_enemy.MaxHealth * 0.5
-            open_chest(Player)
+            if Player.Class.Items == {
+                "testItem", "testItem2"
+            }:
+                sleep(0.01)
+            else:
+                open_chest(Player)
             Integrity_boost = sum(item.Integrity for item in Player.Class.Items)
             Defense_boost = sum(item.Defense for item in Player.Class.Items)
             Player.Defense += Defense_boost
