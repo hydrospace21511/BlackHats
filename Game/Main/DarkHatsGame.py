@@ -20,6 +20,7 @@ from Game.Classes.SecretClasses.CorruptedHatsune import CorruptedHatsuneMikuClas
 from Game.Classes.SecretClasses.Rimuru import RimuruClass
 import Game.Main.Player as PlayerModule
 from Game.ItemsLib.Chests.NPC_Chest import open_chest
+import Game.Main.Player as PlayerStats
 from Game.Main.Player import integrity_bar, defense_bar
 from Game.Main.Enemy import Enemy
 from colorama import Fore, Back, Style, init
@@ -290,9 +291,13 @@ class DarkHatsGame:
                     clear()
                     self.Player.Level += 1
                     current_enemy.Health += current_enemy.MaxHealth * 0.5
+                    import Game.Main.Player as PlayerStats
+                    PlayerStats.record_task_completed()
                     
                     if self.Player.Class.Items != {"testItem", "testItem2"}:
-                        open_chest(self.Player)
+                        chest_opened = open_chest(self.Player)
+                        if chest_opened:
+                            PlayerStats.record_chest_opened()
                         
                     Integrity_boost = sum(item.Integrity for item in getattr(self.Player.Class, 'Items', []))
                     Defense_boost = sum(item.Defense for item in getattr(self.Player.Class, 'Items', []))
@@ -317,7 +322,6 @@ class DarkHatsGame:
             cText(f" >> {current_enemy.Name} retaliates with [{enemy_attack_name}]! You took {enemy_final_damage:.1f} damage!", "error")
             sleep(2.5)
 
-            # CHECAGEM DE DERROTA
             if self.Player.Integrity <= 0:
                 clear()
                 cText(f"\n        [!]Error 404[!] \n < -- You have been hacked. -- >\n", "red")

@@ -1,5 +1,39 @@
 from colorama import Fore, Style
 
+_LIFETIME_TASKS = 0
+_LIFETIME_CHESTS = 0
+
+
+def reset_lifetime_stats():
+    global _LIFETIME_TASKS, _LIFETIME_CHESTS
+    _LIFETIME_TASKS = 0                 #por alguma razão tava dando erro quando colocado minusculo, as vezes era o vscodi resenhudo, mas agora ta funfando pelo menos (me lembrou da saga do DBeaver(MySql))
+    _LIFETIME_CHESTS = 0
+
+
+def record_task_completed(amount=1):
+    global _LIFETIME_TASKS
+    _LIFETIME_TASKS += amount
+
+
+def record_chest_opened(amount=1):
+    global _LIFETIME_CHESTS
+    _LIFETIME_CHESTS += amount
+
+
+def get_lifetime_tasks():
+    return _LIFETIME_TASKS
+
+
+def get_lifetime_chests():
+    return _LIFETIME_CHESTS
+
+
+def get_lifetime_stats():
+    return {
+        "tasks": _LIFETIME_TASKS,
+        "chests": _LIFETIME_CHESTS,
+    }
+
 def integrity_bar(current_integrity, max_integrity):
     percent = max(0, min(1, current_integrity / max_integrity))
     
