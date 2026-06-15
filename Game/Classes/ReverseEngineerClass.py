@@ -2,6 +2,8 @@ from colorama import Fore
 class ReverseEngineerClass:
     def __init__(self):
         self.raceName = "Reverse Engineer"
+        self.tier = 2
+        self.attack_power = 34
         self.Integrity = 500
         self.Defense = 45
         self.IntegrityBackup = self.Integrity
@@ -12,11 +14,11 @@ class ReverseEngineerClass:
         self.Decompiled = False
         
         self.Attacks = {
-            "Decompiler": 60,
-            "Protection Bypass": 100,
-            "Algorithm Clone": 40,
-            "ROP Chain": 80,
-            "Punch": 50
+            "Decompiler": (42, 4),
+            "Protection Bypass": (50, 5),
+            "Algorithm Clone": (36, 4),
+            "ROP Chain": (44, 5),
+            "Punch": (30, 3)
         }
 
         self.OriginalAttacks = {

@@ -23,6 +23,7 @@ from Game.ItemsLib.Chests.NPC_Chest import open_chest
 import Game.Main.Player as PlayerStats
 from Game.Main.Player import integrity_bar, defense_bar
 from Game.Main.Enemy import Enemy
+from Game.Main.RouteManager import RouteManager
 from colorama import Fore, Back, Style, init
 from Game.Main.Color import cText
 
@@ -192,10 +193,23 @@ class DarkHatsGame:
             else:
                 break
 
-        self.Player.Class = PlayerClass    
+        self.Player.Class = PlayerClass
         self.Player.Integrity = self.Player.Class.Integrity
         self.Player.Defense = self.Player.Class.Defense
         self.Player.Regen = self.Player.Class.Regen
+
+        if not hasattr(self.Player.Class, 'Items') or self.Player.Class.Items in (None, 'None'):
+            self.Player.Class.Items = set()
+
+        saved_progress = RouteManager().load_progress({})
+        inventory_names = saved_progress.get('inventory', [])
+        if inventory_names:
+            for item_name in inventory_names:
+                item = open_chest.__globals__['get_item_by_name'](item_name)
+                if item is not None:
+                    self.Player.Class.Items.add(item)
+                    self.Player.Integrity += getattr(item, 'Integrity', 0)
+                    self.Player.Defense += getattr(item, 'Defense', 0)
         
         clear()
         cText(f">> Welcome {self.Player.Name}!", "green")
@@ -204,13 +218,12 @@ class DarkHatsGame:
         sleep(2)
         clear()
 
-        enemy_attacks = {
-            "Shadow Strike": 20,
-            "Inferno Blast": 60,
-            "Phantom Slash": 70,
-            "Chaos Roar": 100
-        }
-        current_enemy = Enemy(name="filth", max_health=500, defense=15, regen=0, attacks=enemy_attacks)
+        route_choice = getattr(self, 'route_choice', 'BAD')
+        mission_name = getattr(self, 'mission_name', None)
+        current_enemy = Enemy.create_phase_enemy(route_choice, self.Player.Level, mission_name=mission_name)
+        current_enemy.set_phase(max(1, (self.Player.Level // 2) + 1))
+        current_enemy.MaxHealth += int(self.Player.Level * 15)
+        current_enemy.Health = current_enemy.MaxHealth
         active_cooldowns = {}
 
         enemy_life(current_enemy, integrity_bar)
@@ -253,8 +266,19 @@ class DarkHatsGame:
                     cText(f"⚠  ACCESS DENIED: '{Attack}' is cooling down! ({active_cooldowns[Attack]} turns left)", "yellow")
                     continue
                 
-                base_damage, damage_per_level = self.Player.Class.Attacks[Attack]
-                Attack_Info = base_damage + (damage_per_level * (self.Player.Level - 1))
+                raw_attack = self.Player.Class.Attacks[Attack]
+                if isinstance(raw_attack, tuple):
+                    base_damage, damage_per_level = raw_attack
+                else:
+                    base_damage = raw_attack
+                    damage_per_level = 0
+
+                base_damage = float(base_damage)
+                class_power = getattr(self.Player.Class, 'attack_power', 0)
+                level_multiplier = 1.0 + (self.Player.Level - 1) * 0.15
+                Attack_Info = base_damage * level_multiplier
+                Attack_Info += float(damage_per_level) * max(0, self.Player.Level - 1)
+                Attack_Info += class_power * 0.15
                 
                 context = (self.Player, current_enemy, Attack_Info, display_battle_ui, integrity_bar, defense_bar, Damage, Attack, self.Player.Class)
 
@@ -294,13 +318,22 @@ class DarkHatsGame:
                     import Game.Main.Player as PlayerStats
                     PlayerStats.record_task_completed()
                     
-                    if self.Player.Class.Items != {"testItem", "testItem2"}:
-                        chest_opened = open_chest(self.Player)
-                        if chest_opened:
-                            PlayerStats.record_chest_opened()
-                        
-                    Integrity_boost = sum(item.Integrity for item in getattr(self.Player.Class, 'Items', []))
-                    Defense_boost = sum(item.Defense for item in getattr(self.Player.Class, 'Items', []))
+                    if not getattr(self.Player.Class, 'Items', None):
+                        self.Player.Class.Items = set()
+
+                    chest_opened = open_chest(self.Player)
+                    if chest_opened:
+                        PlayerStats.record_chest_opened()
+                        saved_progress = RouteManager().load_progress({})
+                        inventory_names = list(saved_progress.get('inventory', []))
+                        if hasattr(chest_opened, 'itemName'):
+                            inventory_names.append(chest_opened.itemName)
+                        inventory_names = list(dict.fromkeys(inventory_names))
+                        RouteManager().save_progress(saved_progress.get('badges', {}), saved_progress.get('route_history', []), saved_progress.get('ending', 'ENDING_NORMAL'), saved_progress.get('mission_history', []), level=saved_progress.get('level', 1), inventory=inventory_names)
+
+                    item_set = set(getattr(self.Player.Class, 'Items', []))
+                    Integrity_boost = sum(getattr(item, 'Integrity', 0) for item in item_set)
+                    Defense_boost = sum(getattr(item, 'Defense', 0) for item in item_set)
                     self.Player.Defense += Defense_boost
                     self.Player.Integrity += Integrity_boost
                     

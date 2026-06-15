@@ -3,16 +3,18 @@ class HackerClass:
      
     def __init__(self):
         self.raceName = "Hacker"
+        self.tier = 4
+        self.attack_power = 28
         self.Integrity = 85
         self.Defense = 15
         self.Regen = 0
         self.ui_color = Fore.GREEN        
         self.Items = "None"
         self.Attacks = {
-            "SQL Injection": (40, 10),
-            "Cross-Site Scripting": (30, 15),
-            "Buffer Overflow": (50, 8),
-            "Denial of Service": (60, 9),
+            "SQL Injection": (32, 4),
+            "Cross-Site Scripting": (28, 4),
+            "Buffer Overflow": (40, 5),
+            "Denial of Service": (46, 6),
         #    "God's Wrath": Regen + 100000000,
         "Pneumoultramicroscopicsilicovolcanoconiotic": 'ball cancer'
         }

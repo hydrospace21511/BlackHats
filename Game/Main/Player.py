@@ -6,7 +6,7 @@ _LIFETIME_CHESTS = 0
 
 def reset_lifetime_stats():
     global _LIFETIME_TASKS, _LIFETIME_CHESTS
-    _LIFETIME_TASKS = 0                 #por alguma razão tava dando erro quando colocado minusculo, as vezes era o vscodi resenhudo, mas agora ta funfando pelo menos (me lembrou da saga do DBeaver(MySql))
+    _LIFETIME_TASKS = 0                 #vai tomando, 20 anos de experiencia com mysql pra fazer isso, ta? e pq vc ta lendo meus codigo dnv? eu sou o unico q fala aqui, tamo safe
     _LIFETIME_CHESTS = 0
 
 
@@ -34,6 +34,12 @@ def get_lifetime_stats():
         "chests": _LIFETIME_CHESTS,
     }
 
+
+def set_lifetime_stats(tasks=0, chests=0):
+    global _LIFETIME_TASKS, _LIFETIME_CHESTS
+    _LIFETIME_TASKS = int(tasks)
+    _LIFETIME_CHESTS = int(chests)
+
 def integrity_bar(current_integrity, max_integrity):
     percent = max(0, min(1, current_integrity / max_integrity))
     
@@ -54,15 +60,19 @@ def defense_bar(current_defense):
     bar1 = Fore.CYAN + '|' * num_full + Fore.BLUE + '·' * num_empty + Style.RESET_ALL
     return f"[{bar1}] {percent*100:.0f}%"
 
-class Player :
-    def __init__(self):
-        self.Name = ""
+class Player:
+    def __init__(self, name=""):
+        self.Name = name
         self.Class = ""
-        self.Level = 1 #1
+        self.Level = 1
         self.Integrity = 0
         self.Defense = 0
         self.Regen = 0
         self.ui_color = Fore.GREEN
+
+    def scale_damage(self, base_damage):
+        level_bonus = max(0, self.Level - 1) * 0.15
+        return float(base_damage) * (1 + level_bonus)
 
 
     # def Name(self) :

@@ -5,14 +5,21 @@ import os
 from time import sleep
 TestItem = TestItemClass()
 TestItem2 = TestItem2Class()
-items = {TestItem, TestItem2}
+items = [TestItem, TestItem2]
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
 import random
 
 
+def get_item_by_name(item_name):
+    for item in items:
+        if item.itemName.lower() == str(item_name).lower():
+            return item
+    return None
+
+
 def open_chest(Player):
-    random_item = random.choice(list(items))   
+    random_item = random.choice(items)
     while True:
         cText(r'''
                             ___.=""_;=.
@@ -41,9 +48,11 @@ def open_chest(Player):
                 clear()
                 sleep(2)
                 cText(f"You open the chest and find the following item: {random_item.itemName}", "green")
-                Player.Class.Items.add(random_item)
+                current_items = set(getattr(Player.Class, 'Items', set()))
+                current_items.add(random_item)
+                Player.Class.Items = current_items
                 sleep(3)
-                return items
+                return random_item
                 
             case "N" | "NO":
                 clear()

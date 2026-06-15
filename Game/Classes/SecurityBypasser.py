@@ -3,16 +3,18 @@ class SecurityBypasserClass:
      
     def __init__(self):
         self.raceName = "Security Bypasser"
+        self.tier = 1
+        self.attack_power = 24
         self.Integrity = 200
         self.Defense = -10
         self.Regen = 0
         self.ui_color = Fore.GREEN        
         self.Attacks = {
-            "Firewall Bypass": (20, 20),
-            "System Override": (15, 10),
-            "Backdoor Implant": ("regen", 10),
-            "Stealth Access": (30, 30),
-            "Punch": 40      
+            "Firewall Bypass": (18, 4),
+            "System Override": (22, 5),
+            "Backdoor Implant": (20, 6),
+            "Stealth Access": (28, 5),
+            "Punch": (16, 3)
         }
         self.active_cooldowns = {
             "Firewall Bypass": 3,

@@ -6,6 +6,7 @@ import getpass
 from typewriter import typewrite
 
 import Game.Main.Player as PlayerStats
+from Game.Main.RouteManager import RouteManager, EndingManager
 
 init(autoreset=True)
 
@@ -265,6 +266,10 @@ class COBALT_FS:
         self.player_level = 0 
         self.current_dir = "root"
         self.stats = PlayerStats.get_lifetime_stats()
+        self.route_manager = RouteManager(seed=7)
+        self.ending_manager = EndingManager()
+        self.route_history = []
+        self.current_ending = ""
         self.total_tasks = self.stats.get("tasks", 0)
         self.total_chests = self.stats.get("chests", 0)
         self.cursor = 0
@@ -274,7 +279,8 @@ class COBALT_FS:
             "Reverse Engineer": "Survive 10 tasks.",
             "Hardware Specialist": "Open 5 chests",
             "Security Bypass": "Complete the task: placeholder insano",
-            "Robot": "Complete the Good Ending",                                        #ai dento
+            "Mr.Robot": "Complete the Good Ending",                                        #ai dento
+            "Normal Ending": "I don't care about my actions.",
             "Good Ending": "Help them. Leave peace.",
             "Bad Ending": "Destroy everything. Don't leave any trace.",
             "???": "Unknown requirement..."
@@ -286,9 +292,11 @@ class COBALT_FS:
             "Security Bypass": False,
             "Reverse Engineer": False,
             "Robot": False,
-            "Good Ending": True,
+            "Good Ending": False,
             "Bad Ending": False,
-            "???": False
+            "Normal Ending": False,
+            "Mr.Robot": False,
+            "???": False,
         }
         self._system_archives_update()
 
@@ -297,16 +305,28 @@ class COBALT_FS:
         self.stats = PlayerStats.get_lifetime_stats()
         self.total_tasks = self.stats.get("tasks", 0)
         self.total_chests = self.stats.get("chests", 0)
+        self.route_manager = RouteManager(seed=7)
+        self.ending_manager = EndingManager()
+
+        saved = self.route_manager.load_progress(self.badges)
+        self.route_history = list(saved.get("route_history", []))
+        
+        self.current_ending = saved.get("ending", "") 
+        self.player_level = int(saved.get("level", self.player_level or 1))
+        self.route_level = min(5, max(1, len(self.route_history) + 1)) if self.route_history else self.player_level
+
+        saved_badges = saved.get("badges", {})
 
         self.badges = {
-            "Social Engineer": self.stats.get("tasks", 0) >= 2,
-            "Hardware Specialist": self.stats.get("chests", 0) >= 5,
-            "Security Bypass": self.stats.get("tasks", 0) >= 1, #1 so por enquanto btwe
-            "Reverse Engineer": self.stats.get("tasks", 0) >= 10,
-            "Robot": False,
-            "Good Ending": False,
-            "Bad Ending": False,
-            "???": False,
+            "Social Engineer": saved_badges.get("Social Engineer", False) or (self.stats.get("tasks", 0) >= 2),
+            "Hardware Specialist": saved_badges.get("Hardware Specialist", False) or (self.stats.get("chests", 0) >= 5),
+            "Security Bypass": saved_badges.get("Security Bypass", False) or (self.stats.get("tasks", 0) >= 1),
+            "Reverse Engineer": saved_badges.get("Reverse Engineer", False) or (self.stats.get("tasks", 0) >= 10),
+            "Mr.Robot": saved_badges.get("Mr.Robot", False),
+            "Normal Ending": saved_badges.get("Normal Ending", False),
+            "Good Ending": saved_badges.get("Good Ending", False),
+            "Bad Ending": saved_badges.get("Bad Ending", False),
+            "???": saved_badges.get("???", False)
         }
 
         self.file_system = {
@@ -324,79 +344,91 @@ class COBALT_FS:
 
             "root/DarkHats": [
                 {"name": "..",                       "type": "BACK", "icon": "🔙", "color": Fore.YELLOW, "target": "root"},
-                {"name": " DarkHats.flat",           "type": "EXEC", "icon": "⚙️", "color": Fore.WHITE},
                 {"name": " DarkHats.txt",            "type": "FILE", "icon": "📄", "color": Fore.WHITE}
             ],
 
             "root/Games": [
                 {"name": "..",                       "type": "BACK", "icon": "🔙", "color": Fore.YELLOW, "target": "root"},
                 {"name": " SnakeGame.flat",          "type": "EXEC", "icon": "⚙️", "color": Fore.WHITE},
-
             ],
 
             "root/Achievements": [
                 {"name": "..",                       "type": "BACK", "icon": "🔙", "color": Fore.YELLOW, "target": "root"},
-                {"name": "Achievements.txt",         "type": "FILE", "icon": "📄", "color": Fore.WHITE},                
-                {"name": " Social Engineer",         "type": "FILE", "icon": "🏅", "color": Fore.WHITE},
-                {"name": " Hardware Specialist",     "type": "EXEC", "icon": "🏅", "color": Fore.WHITE},
-                {"name": " Security Bypass",         "type": "EXEC", "icon": "🏅", "color": Fore.WHITE},
-                {"name": " Reverse Engineer",        "type": "EXEC", "icon": "🏅", "color": Fore.WHITE},
-                {"name": " Mr.Robot",                "type": "EXEC", "icon": "🏅", "color": Fore.WHITE},
-                {"name": " Good Ending",             "type": "EXEC", "icon": "🏅", "color": Fore.WHITE},
-                {"name": " Bad Ending",              "type": "EXEC", "icon": "🏅", "color": Fore.WHITE},
-                {"name": " ???",                     "type": "EXEC", "icon": "🏅", "color": Fore.WHITE}
-
+                {"name": "Achievements.txt",         "type": "FILE", "icon": "📄", "color": Fore.WHITE}
             ]
         }
+        
         paste_achievements = [
             {"name": "..",                           "type": "BACK", "icon": "🔙", "color": Fore.YELLOW, "target": "root"},
             {"name": "Achievements.txt",             "type": "FILE", "icon": "📄", "color": Fore.WHITE}
         ]
 
-        #missao darkhats
-        #nome de mapas com dicas das proximas fases e finais, caso tenha muitos aleatórios irá continuar com final normal
-        #platinando todas as badges te da a lambda (la ele 100x)
-
         for name, unlocked in self.badges.items():
             color = Fore.YELLOW if unlocked else Fore.LIGHTBLACK_EX
-            
-            paste_achievements.append({"name": f" {name}", 
-                                                     "type": "BADGE","icon": "🏅", "color": color, "raw_name": name #ta desse jeito só pra ficar certo com os outro type btw
+            paste_achievements.append({
+                "name": f" {name}", 
+                "type": "BADGE",
+                "icon": "🏅", 
+                "color": color, 
+                "raw_name": name
             })
         
         self.file_system["root/Achievements"] = paste_achievements        
 
-        if level >= 1:
-            self.file_system["root"].insert(0,
-            {"name": "DarkHats",                     "type": "DIR", "icon": "📁", "color": Fore.WHITE, "target": "root/DarkHats"}
-            )
+        if self.player_level >= 1:
+            self.file_system["root"].insert(0, {"name": "DarkHats", "type": "DIR", "icon": "📁", "color": Fore.WHITE, "target": "root/DarkHats"})
+            self.file_system["root"].insert(1, {"name": "Games", "type": "DIR", "icon": "📁", "color": Fore.WHITE, "target": "root/Games"})
+            self.file_system["root"].insert(3, {"name": "Achievments", "type": "DIR", "icon": "📁", "color": Fore.WHITE, "target": "root/Achievements"})
+            try:
+                self.file_system["root"].remove({"name": "README.flat", "type": "FILE", "icon": "📄", "color": Fore.WHITE})
+            except ValueError:
+                pass
 
-            self.file_system["root"].insert(1,  
-            {"name": "Games",                        "type": "DIR", "icon": "📁", "color": Fore.WHITE, "target": "root/Games"}
-            )
+        if self.player_level >= 1:
+            self.route_level = min(5, max(1, len(self.route_history) + 1))
+            choices = sorted(self.route_manager.get_choices_for_level(self.route_level), key=lambda item: item['display_position'])
+            self.file_system["root/DarkHats"] = [
+                {"name": "..", "type": "BACK", "icon": "🔙", "color": Fore.YELLOW, "target": "root"},
+                {"name": f"Route Level {self.route_level}", "type": "INFO", "icon": "🛰️", "color": Fore.CYAN},
+            ]
+            for choice in choices:
+                self.file_system["root/DarkHats"].append({
+                    "name": choice['mission'],
+                    "type": "ROUTE",
+                    "icon": "⚙️",
+                    "color": Fore.GREEN,
+                    "route": choice['route'],
+                    "mission": choice['mission'],
+                    "level": choice['level'],
+                    "display_position": choice['display_position'],
+                })
+            self.file_system["root/DarkHats"].append({"name": " DarkHats.txt", "type": "FILE", "icon": "📄", "color": Fore.WHITE})
 
-            self.file_system["root"].insert(3,
-            {"name": "Achievments",                  "type": "DIR", "icon": "📁", "color": Fore.WHITE, "target": "root/Achievements"}
-            )
+        if self.player_level >= 2:
+            self.file_system["root/Documents"].append({"name": "test.txt", "type": "FILE", "icon": "📄", "color": Fore.YELLOW})
 
-            self.file_system["root"].remove(
-                {"name": "README.flat",              "type": "FILE", "icon": "📄", "color": Fore.WHITE}
-            )
-
-        if level >= 2:
-            self.file_system["root/Documents"].append(
-                {"name": "test.txt",                 "type": "FILE", "icon": "📄", "color": Fore.YELLOW}
-            )
-
-        if level >= 3:
-            self.file_system["root/DarkHats"].insert(2, 
-                {"name": "boss.flat",                "type": "EXEC", "icon": "⚙️", "color": Fore.WHITE}
-            )
+        if self.player_level >= 3:
+            self.file_system["root/DarkHats"].insert(2, {"name": "boss.flat", "type": "EXEC", "icon": "⚙️", "color": Fore.WHITE})
 
         self.files = self.file_system[self.current_dir]
         
         if self.cursor >= len(self.files):
             self.cursor = 0
+
+    def get_route_choices(self, level=None):
+        if level is None:
+            level = max(1, min(5, self.player_level or 1))
+        return self.route_manager.get_choices_for_level(level)
+
+    def record_route_choice(self, route_name):
+        route_name = str(route_name).upper().strip()
+        if route_name not in ("BAD", "GOOD", "TRUE"):
+            raise ValueError("route_name must be BAD, GOOD or TRUE")
+
+        self.route_history.append(route_name)
+        self.current_ending = self.ending_manager.evaluate(self.route_history)
+        self.route_manager.save_progress(self.badges, self.route_history, self.current_ending, level=self.player_level, tasks=self.stats.get('tasks', 0), chests=self.stats.get('chests', 0), inventory=getattr(self, 'inventory', []))
+        return self.current_ending
 
     def draw(self):
         self._system_archives_update()
@@ -461,8 +493,8 @@ class COBALT_FS:
             self.cursor = 0
             return
 
-        if type == "EXEC" and name == "DarkHats.flat":
-            self._open_darkhats()
+        if type == "ROUTE":
+            self._open_route_mission(file)
 
         elif type == "EXEC" and name == "SnakeGame.flat":
             self._open_snake_game()
@@ -497,22 +529,56 @@ class COBALT_FS:
 
         from Game.Main.DarkHatsGame import DarkHatsGame
         game = DarkHatsGame()
-        
+        game.route_choice = getattr(self, 'selected_route', 'BAD')
+        game.mission_name = getattr(self, 'selected_mission_name', None)
         game.Player.Level = self.player_level
 
         game.start()
 
-        self.player_level = game.Player.Level
+        #self.player_level = game.Player.Level
+        
+        saved = self.route_manager.load_progress(self.badges)
+        self.player_level = int(saved.get("level", 1))
+        self.route_history = list(saved.get('route_history', self.route_history))
 
         clear()
         print(f"{Fore.YELLOW}[!] darkhats.flat finished. Returning to COBALT...{Style.RESET_ALL}")
-        sleep(2)          
+        sleep(2)
+
+    def _open_route_mission(self, file):
+        route_name = str(file.get('route', 'BAD')).upper().strip()
+        mission_name = str(file.get('mission', 'Unknown')).strip()
+        level = int(file.get('level', self.route_level))
+
+        clear()
+        print(f"{Fore.CYAN}[*] Loading route {route_name} mission {mission_name}...{Style.RESET_ALL}")
+        sleep(1)
+
+        saved = self.route_manager.load_progress(self.badges)
+        mission_history = list(saved.get('mission_history', [])) + [mission_name]
+
+        self.selected_route = route_name
+        self.selected_mission_name = mission_name
+        self.route_history = list(saved.get('route_history', self.route_history)) + [route_name]
+        self.current_ending = self.ending_manager.evaluate(self.route_history)
+        next_level = min(5, len(self.route_history) + 1)
+        self.route_manager.save_progress(self.badges, self.route_history, self.current_ending, mission_history, level=next_level, tasks=self.stats.get('tasks', 0), chests=self.stats.get('chests', 0), inventory=getattr(self, 'inventory', []))
+        self.player_level = next_level
+
+        if len(self.route_history) >= 5:
+            self.current_ending = self.ending_manager.evaluate(self.route_history)
+            self.badges['Normal Ending'] = self.current_ending == 'ENDING_NORMAL'
+            self.badges['Good Ending'] = self.current_ending == 'ENDING_GOOD'
+            self.badges['Bad Ending'] = self.current_ending == 'ENDING_BAD'
+            self.badges['Mr.Robot'] = self.current_ending == 'ENDING_TRUE'
+
+        self._open_darkhats()
 
     def _open_badge(self, badge_name):
         clear()
         
         unlocked = self.badges.get(badge_name, False)
-        descricao = self.desc_badges.get(badge_name, "No informations provided.")
+        description = self.desc_badges.get(badge_name, "No informations provided.")
         
         if unlocked:
             border = Fore.YELLOW
@@ -527,7 +593,7 @@ class COBALT_FS:
         print(f"{border}║ {Fore.WHITE}STATUS: {status_text.ljust(42)}{border}║")
         print(f"{border}║                                              ║")
         print(f"{border}║ {Fore.WHITE}HOW TO UNLOCK:                             {border}  ║")
-        print(f"{border}║ {Fore.LIGHTBLACK_EX}{descricao.ljust(42)[0:42]}{border}   ║")
+        print(f"{border}║ {Fore.LIGHTBLACK_EX}{description.ljust(42)[0:42]}{border}   ║")
         print(f"{border}╚══════════════════════════════════════════════╝{Style.RESET_ALL}")
         
         input(f"\n  {Fore.WHITE}[ Press ENTER to return ]{Style.RESET_ALL}")
@@ -546,6 +612,19 @@ class COBALT_FS:
         )   
         typewrite(message, "GREEN", "GREEN")
         self.player_level = 1
+
+        self.route_manager.save_progress(
+            badges=self.badges, 
+            route_history=self.route_history, 
+            ending=self.current_ending, 
+            level=self.player_level, 
+            tasks=self.total_tasks, 
+            chests=self.total_chests,
+            inventory=getattr(self, 'inventory', [])
+        )
+        
+        self._system_archives_update()        
+
         input("") #jenial a sacada do input, pq ele trava o caba, pra ai s n precisar usar varios sleep
 
     def _open_snake_game(self):

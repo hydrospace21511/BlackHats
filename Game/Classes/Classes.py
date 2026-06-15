@@ -72,6 +72,8 @@ class Classes:
             print(f"{C_B}║{'  << Previous':<18}{'2':^20}{'Next >>  ':>18}║{R}")
             print(f"{C_B}╚{'═'*56}╝{R}")  
     
+
+    
     def _Classes3(self):
             C_B = Fore.GREEN      
             C_T = Fore.YELLOW

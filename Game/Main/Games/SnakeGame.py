@@ -7,7 +7,7 @@ def snake_game():
 
     def main(stdscr):
         nonlocal death
-
+                            #corbrinha
         curses.curs_set(0)
         stdscr.nodelay(True)
         stdscr.timeout(100)
