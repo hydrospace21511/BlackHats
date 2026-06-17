@@ -74,6 +74,41 @@ class RouteSystemTests(unittest.TestCase):
         self.assertEqual(loaded['inventory'], ['Test', 'Test2'])
         self.assertEqual(loaded['level'], 2)
 
+    def test_load_progress_without_updating_stats(self):
+        import Game.Main.Player as PlayerStats
+        manager = RouteManager(seed=3)
+
+        # Force a baseline in the JSON file
+        manager.save_progress({}, ['BAD'], tasks=5, chests=3)
+
+        # Set memory stats to something else
+        PlayerStats.set_lifetime_stats(tasks=10, chests=8)
+
+        # Load with update_stats=False, should NOT overwrite memory stats
+        loaded = manager.load_progress({}, update_stats=False)
+        self.assertEqual(loaded['tasks'], 5)
+        self.assertEqual(loaded['chests'], 3)
+        self.assertEqual(PlayerStats.get_lifetime_tasks(), 10)
+        self.assertEqual(PlayerStats.get_lifetime_chests(), 8)
+
+        # Load with default (update_stats=True), SHOULD overwrite memory stats
+        loaded_with_update = manager.load_progress({})
+        self.assertEqual(PlayerStats.get_lifetime_tasks(), 5)
+        self.assertEqual(PlayerStats.get_lifetime_chests(), 3)
+
+    def test_save_progress_falls_back_to_in_memory_stats(self):
+        import Game.Main.Player as PlayerStats
+        manager = RouteManager(seed=3)
+
+        PlayerStats.set_lifetime_stats(tasks=12, chests=7)
+        
+        # Save progress without specifying tasks/chests
+        payload = manager.save_progress({}, ['BAD'])
+        
+        # Verify it saved current in-memory stats instead of 0
+        self.assertEqual(payload['tasks'], 12)
+        self.assertEqual(payload['chests'], 7)
+
 
 if __name__ == '__main__':
     unittest.main()

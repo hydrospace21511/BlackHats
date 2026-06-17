@@ -1,12 +1,33 @@
 import os
 import sys
+import re
+import unicodedata
 from time import sleep
 from colorama import Fore, Style, init
 import getpass
 from typewriter import typewrite
-
 import Game.Main.Player as PlayerStats
 from Game.Main.RouteManager import RouteManager, EndingManager
+
+def get_char_width(char):
+    cat = unicodedata.category(char)
+    if cat in ('Mn', 'Me', 'Cf', 'Cc'):
+        return 0
+    eaw = unicodedata.east_asian_width(char)
+    if eaw in ('W', 'F'):
+        return 2
+    code = ord(char)
+    if (0x1F300 <= code <= 0x1F9FF) or (0x2600 <= code <= 0x27BF):
+        return 2
+    return 1
+
+def strip_ansi(s):
+    return re.sub(r'\x1b\[[0-9;]*[mK]', '', s)
+
+def visual_width(s):
+    clean_s = strip_ansi(s)
+    return sum(get_char_width(c) for c in clean_s)
+
 
 init(autoreset=True)
 
@@ -302,9 +323,6 @@ class COBALT_FS:
 
     def _system_archives_update(self):
         level = self.player_level
-        self.stats = PlayerStats.get_lifetime_stats()
-        self.total_tasks = self.stats.get("tasks", 0)
-        self.total_chests = self.stats.get("chests", 0)
         self.route_manager = RouteManager(seed=7)
         self.ending_manager = EndingManager()
 
@@ -314,6 +332,10 @@ class COBALT_FS:
         self.current_ending = saved.get("ending", "") 
         self.player_level = int(saved.get("level", self.player_level or 1))
         self.route_level = min(5, max(1, len(self.route_history) + 1)) if self.route_history else self.player_level
+
+        self.stats = PlayerStats.get_lifetime_stats()
+        self.total_tasks = self.stats.get("tasks", 0)
+        self.total_chests = self.stats.get("chests", 0)
 
         saved_badges = saved.get("badges", {})
 
@@ -332,7 +354,6 @@ class COBALT_FS:
         self.file_system = {
             "root": [
                 {"name": "README.flat",              "type": "FILE", "icon": "📄", "color": Fore.WHITE},
-                {"name": "Documents",                "type": "DIR",  "icon": "📁", "color": Fore.WHITE, "target": "root/Documents"},
                 {"name": "shutdown",                 "type": "EXIT", "icon": " ⏻", "color": Fore.RED}
             ],
 
@@ -341,6 +362,12 @@ class COBALT_FS:
                 {"name": " notes.txt",               "type": "FILE", "icon": "📄", "color": Fore.WHITE},
                 {"name": " logs.db",                 "type": "FILE", "icon": "📄", "color": Fore.WHITE},
             ],
+
+            "root/Settings": [
+                {"name": "..",                       "type": "BACK", "icon": "🔙", "color": Fore.YELLOW, "target": "root"},
+                {"name": " Contribuitors.flat",      "type": "FILE", "icon": "📄", "color": Fore.WHITE}, 
+                {"name": " Admin.db",                "type": "FILE", "icon": "📄", "color": Fore.WHITE},
+            ],            
 
             "root/DarkHats": [
                 {"name": "..",                       "type": "BACK", "icon": "🔙", "color": Fore.YELLOW, "target": "root"},
@@ -354,7 +381,7 @@ class COBALT_FS:
 
             "root/Achievements": [
                 {"name": "..",                       "type": "BACK", "icon": "🔙", "color": Fore.YELLOW, "target": "root"},
-                {"name": "Achievements.txt",         "type": "FILE", "icon": "📄", "color": Fore.WHITE}
+                {"name": " Achievements.txt",         "type": "FILE", "icon": "📄", "color": Fore.WHITE}
             ]
         }
         
@@ -378,7 +405,9 @@ class COBALT_FS:
         if self.player_level >= 1:
             self.file_system["root"].insert(0, {"name": "DarkHats", "type": "DIR", "icon": "📁", "color": Fore.WHITE, "target": "root/DarkHats"})
             self.file_system["root"].insert(1, {"name": "Games", "type": "DIR", "icon": "📁", "color": Fore.WHITE, "target": "root/Games"})
-            self.file_system["root"].insert(3, {"name": "Achievments", "type": "DIR", "icon": "📁", "color": Fore.WHITE, "target": "root/Achievements"})
+            self.file_system["root"].insert(3, {"name": "Documents",                "type": "DIR",  "icon": "📁", "color": Fore.WHITE, "target": "root/Documents"})
+            self.file_system["root"].insert(2, {"name": "Achievments", "type": "DIR", "icon": "📁", "color": Fore.WHITE, "target": "root/Achievements"})
+            self.file_system["root"].insert(5, {"name": "Settings", "type": "DIR", "icon": "📁", "color": Fore.WHITE, "target": "root/Settings"})
             try:
                 self.file_system["root"].remove({"name": "README.flat", "type": "FILE", "icon": "📄", "color": Fore.WHITE})
             except ValueError:
@@ -389,14 +418,14 @@ class COBALT_FS:
             choices = sorted(self.route_manager.get_choices_for_level(self.route_level), key=lambda item: item['display_position'])
             self.file_system["root/DarkHats"] = [
                 {"name": "..", "type": "BACK", "icon": "🔙", "color": Fore.YELLOW, "target": "root"},
-                {"name": f"Route Level {self.route_level}", "type": "INFO", "icon": "🛰️", "color": Fore.CYAN},
+                {"name": f"Route Level {self.route_level}", "type": "INFO", "icon": "🛰️  ", "color": Fore.CYAN},
             ]
             for choice in choices:
                 self.file_system["root/DarkHats"].append({
                     "name": choice['mission'],
                     "type": "ROUTE",
-                    "icon": "⚙️",
-                    "color": Fore.GREEN,
+                    "icon": "⚙️  ",
+                    "color": Fore.WHITE,
                     "route": choice['route'],
                     "mission": choice['mission'],
                     "level": choice['level'],
@@ -440,7 +469,8 @@ class COBALT_FS:
         print(f"{C_BORDER}╔{'═' * self.inner_w}╗")
         
         title = f" ■ COBALT FILE EXPLORER [{self.current_dir}]"
-        print(f"{C_BORDER}║{C_TITLE}{title.ljust(self.inner_w)}{C_BORDER}║")
+        pad_title = self.inner_w - visual_width(title)
+        print(f"{C_BORDER}║{C_TITLE}{title}{' ' * pad_title}{C_BORDER}║")
         print(f"{C_BORDER}╠{'═' * self.inner_w}╣")
         
         for i, f in enumerate(self.files):
@@ -451,10 +481,8 @@ class COBALT_FS:
             
             item_string = f" {arrow} {f['icon']} {f['name']}"
 
-            emoji_offset = 1 if f['icon'] in ["📂", "📁", "📄", "🔙", "⚙️", "🏅", "⚙️"] else 0
-            
-            visual_lenght = len(item_string) + emoji_offset
-            space = " " * (self.inner_w - visual_lenght)
+            visual_length = visual_width(item_string)
+            space = " " * (self.inner_w - visual_length)
      
             print(f"{C_BORDER}║{text_color}{item_string}{space}{C_BORDER}║")
             
@@ -466,7 +494,8 @@ class COBALT_FS:
             f"Tasks: {self.stats.get('tasks', 0)} | "
             f"Chests: {self.stats.get('chests', 0)}"
         )
-        print(f"{C_BORDER}║{Fore.LIGHTBLACK_EX}{status.ljust(self.inner_w)}{C_BORDER}║")
+        pad_status = self.inner_w - visual_width(status)
+        print(f"{C_BORDER}║{Fore.LIGHTBLACK_EX}{status}{' ' * pad_status}{C_BORDER}║")
         print(f"{C_BORDER}╚{'═' * self.inner_w}╝{Style.RESET_ALL}")
 
         print(f"\n  {Fore.LIGHTBLACK_EX}[ ARROWS: Navigate | ENTER: Select ]{Style.RESET_ALL}")
@@ -511,8 +540,20 @@ class COBALT_FS:
         elif type == "FILE" and name == "notes.txt":
             self._open_notes()
            
+        elif type == "FILE" and name == "DarkHats.txt":
+            self._open_DarkHatsText()
+
         elif type == "FILE" and name == "logs.db":
             self._open_logs()
+
+        elif type == "FILE" and name == "Admin.db":
+            self._open_admins()
+
+        elif type == "FILE" and name == "Achievements.txt":
+            self._open_achievements()
+
+        elif type == "FILE" and name == "Contribuitors.flat":
+            self._open_contribuitors()
             
         elif type == "EXIT" and name == "shutdown":
             clear()
@@ -585,15 +626,35 @@ class COBALT_FS:
             status_text = f"{Fore.GREEN}[ UNLOCKED ]"
         else:
             border = Fore.LIGHTBLACK_EX
-            status_text = f"{Fore.RED}[ LOCKED ]  "
+            status_text = f"{Fore.RED}[ LOCKED ]"
+        
         print(f"{border}╔══════════════════════════════════════════════╗")
-        print(f"{border}║ {Fore.WHITE}🏅 ACHIEVEMENT DETAILS                     {border}  ║")
+        
+        line_1 = f" {Fore.WHITE}🏅 ACHIEVEMENT DETAILS"
+        pad_1 = 46 - visual_width(line_1)
+        print(f"{border}║{line_1}{' ' * pad_1}{border}║")
+        
         print(f"{border}╠══════════════════════════════════════════════╣")
-        print(f"{border}║ {Fore.WHITE}TITLE:  {Fore.CYAN}{badge_name.ljust(33)}{border}    ║")#ljust serve p n deixsa o texto maior q (very interessante, right?)
-        print(f"{border}║ {Fore.WHITE}STATUS: {status_text.ljust(42)}{border}║")
-        print(f"{border}║                                              ║")
-        print(f"{border}║ {Fore.WHITE}HOW TO UNLOCK:                             {border}  ║")
-        print(f"{border}║ {Fore.LIGHTBLACK_EX}{description.ljust(42)[0:42]}{border}   ║")
+        
+        line_2 = f" {Fore.WHITE}TITLE:  {Fore.CYAN}{badge_name}"
+        pad_2 = 46 - visual_width(line_2)
+        print(f"{border}║{line_2}{' ' * pad_2}{border}║")
+        
+        line_3 = f" {Fore.WHITE}STATUS: {status_text}"
+        pad_3 = 46 - visual_width(line_3)
+        print(f"{border}║{line_3}{' ' * pad_3}{border}║")
+        
+        print(f"{border}║{' ' * 46}║")
+        
+        line_5 = f" {Fore.WHITE}HOW TO UNLOCK:"
+        pad_5 = 46 - visual_width(line_5)
+        print(f"{border}║{line_5}{' ' * pad_5}{border}║")
+        
+        truncated_desc = description[:44]
+        line_6 = f" {Fore.LIGHTBLACK_EX}{truncated_desc}"
+        pad_6 = 46 - visual_width(line_6)
+        print(f"{border}║{line_6}{' ' * pad_6}{border}║")
+        
         print(f"{border}╚══════════════════════════════════════════════╝{Style.RESET_ALL}")
         
         input(f"\n  {Fore.WHITE}[ Press ENTER to return ]{Style.RESET_ALL}")
@@ -602,14 +663,18 @@ class COBALT_FS:
         clear()
         
         message = (
-        f"Connection established. I see you, {getpass.getuser()}.\n"
-        f"To look through the files, just type 'next' or 'previous'. Don't get lost in the logs.\n"
-        f"Every task you finish the better the system gets. 1 Work = 1 Level.\n"
-        f"Grow your level to unlock new missions. The deeper you go, the more you get.\n"
-        f"Stand by. Giving you access to DarkHatsUI... " #acho q n vou colocar quebra de linha pq fica maior a caixa
-        #vou adicionar s pq fica fei p poxa
-        f"Everthing done!\nPress enter to close this message"#soq aq, veja dando play
+        f"Connection established. Welcome, {getpass.getuser()}.\n"
+        f"To use the COBALT OS, you will need a keyboard with:\n"
+        f"  Numpad,\n"
+        f"  Arrows,\n"
+        f"  And letters (optional for names!)\n" 
+        f"To move in the archives, use arrows and for selecting then, just press enter.\n"
+        f"How you opened this without knowing?"
+        f"Remember, almost all the pages, have a tutorial explaining them, as txt or md!"
+        f"P.S: This message will only appear once."
+        f"\nPress enter to close this message"
         )   
+        input(f"\n  {Fore.LIGHTBLACK_EX}[ Press ENTER to return ]{Style.RESET_ALL}")
         typewrite(message, "GREEN", "GREEN")
         self.player_level = 1
 
@@ -622,7 +687,7 @@ class COBALT_FS:
             chests=self.total_chests,
             inventory=getattr(self, 'inventory', [])
         )
-        
+
         self._system_archives_update()        
 
         input("") #jenial a sacada do input, pq ele trava o caba, pra ai s n precisar usar varios sleep
@@ -670,10 +735,21 @@ class COBALT_FS:
     def _open_boss(self):
         clear()
         print(f"{Fore.RED}╔════════════════════════════════════════════╗")
-        print(f"║ {Fore.YELLOW}⚠️  WARNING: SYSTEM INTEGRITY AT RISK       {Fore.RED}║")
+        
+        line_1 = f" {Fore.YELLOW}⚠️  WARNING: SYSTEM INTEGRITY AT RISK"
+        pad_1 = 44 - visual_width(line_1)
+        print(f"║{line_1}{' ' * pad_1}{Fore.RED}║")
+        
         print(f"╠════════════════════════════════════════════╣")
-        print(f"║ Connecting to highly secure server...      ║")
-        print(f"║ Executing malware injection...             ║")
+        
+        line_2 = " Connecting to highly secure server..."
+        pad_2 = 44 - visual_width(line_2)
+        print(f"║{line_2}{' ' * pad_2}║")
+        
+        line_3 = " Executing malware injection..."
+        pad_3 = 44 - visual_width(line_3)
+        print(f"║{line_3}{' ' * pad_3}║")
+        
         print(f"╚════════════════════════════════════════════╝{Style.RESET_ALL}")
         sleep(2)
         
@@ -688,21 +764,80 @@ class COBALT_FS:
         self.player_level = game.Player.Level
         clear()              
 
+    def _open_contribuitors(self):
+        clear()
+        print(f"{Fore.YELLOW}[!] OPENING Contribuitors.flat...{Style.RESET_ALL}")
+        sleep(0.5)
+        clear()
+        print(f"{Fore.GREEN}╔════════════════════════════════════════════╗")
+        
+        line_1 = f" {Fore.GREEN}✏️  TEXT VISUALIZER: Contribuitors.flat"
+        pad_1 = 44 - visual_width(line_1)
+        print(f"{Fore.GREEN}║{line_1}{' ' * pad_1}{Fore.GREEN}║")
+        
+        print(f"{Fore.GREEN}╠════════════════════════════════════════════╣")
+        
+        line_2 = " Hydro"
+        pad_2 = 44 - visual_width(line_2)
+        print(f"{Fore.GREEN}║{line_2}{' ' * pad_2}║")
+        
+        line_3 = " Apogavi"
+        pad_3 = 44 - visual_width(line_3)
+        print(f"{Fore.GREEN}║{line_3}{' ' * pad_3}║")
+        
+        line_4 = " DiscorDANdo"
+        pad_4 = 44 - visual_width(line_4)
+        print(f"{Fore.GREEN}║{line_4}{' ' * pad_4}║")
+        
+        print(f"{Fore.GREEN}╚════════════════════════════════════════════╝{Style.RESET_ALL}")
+        input(f"\n  {Fore.LIGHTBLACK_EX}[ Press ENTER to return ]{Style.RESET_ALL}")
+
+    def _open_admins(self):
+        clear()
+        print(f"{Fore.YELLOW}[!] OPENING Admin.db...{Style.RESET_ALL}")
+        sleep(0.5)
+        clear()        
+        print(f"{Fore.GREEN}╔════════════════════════════════════════════╗")
+        
+        line_1 = f" {Fore.GREEN}⚙️  TEXT VISUALIZER: Admin.db"
+        pad_1 = 44 - visual_width(line_1)
+        print(f"{Fore.GREEN}║{line_1}{' ' * pad_1}{Fore.GREEN}║")
+        
+        print(f"{Fore.GREEN}╠════════════════════════════════════════════╣")
+        
+        line_2 = " You're not an admin!"
+        pad_2 = 44 - visual_width(line_2)
+        print(f"{Fore.GREEN}║{line_2}{' ' * pad_2}║")
+        
+        print(f"{Fore.GREEN}╚════════════════════════════════════════════╝{Style.RESET_ALL}")
+        input(f"\n  {Fore.LIGHTBLACK_EX}[ Press ENTER to return ]{Style.RESET_ALL}")    
+
     def _open_notes(self):
         clear()
         print(f"{Fore.YELLOW}[!] OPENING notes.txt...{Style.RESET_ALL}")
         sleep(0.5)
         clear()
         print(f"{Fore.WHITE}╔════════════════════════════════════════════╗")
-        print(f"║ {Fore.WHITE}📝 TEXT VISUALIZER: notes.txt              ║")
+        
+        line_1 = f" {Fore.WHITE}📝 TEXT VISUALIZER: notes.txt"
+        pad_1 = 44 - visual_width(line_1)
+        print(f"║{line_1}{' ' * pad_1}║")
+        
         print(f"╠════════════════════════════════════════════╣")
-        print(f"║ Lembrete para a equipe DarkHats:           ║")
-        print(f"║ Hydro é lindo                              ║")
-        print(f"║ Preciso de um café                         ║")
-        print(f"║ DarkHats Updater é lindo                   ║")
-        print(f"║ - Admin                                    ║")
+        
+        lines = [
+            " Lembrete para a equipe DarkHats:",
+            " Hydro é lindo",
+            " Preciso de um café",
+            " DarkHats Updater é lindo",
+            " - Admin"
+        ]
+        for line in lines:
+            pad = 44 - visual_width(line)
+            print(f"║{line}{' ' * pad}║")
+            
         print(f"╚════════════════════════════════════════════╝{Style.RESET_ALL}")
-        input(f"\n  {Fore.WHITE}[ Press ENTER to exit ]{Style.RESET_ALL}")
+        input(f"\n  {Fore.LIGHTBLACK_EX}[ Press ENTER to return ]{Style.RESET_ALL}")
     
     def _open_logs(self):
         clear()
@@ -718,6 +853,34 @@ class COBALT_FS:
         print(f"\n{Fore.RED}[ ACCESS DENIED: ENCRYPTION KEY NOT FOUND ]{Style.RESET_ALL}")
         input(f"\n  {Fore.LIGHTBLACK_EX}[ Press ENTER to return ]{Style.RESET_ALL}")
     
+    def _open_achievements(self):
+        clear()
+        
+        message = (
+        f"Hello, {getpass.getuser()}.\n"
+        f"You can press enter in a badge to see it description and details.\n"
+        f"Badges gives you new characters and shows the current progress in the game.\n"
+        f"P.S: Be careful.\n"
+        f"Press enter to close this message!"
+        )   
+        typewrite(message, "GREEN", "GREEN")
+
+        input(f"\n  {Fore.LIGHTBLACK_EX}[ Press ENTER to return ]{Style.RESET_ALL}")
+
+    def _open_DarkHatsText(self):
+        clear()
+        
+        message = (
+        f"What's up, {getpass.getuser()}.\n"
+        f"To look through the classes, you just need to type 'next' or 'previous'!\n"
+        f"Remember, some classes may be locked without their respective badge.\n"
+        f"P.S: The name you always put, it's only a pseudonym. NEVER put your real name on it.\n"
+        f"Press enter to close this message!"
+        )   
+        typewrite(message, "GREEN", "GREEN")
+
+        input(f"\n  {Fore.LIGHTBLACK_EX}[ Press ENTER to return ]{Style.RESET_ALL}")
+
 def Explorer():
     clear()
     COBALT_FS().run()

@@ -324,12 +324,22 @@ class DarkHatsGame:
                     chest_opened = open_chest(self.Player)
                     if chest_opened:
                         PlayerStats.record_chest_opened()
-                        saved_progress = RouteManager().load_progress({})
-                        inventory_names = list(saved_progress.get('inventory', []))
-                        if hasattr(chest_opened, 'itemName'):
-                            inventory_names.append(chest_opened.itemName)
-                        inventory_names = list(dict.fromkeys(inventory_names))
-                        RouteManager().save_progress(saved_progress.get('badges', {}), saved_progress.get('route_history', []), saved_progress.get('ending', 'ENDING_NORMAL'), saved_progress.get('mission_history', []), level=saved_progress.get('level', 1), inventory=inventory_names)
+
+                    saved_progress = RouteManager().load_progress({}, update_stats=False)
+                    inventory_names = list(saved_progress.get('inventory', []))
+                    if chest_opened and hasattr(chest_opened, 'itemName'):
+                        inventory_names.append(chest_opened.itemName)
+                    inventory_names = list(dict.fromkeys(inventory_names))
+                    RouteManager().save_progress(
+                        saved_progress.get('badges', {}),
+                        saved_progress.get('route_history', []),
+                        saved_progress.get('ending', 'ENDING_NORMAL'),
+                        saved_progress.get('mission_history', []),
+                        level=saved_progress.get('level', 1),
+                        inventory=inventory_names,
+                        tasks=PlayerStats.get_lifetime_tasks(),
+                        chests=PlayerStats.get_lifetime_chests()
+                    )
 
                     item_set = set(getattr(self.Player.Class, 'Items', []))
                     Integrity_boost = sum(getattr(item, 'Integrity', 0) for item in item_set)

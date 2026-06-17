@@ -85,7 +85,10 @@ class RouteManager:
         badges['Normal Ending'] = bool(completed_tasks >= 5 and ending == 'ENDING_NORMAL')
         badges['Good Ending'] = bool(completed_tasks >= 5 and ending == 'ENDING_GOOD')
         badges['Bad Ending'] = bool(completed_tasks >= 5 and ending == 'ENDING_BAD')
-        badges['Mr.Robot'] = bool(completed_tasks >= 5 and ending == 'ENDING_TRUE')
+        badges['???'] = bool(completed_tasks >= 5 and ending == 'ENDING_TRUE')
+
+        import Game.Main.Player as PlayerStats
+        stats = PlayerStats.get_lifetime_stats()
 
         payload = {
             "level": int(level) if level is not None else max(1, min(5, completed_tasks + 1)),
@@ -93,15 +96,15 @@ class RouteManager:
             "route_history": route_history,
             "mission_history": list(mission_history or []),
             "inventory": list(inventory or []),
-            "tasks": int(tasks) if tasks is not None else 0,
-            "chests": int(chests) if chests is not None else 0,
+            "tasks": int(tasks) if tasks is not None else stats.get("tasks", 0),
+            "chests": int(chests) if chests is not None else stats.get("chests", 0),
             "ending": ending,
             "seed": self.seed,
         }
         self.progress_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
         return payload
 
-    def load_progress(self, badges):
+    def load_progress(self, badges, update_stats=True):
         payload = None
 
         if self.progress_path.exists():
@@ -127,13 +130,14 @@ class RouteManager:
         badges_payload['Normal Ending'] = bool(completed_tasks >= 5 and ending == 'ENDING_NORMAL')
         badges_payload['Good Ending'] = bool(completed_tasks >= 5 and ending == 'ENDING_GOOD')
         badges_payload['Bad Ending'] = bool(completed_tasks >= 5 and ending == 'ENDING_BAD')
-        badges_payload['Mr.Robot'] = bool(completed_tasks >= 5 and ending == 'ENDING_TRUE')
+        badges_payload['???'] = bool(completed_tasks >= 5 and ending == 'ENDING_TRUE')
 
         tasks = int(payload.get('tasks', 0))
         chests = int(payload.get('chests', 0))
 
-        import Game.Main.Player as PlayerStats
-        PlayerStats.set_lifetime_stats(tasks, chests)
+        if update_stats:
+            import Game.Main.Player as PlayerStats
+            PlayerStats.set_lifetime_stats(tasks, chests)
 
         return {
             "level": int(payload.get("level", max(1, min(5, len(route_history) + 1)))),

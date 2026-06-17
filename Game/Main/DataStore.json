@@ -1,5 +1,5 @@
 {
-  "level": 1,
+  "level": 0,
   "badges": {
     "Social Engineer": false,
     "Hardware Specialist": false,
@@ -11,8 +11,10 @@
     "Bad Ending": false,
     "???": false
   },
-  "route_history": [],
-  "mission_history": [],
+  "route_history": [
+  ],
+  "mission_history": [
+  ],
   "inventory": [],
   "tasks": 0,
   "chests": 0,
