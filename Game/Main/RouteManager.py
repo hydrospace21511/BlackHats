@@ -82,10 +82,18 @@ class RouteManager:
         badges = dict(badges or {})
 
         completed_tasks = len(route_history)
-        badges['Normal Ending'] = bool(completed_tasks >= 5 and ending == 'ENDING_NORMAL')
-        badges['Good Ending'] = bool(completed_tasks >= 5 and ending == 'ENDING_GOOD')
-        badges['Bad Ending'] = bool(completed_tasks >= 5 and ending == 'ENDING_BAD')
-        badges['???'] = bool(completed_tasks >= 5 and ending == 'ENDING_TRUE')
+        
+        badges['Normal Ending'] = badges.get('Normal Ending', False) or bool(completed_tasks >= 5 and ending == 'ENDING_NORMAL')
+        badges['Good Ending']   = badges.get('Good Ending', False)   or bool(completed_tasks >= 5 and ending == 'ENDING_GOOD')
+        badges['Bad Ending']    = badges.get('Bad Ending', False)    or bool(completed_tasks >= 5 and ending == 'ENDING_BAD')
+        badges['???']           = badges.get('???', False)           or bool(completed_tasks >= 5 and ending == 'ENDING_TRUE')
+
+        badges['Platina'] = badges.get('Platina', False) or (
+            badges['Normal Ending'] and 
+            badges['Good Ending'] and 
+            badges['Bad Ending'] and 
+            badges['???']
+        )
 
         import Game.Main.Player as PlayerStats
         stats = PlayerStats.get_lifetime_stats()
@@ -127,11 +135,21 @@ class RouteManager:
         badges_payload = dict(payload.get("badges", badges or {}))
 
         completed_tasks = len(route_history)
-        badges_payload['Normal Ending'] = bool(completed_tasks >= 5 and ending == 'ENDING_NORMAL')
-        badges_payload['Good Ending'] = bool(completed_tasks >= 5 and ending == 'ENDING_GOOD')
-        badges_payload['Bad Ending'] = bool(completed_tasks >= 5 and ending == 'ENDING_BAD')
-        badges_payload['???'] = bool(completed_tasks >= 5 and ending == 'ENDING_TRUE')
+        
+        badges_payload['Normal Ending'] = badges_payload.get('Normal Ending', False) or bool(completed_tasks >= 5 and ending == 'ENDING_NORMAL')
+        badges_payload['Good Ending']   = badges_payload.get('Good Ending', False)   or bool(completed_tasks >= 5 and ending == 'ENDING_GOOD')
+        badges_payload['Bad Ending']    = badges_payload.get('Bad Ending', False)    or bool(completed_tasks >= 5 and ending == 'ENDING_BAD')
+        badges_payload['???']           = badges_payload.get('???', False)           or bool(completed_tasks >= 5 and ending == 'ENDING_TRUE')
 
+        badges_payload['Platina'] = badges_payload.get('Platina', False) or (
+            badges_payload['Normal Ending'] and 
+            badges_payload['Good Ending'] and 
+            badges_payload['Bad Ending'] and 
+            badges_payload['???']
+        )
+
+        tasks = int(payload.get('tasks', 0))
+        chests = int(payload.get('chests', 0))
         tasks = int(payload.get('tasks', 0))
         chests = int(payload.get('chests', 0))
 

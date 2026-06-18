@@ -18,6 +18,7 @@ from Game.Classes.HardwareSpecialistClass import HardwareSpecialistClass
 from Game.Classes.SecretClasses.Hatsune import HatsuneMikuClass
 from Game.Classes.SecretClasses.CorruptedHatsune import CorruptedHatsuneMikuClass
 from Game.Classes.SecretClasses.Rimuru import RimuruClass
+from Game.Classes.LambdaClass import LambdaClass
 import Game.Main.Player as PlayerModule
 from Game.ItemsLib.Chests.NPC_Chest import open_chest
 import Game.Main.Player as PlayerStats
@@ -45,17 +46,18 @@ def Damage(D, Defense):
 
 class DarkHatsGame:
     def __init__(self):
-        self.ClassesMenu = Classes()
-        self.Hacker = HackerClass()
-        self.Rimuru = RimuruClass()
-        self.SecurityAnalytic = SecurityAnalyticClass()
-        self.SecurityBypasser = SecurityBypasserClass()
-        self.HardwareSpecialist = HardwareSpecialistClass()
-        self.SocialEngineer = SocialEngineerClass()
-        self.Vocaloid = HatsuneMikuClass()
-        self.ReverseEngineer = ReverseEngineerClass()
+        self.ClassesMenu          = Classes()
+        self.Hacker               = HackerClass()
+        self.Rimuru               = RimuruClass()
+        self.SecurityAnalytic     = SecurityAnalyticClass()
+        self.SecurityBypasser     = SecurityBypasserClass()
+        self.HardwareSpecialist   = HardwareSpecialistClass()
+        self.SocialEngineer       = SocialEngineerClass()
+        self.Vocaloid             = HatsuneMikuClass()
+        self.Lambda               = LambdaClass()
+        self.ReverseEngineer      = ReverseEngineerClass()
         self.CorruptedHatsuneMiku = CorruptedHatsuneMikuClass()
-        self.Player = PlayerModule.Player()
+        self.Player               = PlayerModule.Player()
         
         self.attack_functions = {
             "Decompiler": DecompilerAttack,
@@ -121,6 +123,9 @@ class DarkHatsGame:
                         break
                     case "RIMURU" | "SLIME":
                         PlayerClass = self.Rimuru
+                        break
+                    case "LAMBDA":
+                        PlayerClass = self.Lambda
                         break
                         
                     case "SECRET" | "666":

@@ -1,7 +1,15 @@
 import os
 import sys
 import re
+import json
 import unicodedata
+from rich.console import Console, Group
+from rich.panel import Panel
+from rich.align import Align
+from rich.text import Text
+from rich.live import Live
+from rich.spinner import Spinner
+from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn
 from time import sleep
 from colorama import Fore, Style, init
 import getpass
@@ -13,12 +21,11 @@ def get_char_width(char):
     cat = unicodedata.category(char)
     if cat in ('Mn', 'Me', 'Cf', 'Cc'):
         return 0
+    
     eaw = unicodedata.east_asian_width(char)
     if eaw in ('W', 'F'):
         return 2
-    code = ord(char)
-    if (0x1F300 <= code <= 0x1F9FF) or (0x2600 <= code <= 0x27BF):
-        return 2
+    
     return 1
 
 def strip_ansi(s):
@@ -218,8 +225,73 @@ class COBALT:
         
         #print("\n" * 3)    
 
-    def _terminal_loading(self):
+    def _welcome_screen(self):
+        console = Console()
+        user_name = getpass.getuser().upper()
+
+        ascii_art = (
+            " ____________________________________________\n"
+            " __  ____/_  __ \\__  __ )__    |__  /___  __/\n"
+            " _  /    _  / / /_  __  |_  /| |_  / __  /   \n"
+            " / /___  / /_/ /_  /_/ /_  ___ |  /___  /    \n"
+            " \\____/  \\____/ /_____/ /_/  |_/_____/_/     "
+        )
+
+        top_text = Text() 
+        top_text.append(ascii_art, style="bold green")
         
+        centered_top = Align.center(top_text)
+
+        top_text.append("\n\n               W E L C O M E\n", style="bold white")
+        top_text.append(f"                User: {user_name}\n\n", style="dim green")
+
+        clear()
+
+        spinner = Spinner("dots", text="[green]Preparing COBALT desktop environment...", style="bold green")
+        
+        with Live(console=console, refresh_per_second=20) as live:
+            for _ in range(50):
+                content_loading = Group(
+                    top_text,
+                    Align.center(spinner),
+                    Text("\n\n") 
+                )
+                panel_loading = Panel(
+                    content_loading,
+                    border_style="green",
+                    padding=(3, 16),
+                    title="[bold green]System Boot[/bold green]",
+                )
+                live.update(Align.center(panel_loading))
+                sleep(0.05)
+
+        clear() 
+        
+        ready_text = Text.from_markup("[bold green]Environment Ready.[/bold green]\n\n[bold white]> PRESS SPACE TO CONTINUE <[/bold white]", justify="center")
+        
+        content_ready = Group(
+            top_text,
+            ready_text
+        )
+        
+        panel_ready = Panel(
+            content_ready,
+            border_style="green",
+            padding=(3, 16),
+            title="[bold green]System Ready[/bold green]",
+        )
+        
+        console.print(Align.center(panel_ready))
+
+        while True:
+            key = get_key()
+            if key == 'SPACE':
+                break
+            sleep(0.05)
+                
+        clear()
+                
+    def _terminal_loading(self):
         clear()
         
         tasks = [
@@ -238,34 +310,43 @@ class COBALT:
             "Initializing Hydro protocol..."
         ]
 
-        for task in tasks:
-           
-            for i in range(11):  
-                percent = i * 10
-                bar = "▓" * i + "░" * (10 - i)
-               
-                print(f"{Fore.GREEN}  [{bar}] {percent}% | {task}", end='\r')
-                sleep(0.15)
-            print() 
+        with Progress(
+            SpinnerColumn(spinner_name="dots2", style="bold green"),
+            TextColumn("[bold green]{task.description}"),
+            BarColumn(complete_style="green", finished_style="bold green", style="black"),
+            TextColumn("[bold green]{task.percentage:>3.0f}%"),
+        ) as progress:
+            
+            for task_name in tasks:
+                task_id = progress.add_task(task_name, total=100)
+
+                for _ in range(100):
+                    progress.update(task_id, advance=1)
+                    sleep(0.01875)
 
         print(f"\n{Fore.GREEN}  [!] Synchronization complete. Starting interface....")
         sleep(3)
         clear()
         print(f"\n{Fore.RED}  [!] Error: Interface not found. Starting recovery protocol...\n")
         sleep(3)
-        for e_task in extra_tasks:
-           
-            for i in range(11):  
-                percent = i * 10
-                bar = "▓" * i + "░" * (10 - i)
-               
-                print(f"{Fore.GREEN}  [{bar}] {percent}% | {e_task}", end='\r')
-                sleep(0.15)
-            print()
+
+        with Progress(
+            SpinnerColumn(spinner_name="line", style="bold green"),
+            TextColumn("[bold green]{task.description}"),
+            BarColumn(complete_style="green", finished_style="bold green", style="black"),
+            TextColumn("[bold green]{task.percentage:>3.0f}%"),
+        ) as progress:
+            
+            for e_task in extra_tasks:
+                task_id = progress.add_task(e_task, total=100)
+                
+                for _ in range(100):
+                    progress.update(task_id, advance=1)
+                    sleep(0.01875)
 
         print(f"\n{Fore.GREEN}  [!] Success: Interface recovered. Starting COBALT...")  
         sleep(3)     
-        clear()  
+        clear()
 
     def _check_space(self):
         while True:
@@ -276,6 +357,7 @@ class COBALT:
             else:
                 continue
         self._terminal_loading()
+        self._welcome_screen()
         #isso seria consideraro criar um OS do 0? porém extremamente limitado? 
         #s seria, tem base linuc e tem funções de um ai, receba, criei um OS do 0
         #go drinking (vaitomano)
@@ -321,6 +403,24 @@ class COBALT_FS:
         }
         self._system_archives_update()
 
+    def reset_game_data(self):
+        current_data = self.load_progress(badges={})
+        preserved_badges = current_data.get("badges", {})
+        new_payload = {
+            "level": 1,
+            "badges": preserved_badges,
+            "route_history": [],
+            "mission_history": [],
+            "inventory": [],
+            "tasks": 0,
+            "chests": 0,
+            "ending": "",
+            "seed": self.seed,
+        }
+        
+        self.progress_path.write_text(json.dumps(new_payload, indent=2), encoding="utf-8")
+        return new_payload
+    
     def _system_archives_update(self):
         level = self.player_level
         self.route_manager = RouteManager(seed=7)
@@ -674,7 +774,7 @@ class COBALT_FS:
         f"P.S: This message will only appear once."
         f"\nPress enter to close this message"
         )   
-        input(f"\n  {Fore.LIGHTBLACK_EX}[ Press ENTER to return ]{Style.RESET_ALL}")
+
         typewrite(message, "GREEN", "GREEN")
         self.player_level = 1
 
@@ -690,7 +790,7 @@ class COBALT_FS:
 
         self._system_archives_update()        
 
-        input("") #jenial a sacada do input, pq ele trava o caba, pra ai s n precisar usar varios sleep
+        input(f"\n  {Fore.LIGHTBLACK_EX}[ Press ENTER to return ]{Style.RESET_ALL}") #jenial a sacada do input, pq ele trava o caba, pra ai s n precisar usar varios sleep
 
     def _open_snake_game(self):
         clear()
