@@ -481,7 +481,7 @@ class COBALT_FS:
 
             "root/Achievements": [
                 {"name": "..",                       "type": "BACK", "icon": "🔙", "color": Fore.YELLOW, "target": "root"},
-                {"name": " Achievements.txt",         "type": "FILE", "icon": "📄", "color": Fore.WHITE}
+                {"name": " Achievements.txt",        "type": "FILE", "icon": "📄", "color": Fore.WHITE}
             ]
         }
         
