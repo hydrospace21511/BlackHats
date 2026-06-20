@@ -12,11 +12,8 @@
     "???": false,
     "Platina": false
   },
-  "route_history": [
-
-  ],
-  "mission_history": [
-  ],
+  "route_history": [],
+  "mission_history": [],
   "inventory": [],
   "tasks": 0,
   "chests": 0,

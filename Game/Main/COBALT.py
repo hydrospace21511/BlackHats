@@ -13,7 +13,7 @@ from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn
 from time import sleep
 from colorama import Fore, Style, init
 import getpass
-from typewriter import typewrite
+from typewriter import typewriter
 import Game.Main.Player as PlayerStats
 from Game.Main.RouteManager import RouteManager, EndingManager
 
@@ -775,7 +775,7 @@ class COBALT_FS:
         f"\nPress enter to close this message"
         )   
 
-        typewrite(message, "GREEN", "GREEN")
+        typewriter(message, speed=0.06, anim_speed=3)
         self.player_level = 1
 
         self.route_manager.save_progress(
@@ -963,7 +963,7 @@ class COBALT_FS:
         f"P.S: Be careful.\n"
         f"Press enter to close this message!"
         )   
-        typewrite(message, "GREEN", "GREEN")
+        typewriter(message, speed=0.06, anim_speed=3)
 
         input(f"\n  {Fore.LIGHTBLACK_EX}[ Press ENTER to return ]{Style.RESET_ALL}")
 
@@ -977,7 +977,7 @@ class COBALT_FS:
         f"P.S: The name you always put, it's only a pseudonym. NEVER put your real name on it.\n"
         f"Press enter to close this message!"
         )   
-        typewrite(message, "GREEN", "GREEN")
+        typewriter(message, speed=0.06, anim_speed=3)
 
         input(f"\n  {Fore.LIGHTBLACK_EX}[ Press ENTER to return ]{Style.RESET_ALL}")
 
