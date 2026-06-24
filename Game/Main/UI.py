@@ -1,107 +1,203 @@
-from colorama import Fore, Style
-from Game.Main.Color import cText
-import re
-def display_battle_ui(player_integrity, max_integrity, player_defense, available_attacks, ui_color):
+import os
+import sys
+from rich.console import Console
+from rich.text import Text
+from rich.panel import Panel
+from rich.table import Table
+from rich import box
+from colorama import Fore
 
-    C_BORDER = ui_color
-    #gosto da strategia ne? E PQ VC TA LENDO ISSO TUDO? EU N SOU ESQUIZOFRENICO DE ESCREVER MAS PQ VC TA LENDO?
-    C_CORRUPTED = Fore.RED  #setei pra hatsune corrompida, mas posso usar pra outras classes futuramente
-    C_ALERT  = ui_color  
-    C_TEXT   = Fore.WHITE                
-    C_DATA   = Fore.CYAN                  
-    RESET    = Style.RESET_ALL
-    
+console = Console()
 
-    l1_spaces = " " * 33 #l1 = linha 1 (ta centralizando titulo)
-    title = f"{C_ALERT}COBALT MAINFRAME v1.0.4{RESET}{l1_spaces}{Style.DIM}SYSTEM NODE OVERVIEW{RESET}"
+COLORAMA_TO_RICH = {
+    Fore.GREEN:   "green",
+    Fore.RED:     "red",
+    Fore.CYAN:    "cyan",
+    Fore.YELLOW:  "yellow",
+    Fore.MAGENTA: "magenta",
+    Fore.BLUE:    "blue",
+    Fore.WHITE:   "white",
+}
 
+def to_rich_color(colorama_color):
+    return COLORAMA_TO_RICH.get(colorama_color, "green")
 
-    # vida
-    hp_percent = max(0, min(1, player_integrity / max_integrity))
-    hp_full = int(hp_percent * 15)
-    hp_empty = 15 - hp_full
-    hp_bar_str = Fore.GREEN + '|' * hp_full + Fore.RED + '·' * hp_empty + RESET
-    
-    #porcentagem da defesa 
-    def_visual = 100 if player_defense == 99 else player_defense
-    def_percent = max(0, min(1, def_visual / 100))
-    def_full = int(def_percent * 15)
-    def_empty = 15 - def_full
-    def_bar_str = Fore.CYAN + '|' * def_full + Fore.BLUE + '·' * def_empty + RESET
+def make_bar(current, maximum, width=20, fill='━', empty='─'):
+    if maximum <= 0:
+        return empty * width
+    filled = max(0, min(width, int((current / maximum) * width)))
+    return fill * filled + empty * (width - filled)
 
-    #seta na ui
-    hp_part = f"{C_TEXT}INTEGRITY:{RESET} [{hp_bar_str}] {C_DATA}{hp_percent*100:>3.0f}%{RESET}"
-    def_part = f"{C_TEXT} DEFENSE:{RESET} [{def_bar_str}] {C_DATA}{player_defense:>3.0f}%{RESET}"
-    line_status = f"{hp_part}     {C_BORDER}│{RESET}     {def_part}"
-
-    attacks = ", ".join(available_attacks)
-    prefix = "ACTIVE EXPLOITS: " # 17 caracteres
-    
-    attack_lines = []
-    first_line_limit = 59
-    
-    if len(attacks) <= first_line_limit:
-
-        pattacks = attacks.ljust(59)
-        full_line = f"{Style.DIM}{prefix}{RESET}{C_DATA}{pattacks}{RESET}"
-        attack_lines.append(full_line)
-
+def get_key():
+    if os.name == 'nt':
+        import msvcrt
+        key = msvcrt.getch()
+        if key == b'\xe0': 
+            special = msvcrt.getch()
+            if special == b'H': return 'UP'
+            if special == b'P': return 'DOWN'
+            if special == b'K': return 'LEFT'  
+            if special == b'M': return 'RIGHT'
+        elif key in (b'\r', b'\n'):
+            return 'ENTER'
+        elif key == b' ':
+            return 'SPACE'
+        return None
     else:
-        part1 = attacks[:first_line_limit]
-        full_line1 = f"{Style.DIM}{prefix}{RESET}{C_DATA}{part1}{RESET}"
-        attack_lines.append(full_line1)
-        text = attacks[first_line_limit:]
+        import tty, termios, sys
+        fd = sys.stdin.fileno()
+        old_settings = termios.tcgetattr(fd)
+        try:
+            tty.setraw(sys.stdin.fileno())
+            ch = sys.stdin.read(1)
+            if ch == '\x1b': 
+                ch2 = sys.stdin.read(1)
+                if ch2 == '[':
+                    ch3 = sys.stdin.read(1)
+                    if ch3 == 'A': return 'UP'
+                    if ch3 == 'B': return 'DOWN'
+                    if ch3 == 'C': return 'RIGHT' 
+                    if ch3 == 'D': return 'LEFT'  
+            elif ch in ('\r', '\n'):
+                return 'ENTER'
+            elif ch == ' ':
+                return 'SPACE'
+            return None
+        finally:
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+
+
+from rich.table import Table
+
+def display_battle_ui(player_integrity, max_integrity, player_defense, available_attacks, ui_color, player_name="hydrogostosao", class_name="sla", selected_index=0):
+        color = to_rich_color(ui_color)
+
+        hp_bar  = make_bar(player_integrity, max_integrity, width=20)
+        def_bar = make_bar(player_defense, 100, width=20)
+        hp_pct  = f"{int(player_integrity)}/{int(max_integrity)}"
+        def_pct = f"{int(player_defense)}%"
+
+        hp_style = "green" if (player_integrity / max_integrity) > 0.3 else "red"
         
-        while len(text) > 0:
-            part_next = text[:76]
-            text = text[76:]
-            part_next1 = part_next.ljust(76)
-            full_line_next = f"{C_DATA}{part_next1}{RESET}"
-            attack_lines.append(full_line_next)
+        status_table = Table.grid(expand=True, padding=(0, 1))
+        status_table.add_column(style="dim", width=5) 
+        status_table.add_column()                     
+        status_table.add_column(justify="right")      
 
-    l4_spaces = " " * 51
-    line_prompt = f"{C_ALERT}>> INITIALIZE PROTOCOL...{RESET}{l4_spaces}" #ultima parte da ui (vou trocar pra outras versoes de classes)
-    #printa ui + seta as cor das borda
-
-    print(C_BORDER + "╔" + "═" * 78 + "╗" + RESET)
-    print(f"{C_BORDER}║ {RESET}{title}{C_BORDER} ║{RESET}")
-    print(C_BORDER + "╠" + "═" * 78 + "╣" + RESET)
-    print(f"{C_BORDER}║ {RESET}{line_status}{C_BORDER} ║{RESET}")
-    print(C_BORDER + "╠" + "═" * 78 + "╣" + RESET)
-    
-    for attack_line in attack_lines:
-        print(f"{C_BORDER}║ {RESET}{attack_line}{C_BORDER} ║{RESET}")
+        status_table.add_row("HP", Text(hp_bar, style=hp_style), hp_pct)
+        status_table.add_row("DEF", Text(def_bar, style="blue"), def_pct)
+        status_table.add_row("", "", "") 
         
-    print(C_BORDER + "╠" + "═" * 78 + "╣" + RESET)
-    print(f"{C_BORDER}║ {RESET}{line_prompt}{C_BORDER} ║{RESET}")
-    print(C_BORDER + "╚" + "═" * 78 + "╝" + RESET)
+        status_table.add_row("[dim]LAT", "[bold cyan]━━━┯━━━━[/]", "[dim]12ms[/]") 
+        status_table.add_row("[dim]NODE", "[bold green]ONLINE[/]", "[dim]v1.0.4[/]")
 
-def text_size(text):
-    ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
-    return len(ansi_escape.sub('', str(text)))
+        header_text = Text()
+        header_text.append(f"{player_name}", style="bold white")
+        header_text.append(f" [{class_name}]", style=f"bold {color}")
+        
+        player_panel = Panel(
+            status_table, 
+            title=header_text,
+            title_align="left",
+            box=box.ROUNDED, 
+            border_style=color, 
+            padding=(1, 2), 
+            expand=True 
+        )
 
-def enemy_life(current_enemy, integrity_bar):
+        top_layout = Table.grid(padding=(0, 1), expand=True)
+        top_layout.add_column(ratio=6) 
+        top_layout.add_column(ratio=4, justify="right") 
+        top_layout.add_row("", player_panel)
 
-    C_BORDER = Fore.GREEN           
-    C_ALERT  = Fore.RED            
-    C_TEXT   = Fore.WHITE                
-    C_DATA   = Fore.CYAN                  
-    RESET    = Style.RESET_ALL
+        attacks = list(available_attacks)
+        exploit_grid = Table.grid(padding=(0, 1), expand=True)
+        exploit_grid.add_column(ratio=1)
+        exploit_grid.add_column(ratio=1)
 
-    print(f"{C_BORDER}╔{'═' * 78}╗{RESET}")
+        current_idx = 0
+        for i in range(0, max(len(attacks), 2), 2):
+            left_att  = attacks[i]     if i < len(attacks)     else ''
+            right_att = attacks[i + 1] if i + 1 < len(attacks) else ''
+
+            def make_btn(att, idx):
+                if not att:
+                    return ""
+                if idx == selected_index:
+                    b_style = f"bold {color}"
+                    t_style = f"bold {color}"
+                else:
+                    b_style = "dim"
+                    t_style = "dim white"
+
+                t = Text(att.upper(), style=t_style, justify="center", overflow="ellipsis", no_wrap=True)
+                return Panel(t, box=box.ROUNDED, border_style=b_style, expand=True)
+
+            exploit_grid.add_row(make_btn(left_att, current_idx), make_btn(right_att, current_idx + 1))
+            current_idx += 2
+
+        exploit_panel = Panel(
+            exploit_grid,
+            title=Text("EXPLOITS DISPONÍVEIS", style="dim"),
+            title_align="left",
+            box=box.ROUNDED,
+            border_style=color,
+            padding=(1, 2),
+            expand=True
+        )
+
+        prompt_side = Text()
+        prompt_side.append(f"O que {player_name}\nvai fazer?\n\n\n", style="dim white")
+        prompt_side.append(">> INITIALIZE PROTOCOL...", style=color)
+
+        prompt_panel = Panel(
+            prompt_side, 
+            box=box.ROUNDED, 
+            border_style=color, 
+            padding=(1, 2), 
+            expand=True
+        )
+
+        bottom_layout = Table.grid(padding=(0, 1), expand=True)
+        bottom_layout.add_column(ratio=6)
+        bottom_layout.add_column(ratio=4) 
+        bottom_layout.add_row(exploit_panel, prompt_panel)
+
+        console.print(top_layout)
+        console.print()
+        console.print(bottom_layout)
+        console.print(Text("\n  COBALT MAINFRAME v1.0.4  |  SYSTEM NODE OVERVIEW", style="dim black on black"), justify="left")
+
+def enemy_life(current_enemy):
+    name = str(current_enemy.Name)
+    if len(name) > 24: name = name[:21] + "..."
     
-    print(f"{C_BORDER}║ {C_ALERT}COBALT VIRUS v1.0.2{C_BORDER}                                      {C_ALERT}VIRUS MODE OVERVIEW {C_BORDER}║{RESET}")
-    print(f"{C_BORDER}╠{'═' * 39}╦{'═' * 38}╣{RESET}")
+    enemy_def = getattr(current_enemy, 'Defense', 0)
     
-    nome = str(current_enemy.Name)
-    if len(nome) > 20: 
-        nome = nome[:17] + "..."
-    espacos_esq = 39 - (15 + text_size(nome))
-    espacos_dir = 38 - (12 + text_size(integrity_bar(current_enemy.Health, current_enemy.MaxHealth)))
+    hp_b = make_bar(current_enemy.Health, current_enemy.MaxHealth, width=25)
+    def_b = make_bar(enemy_def, 100, width=25)
+    
+    hp_pct = f"{int(current_enemy.Health)}/{int(current_enemy.MaxHealth)}"
+    def_pct = f"{int(enemy_def)}%"
 
-    bloco_esquerdo = f" ANOMALY NAME: {C_DATA}{nome}{RESET}" + (" " * espacos_esq)
-    bloco_direito = f" INTEGRITY: {C_DATA}{integrity_bar(current_enemy.Health, current_enemy.MaxHealth)}{RESET}" + (" " * espacos_dir)
+    enemy_text = Text()
+    enemy_text.append(name, style="bold red")
+    enemy_text.append(" [VIRUS]", style="bold red")
+    enemy_text.append("  NV.1\n\n", style="dim red") 
+    
+    enemy_text.append("HP  ", style="dim")
+    enemy_text.append(f"{hp_b}", style="red")
+    enemy_text.append(f"  {hp_pct}\n", style="red")
 
-    print(f"{C_BORDER}║{RESET}{bloco_esquerdo}{C_BORDER}║{RESET}{bloco_direito}{C_BORDER}║{RESET}")
+    enemy_text.append("DEF ", style="dim")
+    enemy_text.append(f"{def_b}", style="blue") 
+    enemy_text.append(f"  {def_pct}", style="blue")
 
-    print(f"{C_BORDER}╚{'═' * 39}╩{'═' * 38}╝{RESET}")
+    console.print(Panel(
+        enemy_text, 
+        box=box.ROUNDED, 
+        border_style="red", 
+        padding=(1, 2), 
+        expand=False
+    ))
+    console.print()

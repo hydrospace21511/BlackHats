@@ -25,27 +25,27 @@ class EndingManager:
 class RouteManager:
 
     BAD_ROUTE = [
-        "Pioneer_Credit_Union",
-        "Apex_Investments_DB",
-        "Cayman_Offshore_Net",
-        "MacroGrid_Tech_Host",
-        "Global_Reserve_Node",
+        "Cédulas Falsas",
+        "Cartão Raspado",
+        "Conta Fantasma",
+        "Acesso Central",
+        "Cláusula Final"
     ]
 
     GOOD_ROUTE = [
-        "FakeWin_Registry",
-        "DebtHounds_Inc",
-        "ShadowBet_Servers",
-        "LPD_Evidence_Archive",
-        "ACSD_Public_Comms",
+        "Casa de Apostas",
+        "Cobrança Forçada",
+        "Acordo Quebrado",
+        "Arquivo Negro",
+        "Preço Final"
     ]
 
     TRUE_ROUTE = [
-        "CityCare_Pharmacy_Log",
-        "Aegis_Health_Insurance",
-        "Metro_Hospital_Arch",
-        "Blackwood_Psych_Ward",
-        "Dept_of_Vital_Stats",
+        "Linha Partida",
+        "Único Responsável",
+        "Sala Isolada",
+        "Imagem Oculta",
+        "Eco Final"
     ]
 
     ROUTES = {
@@ -76,7 +76,7 @@ class RouteManager:
             choice['display_position'] = position
         return choices
 
-    def save_progress(self, badges, route_history, ending=None, mission_history=None, level=None, inventory=None, tasks=None, chests=None):
+    def save_progress(self, badges, route_history, ending=None, mission_history=None, level=None, inventory=None, tasks=None, chests=None, rebirths=None):
         route_history = list(route_history or [])
         ending = ending or EndingManager().evaluate(route_history)
         badges = dict(badges or {})
@@ -88,7 +88,7 @@ class RouteManager:
         badges['Bad Ending']    = badges.get('Bad Ending', False)    or bool(completed_tasks >= 5 and ending == 'ENDING_BAD')
         badges['???']           = badges.get('???', False)           or bool(completed_tasks >= 5 and ending == 'ENDING_TRUE')
 
-        badges['Platina'] = badges.get('Platina', False) or (
+        badges['DarkHats'] = badges.get('DarkHats', False) or (
             badges['Normal Ending'] and 
             badges['Good Ending'] and 
             badges['Bad Ending'] and 
@@ -108,6 +108,7 @@ class RouteManager:
             "chests": int(chests) if chests is not None else stats.get("chests", 0),
             "ending": ending,
             "seed": self.seed,
+            "rebirths": int(rebirths) if rebirths is not None else stats.get("rebirths", 0)
         }
         self.progress_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
         return payload
@@ -152,10 +153,11 @@ class RouteManager:
         chests = int(payload.get('chests', 0))
         tasks = int(payload.get('tasks', 0))
         chests = int(payload.get('chests', 0))
+        rebirths = int(payload.get('rebirths', 0))
 
         if update_stats:
             import Game.Main.Player as PlayerStats
-            PlayerStats.set_lifetime_stats(tasks, chests)
+            PlayerStats.set_lifetime_stats(tasks, chests, rebirths)
 
         return {
             "level": int(payload.get("level", max(1, min(5, len(route_history) + 1)))),
@@ -166,4 +168,5 @@ class RouteManager:
             "chests": chests,
             "ending": ending,
             "badges": badges_payload,
+            "rebirths": rebirths,
         }

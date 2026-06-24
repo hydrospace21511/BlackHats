@@ -1,7 +1,9 @@
 import os
 import sys
 import pygame
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+attack_archive = os.path.dirname(os.path.abspath(__file__))
 from time import sleep
 from Game.Classes.SecretClasses.Hatsune import HatsuneMikuClass
 from Game.Classes.SecretClasses.CorruptedHatsune import CorruptedHatsuneMikuClass

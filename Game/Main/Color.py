@@ -25,6 +25,7 @@ def cText(message, type="info"):
          case "white":
             print(f"{Fore.WHITE}{message}")
 
+#cText("oi", "red")
         
                 
     

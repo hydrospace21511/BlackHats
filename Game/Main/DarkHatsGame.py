@@ -5,6 +5,7 @@ from time import sleep
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
+from Game.Main.COBALT import COBALT_FS
 from Game.ItemsLib.Items.TestItem import TestItemClass
 from Game.ItemsLib.Items.TestItem2 import TestItem2Class
 from Game.Classes.SecurityAnalyticClass import SecurityAnalyticClass
@@ -31,6 +32,46 @@ from Game.Main.Color import cText
 init(autoreset=True)
 
 from Game.Attacks.SpecialAttacks import (DecompilerAttack, AlgorithmCloneAttack, ProtectionBypassAttack, InternalAccessAttack, BaitingAttack, FirewallAttack, SecurityPatchAttack, DesintegrationAttack, MikuMikuBeamAttack, NegativeSpaceAttack, GiveDamageAttack, PneumoultramicroscopicsilicovolcanoconioticAttack, WorldIsMineAttack, TellYourWorldAttack, SystemOverrideAttack)
+
+true_level = 0
+def get_key():
+    if os.name == 'nt':
+        import msvcrt
+        key = msvcrt.getch()
+        if key == b'\xe0': 
+            special = msvcrt.getch()
+            if special == b'H': return 'UP'
+            if special == b'P': return 'DOWN'
+            if special == b'K': return 'LEFT' 
+            if special == b'M': return 'RIGHT' 
+        elif key in (b'\r', b'\n'):
+            return 'ENTER'
+        elif key == b' ':
+            return 'SPACE'
+        return None
+    else:
+        import tty, termios, sys
+        fd = sys.stdin.fileno()
+        old_settings = termios.tcgetattr(fd)
+        try:
+            tty.setraw(sys.stdin.fileno())
+            ch = sys.stdin.read(1)
+            if ch == '\x1b': 
+                ch2 = sys.stdin.read(1)
+                if ch2 == '[':
+                    ch3 = sys.stdin.read(1)
+                    if ch3 == 'A': return 'UP'
+                    if ch3 == 'B': return 'DOWN'
+                    if ch3 == 'C': return 'RIGHT' 
+                    if ch3 == 'D': return 'LEFT' 
+            elif ch in ('\r', '\n'):
+                return 'ENTER'
+            elif ch == ' ':
+                return 'SPACE'
+            return None
+        finally:
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+
 
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -77,6 +118,8 @@ class DarkHatsGame:
         }
 
     def start(self):
+       # print(f"[DEBUG COBALT] Your level is actually > : {self.Player.Level}")
+
         clear()
 
         self.ClassesMenu._Classes() 
@@ -85,9 +128,9 @@ class DarkHatsGame:
         while True:
             while True:
                 if self.Player.Class == self.CorruptedHatsuneMiku:
-                    cText("▶  Choose your class >>", "red")
+                    cText("▶  Digite sua classe >>", "red")
                 else:
-                    cText("▶  Choose your class >>", "green")
+                    cText("▶  Digite sua classe >>", "green")
                 
                 PlayerClassInput = str(input("").strip().upper())
 
@@ -186,13 +229,13 @@ class DarkHatsGame:
                         if ClassPage == 1: self.ClassesMenu._Classes() 
                         elif ClassPage == 2: self.ClassesMenu._Classes2() 
                         elif ClassPage == 3: self.ClassesMenu._Classes3() 
-                        cText("⚠  ERROR 04: Class not found", "red")
+                        cText("⚠  ERRO 04: Classe não encontrada", "red")
                         continue
 
-            cText("▶  Enter your name >>", "green")            
+            cText("▶  Digite seu nome >>", "green")            
             self.Player.Name = input("")
             if self.Player.Name == "Return":
-                print("Returning to class selection...")
+                print("Retornando para a seleção de classe...")
                 clear()
                 continue
             else:
@@ -230,23 +273,56 @@ class DarkHatsGame:
         current_enemy.MaxHealth += int(self.Player.Level * 15)
         current_enemy.Health = current_enemy.MaxHealth
         active_cooldowns = {}
-
-        enemy_life(current_enemy, integrity_bar)
-        display_battle_ui(self.Player.Integrity, self.Player.Class.Integrity, self.Player.Defense, self.Player.Class.Attacks.keys(), self.Player.Class.ui_color)
-        
+   
         while True:
+            actual_selection = 0 
+            
             while True:
-                if type(self.Player.Class) == type(self.CorruptedHatsuneMiku):
-                    cText("▶  Choose an exploit >>", "red")
-                else:
-                    cText("▶  Choose an exploit >>", "green")
-                    
-                Attack = input("")    
+
+                attack_list = list(self.Player.Class.Attacks.keys())
+                total_attacks = len(attack_list)
                 
+                while True:
+                    clear()
+                    enemy_life(current_enemy)
+
+                    nome_classe = getattr(self.Player.Class, 'Name', "HACKER")
+                    
+                    display_battle_ui(
+                        player_integrity=self.Player.Integrity, 
+                        max_integrity=self.Player.Class.Integrity, 
+                        player_defense=self.Player.Defense, 
+                        available_attacks=attack_list, 
+                        ui_color=self.Player.Class.ui_color,
+                        player_name=self.Player.Name,
+                        class_name=PlayerClass.raceName,
+                        selected_index=actual_selection
+                    )
+                    
+                    tecla = get_key()
+                    
+                    if tecla == 'DOWN':
+                        actual_selection = (actual_selection + 2) % total_attacks
+                    elif tecla == 'UP':
+                        actual_selection = (actual_selection - 2) % total_attacks
+                    elif tecla == 'RIGHT':
+                        actual_selection = (actual_selection + 1) % total_attacks  
+                    elif tecla == 'LEFT':
+                        actual_selection = (actual_selection - 1) % total_attacks  
+                    elif tecla in ('ENTER', 'SPACE'):
+                        Attack = attack_list[actual_selection]
+                        break
+
+                clear()
+                enemy_life(current_enemy)
+                display_battle_ui(self.Player.Integrity, self.Player.Class.Integrity, self.Player.Defense, self.Player.Class.Attacks.keys(), self.Player.Class.ui_color, selected_index=actual_selection)
+                cText(f"\n>> EXECUTANDO PROTOCOLO: {Attack.upper()}...", "green")
+                sleep(1)
+
                 if Attack == "Reverse" and getattr(self.Player.Class, 'Decompiled', False):
                     clear()
-                    enemy_life(current_enemy, integrity_bar)
-                    display_battle_ui(self.Player.Integrity, self.Player.Class.Integrity, self.Player.Defense, self.Player.Class.Attacks.keys(), self.Player.Class.ui_color)
+                    enemy_life(current_enemy)
+                    display_battle_ui(self.Player.Integrity, self.Player.Class.Integrity, self.Player.Defense, self.Player.Class.Attacks.keys(), self.Player.Class.ui_color, selected_index=actual_selection)
                     cText(" Reversing the decompilation...", "warn")
                     sleep(2)
                     cText(" Decompilation reversed! Your original stats and attacks were restored!", "positive")
@@ -256,19 +332,21 @@ class DarkHatsGame:
                     self.Player.Class.Defense = self.Player.Class.DefenseBackup
                     self.Player.Class.Integrity = self.Player.Class.IntegrityBackup
                     clear()
-                
+
                 if Attack not in self.Player.Class.Attacks:
                     clear()
-                    enemy_life(current_enemy, integrity_bar)
-                    display_battle_ui(self.Player.Integrity, self.Player.Class.Integrity, self.Player.Defense, self.Player.Class.Attacks.keys(), self.Player.Class.ui_color)
-                    cText("⚠  ERROR 04: Exploit not found", "red")
+                    enemy_life(current_enemy)
+                    display_battle_ui(self.Player.Integrity, self.Player.Class.Integrity, self.Player.Defense, self.Player.Class.Attacks.keys(), self.Player.Class.ui_color, selected_index=actual_selection)
+                    cText("⚠  ERRO 04: Exploit não encontrado", "red")
+                    sleep(2) 
                     continue
 
                 if Attack in active_cooldowns and active_cooldowns[Attack] > 0:
                     clear()
-                    enemy_life(current_enemy, integrity_bar)
-                    display_battle_ui(self.Player.Integrity, self.Player.Class.Integrity, self.Player.Defense, self.Player.Class.Attacks.keys(), self.Player.Class.ui_color)
-                    cText(f"⚠  ACCESS DENIED: '{Attack}' is cooling down! ({active_cooldowns[Attack]} turns left)", "yellow")
+                    enemy_life(current_enemy)
+                    display_battle_ui(self.Player.Integrity, self.Player.Class.Integrity, self.Player.Defense, self.Player.Class.Attacks.keys(), self.Player.Class.ui_color, selected_index=actual_selection)
+                    cText(f"⚠  ACCESSO NEGADO: '{Attack}' está em cooldown! ({active_cooldowns[Attack]} turnos restantes)", "yellow")
+                    sleep(2.5) 
                     continue
                 
                 raw_attack = self.Player.Class.Attacks[Attack]
@@ -294,20 +372,20 @@ class DarkHatsGame:
                     self.Player.Integrity -= Attack_Info
 
                 if hasattr(current_enemy, "SkipTurn") and current_enemy.SkipTurn == True:
-                    cText(">> Enemy turn skipped!", "yellow")
+                    cText(">> Turno do inimigo skippado!", "yellow")
                     current_enemy.SkipTurn = False
                     sleep(2)
                     clear()
-                    enemy_life(current_enemy, integrity_bar)
-                    display_battle_ui(self.Player.Integrity, self.Player.Class.Integrity, self.Player.Defense, self.Player.Class.Attacks.keys(), self.Player.Class.ui_color)
+                    enemy_life(current_enemy)
+                    display_battle_ui(self.Player.Integrity, self.Player.Class.Integrity, self.Player.Defense, self.Player.Class.Attacks.keys(), self.Player.Class.ui_color, selected_index=actual_selection)
                     continue
                 else:
                     clear()
-                    enemy_life(current_enemy, integrity_bar)
-                    display_battle_ui(self.Player.Integrity, self.Player.Class.Integrity, self.Player.Defense, self.Player.Class.Attacks.keys(), self.Player.Class.ui_color)
+                    enemy_life(current_enemy)
+                    display_battle_ui(self.Player.Integrity, self.Player.Class.Integrity, self.Player.Defense, self.Player.Class.Attacks.keys(), self.Player.Class.ui_color, selected_index=actual_selection)
                     final_damage = Damage(Attack_Info, current_enemy.Defense)
                     current_enemy.Health -= final_damage
-                    cText(f" >> You executed [{Attack}]! {current_enemy.Name} took {final_damage:.1f} damage!", "positive")
+                    cText(f" >> Você executou [{Attack}]! {current_enemy.Name} levou {final_damage:.1f} de dano!", "positive")
 
                 if hasattr(self.Player.Class, 'Cooldowns') and Attack in self.Player.Class.Cooldowns:
                     active_cooldowns[Attack] = self.Player.Class.Cooldowns[Attack]
@@ -315,10 +393,10 @@ class DarkHatsGame:
                 if current_enemy.Health <= 0:
                     sleep(1.5)                                          
                     clear()
-                    cText(f"\n   [>> NODE COMPROMISED <<]\n < -- {current_enemy.Name} Defeated! -- >\n", "green")
+                    cText(f"\n   [>> NODE COMPROMETIDO <<]\n < -- {current_enemy.Name} hackeado! -- >\n", "green")
                     sleep(4)
                     clear()
-                    self.Player.Level += 1
+                    
                     current_enemy.Health += current_enemy.MaxHealth * 0.5
                     import Game.Main.Player as PlayerStats
                     PlayerStats.record_task_completed()
@@ -353,15 +431,13 @@ class DarkHatsGame:
                     self.Player.Integrity += Integrity_boost
                     
                     clear()
-                    enemy_life(current_enemy, integrity_bar)
-                    display_battle_ui(self.Player.Integrity, self.Player.Class.Integrity, self.Player.Defense, self.Player.Class.Attacks.keys(), self.Player.Class.ui_color)
-                    sleep(3)
+                    enemy_life(current_enemy)
                     cText(f" ur level is {self.Player.Level}, how u managed to do that? (this message will change)", "warn")
                     sleep(3)
                     return 
 
                 sleep(1.5)
-                break 
+                break
 
             enemy_attack_name, enemy_attack_dmg = current_enemy.random_attack()
             enemy_final_damage = Damage(enemy_attack_dmg, self.Player.Defense)
@@ -372,9 +448,9 @@ class DarkHatsGame:
 
             if self.Player.Integrity <= 0:
                 clear()
-                cText(f"\n        [!]Error 404[!] \n < -- You have been hacked. -- >\n", "red")
+                cText(f"\n        [!]Erro 404[!] \n < -- Você foi hackeado -- >\n", "red")
                 sleep(2)
-                enemy_life(current_enemy, integrity_bar)
+                enemy_life(current_enemy)
                 display_battle_ui(self.Player.Integrity, self.Player.Class.Integrity, self.Player.Defense, self.Player.Class.Attacks.keys(), self.Player.Class.ui_color)
                 sleep(3)
                 clear()
@@ -394,5 +470,5 @@ class DarkHatsGame:
                 self.Player.Defense = 99
                 
             clear() 
-            enemy_life(current_enemy, integrity_bar)
+            enemy_life(current_enemy)
             display_battle_ui(self.Player.Integrity, self.Player.Class.Integrity, self.Player.Defense, self.Player.Class.Attacks.keys(), self.Player.Class.ui_color)
