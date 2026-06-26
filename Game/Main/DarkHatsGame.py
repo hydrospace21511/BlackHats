@@ -442,9 +442,9 @@ class DarkHatsGame:
                     clear()
                     #enemy_life(current_enemy)
                     # cText(f" ur level is {self.Player.Level}, how u managed to do that? (this message will change)", "warn")
-                    cText(f"A versão do seu sistema (4) está atualmente desatualizada.", "error")
+                    cText(f"A versão do seu sistema ({self.Player.Level}.0)está atualmente desatualizada.", "error")
                     sleep(1.5)
-                    cText(f"Gostaria de atualizar a versão do seu sistema para 5?", "green")
+                    cText(f"Gostaria de atualizar a versão do seu sistema para {self.Player.Level + 1}.0?", "green")
                     sleep(1)
                     input(f"\n  {Fore.LIGHTBLACK_EX}[ Pressione ENTER para continuar ]{Style.RESET_ALL}")
                     clear()
@@ -463,7 +463,7 @@ class DarkHatsGame:
                     sleep(1)
                     clear()
                     sleep(0.5)
-                    cText(" Sistema atualizado com sucesso. Versão 5.0 instalada.", "positive")
+                    cText(f" Sistema atualizado com sucesso. Versão {self.Player.Level + 1}.0 instalada.", "positive")
                     sleep(1.5)
                     input(f"\n  {Fore.LIGHTBLACK_EX}[ Pressione ENTER para ver as novidades ]{Style.RESET_ALL}")
                                         
@@ -482,9 +482,9 @@ class DarkHatsGame:
             if self.Player.Integrity <= 0:
                 clear()
                 cText(f"\n        [!]Erro 404[!] \n < -- Você foi hackeado -- >\n", "red")
-                sleep(2)
-                enemy_life(current_enemy)
-                display_battle_ui(self.Player.Integrity, self.Player.Class.Integrity, self.Player.Defense, self.Player.Class.Attacks.keys(), self.Player.Class.ui_color)
+                sleep(2)    
+               # enemy_life(current_enemy)
+               # display_battle_ui(self.Player.Integrity, self.Player.Class.Integrity, self.Player.Defense, self.Player.Class.Attacks.keys(), self.Player.Class.ui_color)
                 sleep(3)
                 clear()
                 return

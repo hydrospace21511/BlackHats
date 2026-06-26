@@ -887,17 +887,17 @@ class COBALT_FS:
         clear()
         print(f"{Fore.RED}╔════════════════════════════════════════════╗")
         
-        line_1 = f" {Fore.YELLOW}⚠️  WARNING: SYSTEM INTEGRITY AT RISK"
+        line_1 = f" {Fore.YELLOW}⚠️  WARNING: SYSTEM AT RISK"
         pad_1 = 44 - visual_width(line_1)
         print(f"║{line_1}{' ' * pad_1}{Fore.RED}║")
         
         print(f"╠════════════════════════════════════════════╣")
         
-        line_2 = " Connecting to highly secure server..."
+        line_2 = " Connecting to serve..."
         pad_2 = 44 - visual_width(line_2)
         print(f"║{line_2}{' ' * pad_2}║")
         
-        line_3 = " Executing malware injection..."
+        line_3 = " Executing."
         pad_3 = 44 - visual_width(line_3)
         print(f"║{line_3}{' ' * pad_3}║")
         
@@ -981,11 +981,11 @@ class COBALT_FS:
         print(f"╠════════════════════════════════════════════╣")
         
         lines = [
-            " Lembrete para a equipe DarkHats:",
-            " Hydro é lindo",
-            " Preciso de um café",
-            " DarkHats Updater é lindo",
-            " - Admin"
+            " Finalmente consegui um emprego.",
+            " Talvez minha mãe fique feliz com isso!",
+            " Quando conseguir meu primeiro salário,",
+            " com toda certeza mostrarei para ela.",
+            #""
         ]
         for line in lines:
             pad = 44 - visual_width(line)

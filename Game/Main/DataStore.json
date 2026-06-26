@@ -1,38 +1,24 @@
 {
-  "level": 5,
+  "level": 0,
   "badges": {
-    "Social Engineer": true,
+    "Social Engineer": false,
     "Hardware Specialist": false,
-    "Security Bypass": true,
+    "Security Bypass": false,
     "Reverse Engineer": false,
     "Mr.Robot": false,
-    "Normal Ending": true,
+    "Normal Ending": false,
     "Good Ending": false,
     "Bad Ending": false,
     "???": false,
-    "DarkHats": false,
-    "Platina": false
+    "DarkHats": false
   },
   "route_history": [
-    "BAD",
-    "TRUE",
-    "GOOD",
-    "BAD",
-    "TRUE",
-    "GOOD"
   ],
   "mission_history": [
-    "C\u00e9dulas Falsas",
-    "\u00danico Respons\u00e1vel",
-    "Acordo Quebrado",
-    "Acesso Central",
-    "Eco Final",
-    "Pre\u00e7o Final"
   ],
-  "inventory": [],
-  "tasks": 3,
+    "inventory": [],
+  "tasks": 0,
   "chests": 0,
-  "ending": "ENDING_NORMAL",
-  "seed": 7,
-  "rebirths": 0
+  "ending": "",
+  "seed": 7
 }
