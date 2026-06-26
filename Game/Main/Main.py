@@ -6,7 +6,7 @@ from colorama import init
 init(autoreset=True)
 
 sistema = COBALT()
-#sistema._check_space()
+sistema._check_space()
 explorer = COBALT_FS()
 explorer.run()
 sistema.start()
