@@ -252,7 +252,7 @@ class COBALT:
         spinner = Spinner("dots", text="[green]Preparando o ambiente COBALT...", style="bold green")
         
         with Live(console=console, refresh_per_second=20) as live:
-            for _ in range(50):
+            for _ in range(75):
                 content_loading = Group(
                     top_text,
                     Align.center(spinner),
