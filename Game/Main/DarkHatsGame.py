@@ -303,7 +303,7 @@ class DarkHatsGame:
                         player_defense=self.Player.Defense, 
                         available_attacks=attack_list, 
                         ui_color=self.Player.Class.ui_color,
-                        player_name=self.Player.Name,
+                        player_name=self.Player.Name, 
                         class_name=PlayerClass.raceName,
                         selected_index=actual_selection
                     )
@@ -324,14 +324,16 @@ class DarkHatsGame:
 
                 clear()
                 enemy_life(current_enemy)
-                display_battle_ui(self.Player.Integrity, self.Player.Class.Integrity, self.Player.Defense, self.Player.Class.Attacks.keys(), self.Player.Class.ui_color, selected_index=actual_selection)
+                #player_name=self.Player.Name, class_name=PlayerClass.raceName,
+                #display_battle_ui()
+                display_battle_ui(self.Player.Integrity, self.Player.Class.Integrity, self.Player.Defense, self.Player.Class.Attacks.keys(), self.Player.Class.ui_color, player_name=self.Player.Name, class_name=PlayerClass.raceName, selected_index=actual_selection)
                 cText(f"\n>> EXECUTANDO PROTOCOLO: {Attack.upper()}...", "green")
                 sleep(1)
 
                 if Attack == "Reverse" and getattr(self.Player.Class, 'Decompiled', False):
                     clear()
                     enemy_life(current_enemy)
-                    display_battle_ui(self.Player.Integrity, self.Player.Class.Integrity, self.Player.Defense, self.Player.Class.Attacks.keys(), self.Player.Class.ui_color, selected_index=actual_selection)
+                    display_battle_ui(self.Player.Integrity, self.Player.Class.Integrity, self.Player.Defense, self.Player.Class.Attacks.keys(), self.Player.Class.ui_color, player_name=self.Player.Name, class_name=PlayerClass.raceName, selected_index=actual_selection)
                     cText(" Reversing the decompilation...", "warn")
                     sleep(2)
                     cText(" Decompilation reversed! Your original stats and attacks were restored!", "positive")
@@ -345,7 +347,7 @@ class DarkHatsGame:
                 if Attack not in self.Player.Class.Attacks:
                     clear()
                     enemy_life(current_enemy)
-                    display_battle_ui(self.Player.Integrity, self.Player.Class.Integrity, self.Player.Defense, self.Player.Class.Attacks.keys(), self.Player.Class.ui_color, selected_index=actual_selection)
+                    display_battle_ui(self.Player.Integrity, self.Player.Class.Integrity, self.Player.Defense, self.Player.Class.Attacks.keys(), self.Player.Class.ui_color, player_name=self.Player.Name, class_name=PlayerClass.raceName, selected_index=actual_selection)
                     cText("⚠  ERRO 04: Exploit não encontrado", "red")
                     sleep(2) 
                     continue
@@ -353,7 +355,7 @@ class DarkHatsGame:
                 if Attack in active_cooldowns and active_cooldowns[Attack] > 0:
                     clear()
                     enemy_life(current_enemy)
-                    display_battle_ui(self.Player.Integrity, self.Player.Class.Integrity, self.Player.Defense, self.Player.Class.Attacks.keys(), self.Player.Class.ui_color, selected_index=actual_selection)
+                    display_battle_ui(self.Player.Integrity, self.Player.Class.Integrity, self.Player.Defense, self.Player.Class.Attacks.keys(), self.Player.Class.ui_color, player_name=self.Player.Name, class_name=PlayerClass.raceName, selected_index=actual_selection)
                     cText(f"⚠  ACCESSO NEGADO: '{Attack}' está em cooldown! ({active_cooldowns[Attack]} turnos restantes)", "yellow")
                     sleep(2.5) 
                     continue
@@ -386,12 +388,12 @@ class DarkHatsGame:
                     sleep(2)
                     clear()
                     enemy_life(current_enemy)
-                    display_battle_ui(self.Player.Integrity, self.Player.Class.Integrity, self.Player.Defense, self.Player.Class.Attacks.keys(), self.Player.Class.ui_color, selected_index=actual_selection)
+                    display_battle_ui(self.Player.Integrity, self.Player.Class.Integrity, self.Player.Defense, self.Player.Class.Attacks.keys(), self.Player.Class.ui_color, player_name=self.Player.Name, class_name=PlayerClass.raceName, selected_index=actual_selection)
                     continue
                 else:
                     clear()
                     enemy_life(current_enemy)
-                    display_battle_ui(self.Player.Integrity, self.Player.Class.Integrity, self.Player.Defense, self.Player.Class.Attacks.keys(), self.Player.Class.ui_color, selected_index=actual_selection)
+                    display_battle_ui(self.Player.Integrity, self.Player.Class.Integrity, self.Player.Defense, self.Player.Class.Attacks.keys(), self.Player.Class.ui_color, player_name=self.Player.Name, class_name=PlayerClass.raceName, selected_index=actual_selection)
                     final_damage = Damage(Attack_Info, current_enemy.Defense)
                     current_enemy.Health -= final_damage
                     cText(f" >> Você executou [{Attack}]! {current_enemy.Name} levou {final_damage:.1f} de dano!", "positive")
@@ -442,9 +444,9 @@ class DarkHatsGame:
                     clear()
                     #enemy_life(current_enemy)
                     # cText(f" ur level is {self.Player.Level}, how u managed to do that? (this message will change)", "warn")
-                    cText(f"A versão do seu sistema ({self.Player.Level}.0)está atualmente desatualizada.", "error")
+                    cText(f"A versão do seu sistema ({self.Player.Level - 1}.0) está atualmente desatualizada.", "error")
                     sleep(1.5)
-                    cText(f"Gostaria de atualizar a versão do seu sistema para {self.Player.Level + 1}.0?", "green")
+                    cText(f"Gostaria de atualizar a versão do seu sistema para {self.Player.Level}.0?", "green")
                     sleep(1)
                     input(f"\n  {Fore.LIGHTBLACK_EX}[ Pressione ENTER para continuar ]{Style.RESET_ALL}")
                     clear()
@@ -463,10 +465,23 @@ class DarkHatsGame:
                     sleep(1)
                     clear()
                     sleep(0.5)
-                    cText(f" Sistema atualizado com sucesso. Versão {self.Player.Level + 1}.0 instalada.", "positive")
+                    cText(f" Sistema atualizado com sucesso. Versão {self.Player.Level}.0 instalada.", "positive")
                     sleep(1.5)
                     input(f"\n  {Fore.LIGHTBLACK_EX}[ Pressione ENTER para ver as novidades ]{Style.RESET_ALL}")
-                                        
+                    if self.Player.Level == 2:
+                        clear()
+                        cText(f"Você recebeu 2 novas mensagens:", "green")
+                        sleep(1)
+                        cText(f"    Mãe,", "green")
+                        sleep(1)
+                        cText(f"    Morgan.", "green")
+                        sleep(1)
+                        cText(f"Você pode vê-las na aba 'Documentos' do seu sistema!", "green")
+                        input(f"\n  {Fore.LIGHTBLACK_EX}[ Pressione ENTER para sair ]{Style.RESET_ALL}")
+                    else:
+                        cText("Update muito massa", "green")
+                        input(f"\n  {Fore.LIGHTBLACK_EX}[ Pressione ENTER para sair ]{Style.RESET_ALL}")
+
                     return 
 
                 sleep(1.5)
@@ -504,4 +519,4 @@ class DarkHatsGame:
                 
             clear() 
             enemy_life(current_enemy)
-            display_battle_ui(self.Player.Integrity, self.Player.Class.Integrity, self.Player.Defense, self.Player.Class.Attacks.keys(), self.Player.Class.ui_color)
+            display_battle_ui(self.Player.Integrity, self.Player.Class.Integrity, self.Player.Defense, self.Player.Class.Attacks.keys(), self.Player.Class.ui_color, player_name=self.Player.Name, class_name=PlayerClass.raceName, selected_index=actual_selection)

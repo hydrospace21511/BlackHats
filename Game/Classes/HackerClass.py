@@ -15,8 +15,8 @@ class HackerClass:
             "Cross-Site Scripting": (28, 4),
             "Buffer Overflow": (40, 5),
             "Denial of Service": (46, 6),
+            "Debug":(10000, 0)
         #    "God's Wrath": Regen + 100000000,
-        "Pneumoultramicroscopicsilicovolcanoconiotic": 'ball cancer'
         }
         self.active_cooldowns = {
             "SQL Injection": 1,

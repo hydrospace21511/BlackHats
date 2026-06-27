@@ -507,6 +507,7 @@ class COBALT_FS:
             "root/Jogos": [
                 {"name": "..",                       "type": "BACK", "icon": "🔙", "color": Fore.YELLOW, "target": "root"},
                 {"name": "SnakeGame.flat",          "type": "EXEC", "icon": "⚙️", "color": Fore.WHITE},
+                {"name": "RobuxGen_v2.exe", "type": "EXEC", "icon": "⚙️", "color": Fore.WHITE}
             ],
 
             "root/Conquistas": [
@@ -544,7 +545,12 @@ class COBALT_FS:
                 self.file_system["root"].remove({"name": "Instruções.txt", "type": "FILE", "icon": "📄", "color": Fore.WHITE})
             except ValueError:
                 pass
-
+        
+        if self.player_level >= 2:
+            self.file_system["root/Documentos"].remove({"name": "Notas.txt", "type": "FILE", "icon": "📄", "color": Fore.WHITE})
+            self.file_system["root/Documentos"].insert(2, {"name": "Mãe", "FILE": "DIR", "icon": "📄", "color": Fore.WHITE,"preview": " \"Filho, vi que finalmente conseguiu um trabalho...\""})        
+            self.file_system["root/Documentos"].insert(3, {"name": "Morgan", "FILE": "DIR", "icon": "📄", "color": Fore.WHITE,"preview": " \"Vejo que conseguiu terminar sua primeira tarefa...\""}) 
+        
         if self.player_level >= 1:
             self.route_level = min(5, max(1, len(self.route_history) + 1))
             choices = sorted(self.route_manager.get_choices_for_level(self.route_level), key=lambda item: item['display_position'])
@@ -616,21 +622,28 @@ class COBALT_FS:
             text_color = Fore.GREEN if is_selected else f['color']
             
             item_string = f" {arrow} {f['icon']} {f['name']}"
-
             visual_length = visual_width(item_string)
             space = " " * (self.inner_w - visual_length)
-     
             print(f"{C_BORDER}║{text_color}{item_string}{space}{C_BORDER}║")
             
         print(f"{C_BORDER}╠{'═' * self.inner_w}╣")
-        
-        status = (
-            f" Status: {len(self.files)} itens | "
-            f"Player Lvl: {self.player_level} | "
-            f"Tasks: {self.stats.get('tasks', 0)} | "
-            f"Baús: {self.stats.get('chests', 0)} | "
-            f"Rebirths: {self.stats.get('rebirths', 0)}" 
-        )
+
+        item_selecionado = self.files[self.cursor]
+        preview = item_selecionado.get('preview', '')
+
+        if preview:
+            status = f" {preview}"
+        else:
+            status = (
+                f" Status: {len(self.files)} itens | "
+                f"Player Lvl: {self.player_level} | "
+                f"Tasks: {self.stats.get('tasks', 0)} | "
+                f"Baús: {self.stats.get('chests', 0)} | "
+                f"Rebirths: {self.stats.get('rebirths', 0)}"
+            )
+
+           
+
         pad_status = self.inner_w - visual_width(status)
         print(f"{C_BORDER}║{Fore.LIGHTBLACK_EX}{status}{' ' * pad_status}{C_BORDER}║")
         print(f"{C_BORDER}╚{'═' * self.inner_w}╝{Style.RESET_ALL}")
@@ -679,6 +692,10 @@ class COBALT_FS:
            
         elif type == "FILE" and name == "DarkHats.txt":
             self._open_DarkHatsText()
+
+        elif type == "EXEC" and name == "RobuxGen_v2.exe":
+            from Game.Main.Games.RobuxGame import robux_game
+            robux_game()    
 
         elif type == "FILE" and name == "ResetData.flat":
             clear()

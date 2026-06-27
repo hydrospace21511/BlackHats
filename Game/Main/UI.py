@@ -69,7 +69,7 @@ def get_key():
 
 from rich.table import Table
 
-def display_battle_ui(player_integrity, max_integrity, player_defense, available_attacks, ui_color, player_name="hydrogostosao", class_name="sla", selected_index=0):
+def display_battle_ui(player_integrity, max_integrity, player_defense, available_attacks, ui_color, player_name, class_name, selected_index=0):
         color = to_rich_color(ui_color)
 
         hp_bar  = make_bar(player_integrity, max_integrity, width=20)
