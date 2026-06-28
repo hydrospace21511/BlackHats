@@ -59,12 +59,10 @@ class RouteManager:
         import sys
         import shutil
         if getattr(sys, 'frozen', False):
-            # Executável compilado (ex: PyInstaller)
             exe_dir = Path(sys.executable).parent
             self.progress_path = exe_dir / "DataStore.json"
             self.legacy_progress_path = exe_dir / "route_progress.json"
             
-            # Se não houver arquivo de progresso no diretório do executável, copia o modelo padrão embutido
             if not self.progress_path.exists():
                 bundled_template = Path(sys._MEIPASS) / "Game" / "Main" / "DataStore.json"
                 if bundled_template.exists():
@@ -73,7 +71,6 @@ class RouteManager:
                     except Exception:
                         pass
         else:
-            # Execução normal via script
             self.progress_path = Path(__file__).with_name("DataStore.json")
             self.legacy_progress_path = Path(__file__).with_name("route_progress.json")
 

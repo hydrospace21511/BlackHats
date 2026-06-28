@@ -111,9 +111,12 @@ def get_desktop_path():
     candidates = [
         os.path.join(home, "Desktop"),
         os.path.join(home, "Área de Trabalho"),
+        os.path.join(home, "Área de trabalho"),
         os.path.join(home, "OneDrive", "Desktop"),
         os.path.join(home, "OneDrive", "Área de Trabalho"),
+        os.path.join(home, "OneDrive", "Área de trabalho"),
         os.path.join(home, "Area de Trabalho"),
+        os.path.join(home, "Area de trabalho"),
     ]
     for path in candidates:
         if os.path.exists(path):

@@ -1,6 +1,6 @@
 import os
 import sys
-from Color import cText
+from Game.Main.Color import cText
 import re
 import json
 import unicodedata
@@ -14,8 +14,8 @@ from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn
 from time import sleep
 from colorama import Fore, Style, init
 import getpass
-from typewriter import typewriter
-from typewriter import text
+from Game.Main.typewriter import typewriter
+from Game.Main.typewriter import text
 import Game.Main.Player as PlayerStats
 from Game.Main.RouteManager import RouteManager, EndingManager
 
