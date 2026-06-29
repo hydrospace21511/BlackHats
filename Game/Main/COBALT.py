@@ -931,7 +931,7 @@ class COBALT_FS:
         
         self.player_level = game.Player.Level
         clear()              
-
+            #test
     def _open_contribuitors(self):
         clear()
         print(f"{Fore.YELLOW}[!] ABRINDO Contribuidores.flat...{Style.RESET_ALL}")
