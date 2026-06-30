@@ -7,7 +7,7 @@ python -m pip install pyinstaller windows-curses
 
 REM 
 SET "PROJECT_ROOT=%~dp0"
-SET "ICON_PATH=%PROJECT_ROOT%darkhats_icon.ico"
+SET "ICON_PATH=%PROJECT_ROOT%Game\darkhats_icon.ico"
 
 REM 
 IF NOT EXIST "%ICON_PATH%" (
@@ -19,7 +19,7 @@ pyinstaller ^
   --onefile ^
   --name DarkHatsGame ^
   --icon "%ICON_PATH%" ^
-  --add-data "Game\SOUNDS;SOUNDS" ^
+  --add-data "Game\Sounds;Sounds" ^
   --add-data "Game\Main\DataStore.json;Game\Main" ^
   "%PROJECT_ROOT%Game\Main\Main.py"
 

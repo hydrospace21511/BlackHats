@@ -5,6 +5,9 @@ from rich.table import Table
 from rich import box
 from colorama import Fore
 import time
+import os
+def clear():
+    os.system('cls' if os.name == 'nt' else 'clear')
 
 
 console = Console()
@@ -85,7 +88,7 @@ def robux_game():
     total    = len(options)
 
     while True:
-        console.clear()
+        clear()
         robux_menu(selected_index=selected)
 
         key = get_key()
@@ -102,7 +105,7 @@ def robux_game():
             choice = options[selected]
             break
 
-    console.clear()
+    clear()
     console.print(Panel(
         Text(f"Gerando {choice} Robux para sua conta...", style="bold green"),
         box=box.ROUNDED,
@@ -123,7 +126,7 @@ def robux_game():
             time.sleep(0.03)
         time.sleep(5)
 
-    console.clear()
+    clear()
     print(f"{Fore.GREEN}Sucesso! R$ {choice} foram gerados para sua conta!")
     time.sleep(2)
     print(f"{Fore.RED}Ou não... (Talvez isso seja um golpe)")
