@@ -41,7 +41,7 @@ class Enemy:
 
     def set_phase(self, phase):
         self.phase = max(1, int(phase))
-        multiplier = 1 + (self.phase - 1) * 0.35
+        multiplier = 1 + (self.phase - 1) * 0.2
         self.MaxHealth = int(self.MaxHealth * multiplier)
         self.Health = self.MaxHealth
         self.Defense = int(self.Defense + (self.phase - 1) * 2)
@@ -57,12 +57,17 @@ class Enemy:
             phase_data = dict(phase_data)
             phase_data['name'] = mission_name
 
+        multiplier = 1 + (phase_index * 0.2)
+        scaled_hp = int(phase_data['hp'] * multiplier)
+        scaled_defense = int(phase_data['defense'] + (phase_index * 2))
+        scaled_attacks = {k: int(v * multiplier) for k, v in phase_data['attacks'].items()}
+
         enemy = cls(
             name=phase_data['name'],
-            max_health=phase_data['hp'],
-            defense=phase_data['defense'],
-            regen=phase_data['regen'],
-            attacks=dict(phase_data['attacks']),
+            max_health=scaled_hp,
+            defense=scaled_defense,
+            regen=phase_data['regen'] + phase_index,
+            attacks=scaled_attacks,
         )
         enemy.route = route
         enemy.phase = phase_index + 1

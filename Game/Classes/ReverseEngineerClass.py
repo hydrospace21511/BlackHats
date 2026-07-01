@@ -2,10 +2,10 @@ from colorama import Fore
 class ReverseEngineerClass:
     def __init__(self):
         self.raceName = "Reverse Engineer"
-        self.tier = 2
+        self.tier = 4
         self.attack_power = 34
-        self.Integrity = 500
-        self.Defense = 45
+        self.Integrity = 250
+        self.Defense = 35
         self.IntegrityBackup = self.Integrity
         self.DefenseBackup = self.Defense
         self.Regen = 0

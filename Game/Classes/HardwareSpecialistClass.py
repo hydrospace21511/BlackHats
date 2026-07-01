@@ -3,10 +3,10 @@ class HardwareSpecialistClass:
      
     def __init__(self):
         self.raceName = "Hardware Specialist"
-        self.tier = 5
+        self.tier = 2
         self.attack_power = 26
-        self.Integrity = 200
-        self.Defense = 40
+        self.Integrity = 150
+        self.Defense = 30
         self.Regen = 0
         self.ui_color = Fore.GREEN        
         self.Attacks = {
@@ -23,3 +23,5 @@ class HardwareSpecialistClass:
             "Firmware Corruption": 3,
             "Power Surge": 4            
         }
+    def Damage(self, D, Defense):
+        return D * (1 - Defense / 100)
