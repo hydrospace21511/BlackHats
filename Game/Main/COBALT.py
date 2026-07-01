@@ -131,6 +131,81 @@ lore_files = {
         ],
     },
 
+    "Relato.txt": {
+        "color": Fore.WHITE,
+        "preview": " \"Filho, perdão pela demora para responder...\"",
+        "lines": [
+            " [ ARQUIVO: mae_02.log ]",
+            " [ DATA: 15/05/1998 ]",
+            " ─────────────────────────────────────────────",
+            " ",
+            " Filho, estive com uma dor de cabeça,",
+            " e acabei não respondendo.",
+            " Porém agora já estou melhor.",
+            " ",
+            " Estou orgulhosa de você.",
+            " - Mãe",
+            " ─────────────────────────────────────────────",
+        ],
+    },
+
+    "Morgan2.txt": {
+        "color": Fore.WHITE,
+        "preview": " \"Ei, vejo que realmente está se empenhando...\"",
+        "lines": [
+            " [ ARQUIVO: morgan_02.log ]",
+            " [ DATA: 10/05/1998 ]",
+            " ─────────────────────────────────────────────",
+            " ",
+            " Ei, vejo que realmente está se empenhando.",
+            " Bom trabalho.",
+            " Poderia me mandar os arquivos?",
+            " Estarei aguardando seu retorno.",
+            " ",
+            " Continue assim.",
+            " — Arthur",
+            " ─────────────────────────────────────────────",
+        ],
+    },
+
+    "Trabalho.txt": {
+        "color": Fore.WHITE,
+        "preview": " [CORROMPIDO] \"V0c3 3st4... 0 qu3.. 4c0nt3c3nd0?\"",
+        "lines": [
+            " [ ARQUIVO: m0rg4n_03.log ]",
+            " [ DATA: 05/07/1998 ]",
+            " ─────────────────────────────────────────────",
+            " ",
+            " V0c3 3st4 b3m? 3st4 tr4b4lh4nd0 m4s n4o m3",
+            " r3t0rn4.",
+            " 0 qu3 3st4 4c0nt3c3nd0?",
+            " 3sp3r0 qu3 m3lh0r3.",
+            " ",
+            " N4o sum4.",
+            " — Arthur",
+            " ─────────────────────────────────────────────",
+        ],
+    },
+
+    "Lembranças.txt": {
+        "color": Fore.WHITE,
+        "preview": " \"Finalmente consegui um trabalho.\"",
+        "lines": [
+            " [ PROCESSO: Eu.exe ]",
+            " [ DATA: 26/02/1998 ]",
+            " ──────────────────────────────────────────────",
+            " ",
+            " Consegui um trabalho hoje.",
+            " Morgan me convenceu a entrar na área.",
+            " ",
+            " Ele mencionou uma tal de ACSD antes de ir.",
+            " Associação Contra Distúrbio, disse ele.",
+            " ",
+            " Pareceu razoável na hora.",
+            " ──────────────────────────────────────────────",
+        ],
+    },
+
     "A Raiz.txt": {
         "color": Fore.YELLOW,
         "preview": " [CORROMPIDO] \"...ela sabia. desde o início...\"",
@@ -158,7 +233,7 @@ lore_files = {
         "color": Fore.RED,
         "preview": " [SISTEMA] \"NULL não respondeu.\"",
         "lines": [
-            " [ PROCESSO: ego_secundario.exe ]",
+            " [ PROCESSO: Eu.exe ]",
             " [ TIMESTAMP: --/--/---- 03:17 ]",
             " ─────────────────────────────────────────────",
             " ",
@@ -555,19 +630,28 @@ class COBALT_FS:
                     "name": fname, "type": "FILE", "icon": "📄",
                     "color": info["color"], "preview": info["preview"],
                 })
+
         if lvl >= 3:
-            info = lore_files["A Raiz.txt"]
-            docs.append({
-                "name": "A Raiz.txt", "type": "FILE", "icon": "📄",
-                "color": info["color"], "preview": info["preview"],
-            })
+            for fname in ("Relato.txt", "Morgan2.txt"):
+                info = lore_files[fname]
+                docs.append({
+                    "name": fname, "type": "FILE", "icon": "📄",
+                    "color": info["color"], "preview": info["preview"],
+                })
         if lvl >= 4:
+            for fname in ("Lembranças.txt", "Trabalho.txt", "A Raiz.txt"):
+                info = lore_files[fname]
+                docs.append({
+                    "name": fname, "type": "FILE", "icon": "📄",
+                    "color": info["color"], "preview": info["preview"],
+                })
+        if lvl >= 5:
             info = lore_files["NULL.txt"]
             docs.append({
                 "name": "NULL.txt", "type": "FILE", "icon": "📄",
                 "color": info["color"], "preview": info["preview"],
             })
-        if lvl >= 5:
+        if lvl >= 6:
             info = lore_files["SHEOL.txt"]
             docs.append({
                 "name": "SHEOL.txt", "type": "FILE", "icon": "📄",

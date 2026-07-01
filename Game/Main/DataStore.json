@@ -1,24 +1,38 @@
 {
-  "level": 0,
+  "level": 6,
   "badges": {
-    "Social Engineer": false,
+    "Social Engineer": true,
     "Hardware Specialist": false,
-    "Security Bypass": false,
+    "Security Bypass": true,
     "Reverse Engineer": false,
     "Mr.Robot": false,
-    "Normal Ending": false,
+    "Normal Ending": true,
     "Good Ending": false,
     "Bad Ending": false,
     "???": false,
-    "DarkHats": false
+    "DarkHats": false,
+    "Platina": false
   },
   "route_history": [
+    "TRUE",
+    "BAD",
+    "GOOD",
+    "BAD",
+    "BAD"
   ],
   "mission_history": [
+    "Linha Partida",
+    "Cart\u00e3o Raspado",
+    "Acordo Quebrado",
+    "Acesso Central",
+    "Cl\u00e1usula Final"
   ],
-    "inventory": [],
-  "tasks": 0,
-  "chests": 0,
-  "ending": "",
-  "seed": 7
+  "inventory": [
+    "Test2"
+  ],
+  "tasks": 5,
+  "chests": 5,
+  "ending": "ENDING_NORMAL",
+  "seed": 7,
+  "rebirths": 0
 }
