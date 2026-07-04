@@ -943,20 +943,30 @@ class COBALT_FS:
     def _open_route_mission(self, file):
         route_name   = str(file.get('route', 'BAD')).upper().strip()
         mission_name = str(file.get('mission', 'Unknown')).strip()
+        level        = int(file.get('level', self.route_level))
+
+        FINAL_MISSIONS = {
+            "Cláusula Final": "BAD",
+            "Eco Final":      "TRUE",
+            "Preço Final":    "GOOD",
+        }
+
+        if mission_name in FINAL_MISSIONS:
+            self._open_final_mission(mission_name, route_name)
+            return
 
         clear()
         print(f"{Fore.CYAN}[*] Carregando rota: {route_name} missão: {mission_name}...{Style.RESET_ALL}")
         sleep(1)
 
-        saved           = self.route_manager.load_progress(self.badges)
+        saved = self.route_manager.load_progress(self.badges)
         mission_history = list(saved.get('mission_history', [])) + [mission_name]
 
-        self.selected_route        = route_name
+        self.selected_route       = route_name
         self.selected_mission_name = mission_name
-        self.route_history = list(saved.get('route_history', self.route_history)) + [route_name]
-        self.current_ending = self.ending_manager.evaluate(self.route_history)
+        self.route_history        = list(saved.get('route_history', self.route_history)) + [route_name]
+        self.current_ending       = self.ending_manager.evaluate(self.route_history)
         next_level = min(5, len(self.route_history) + 1)
-
         self.route_manager.save_progress(
             self.badges, self.route_history, self.current_ending,
             mission_history, level=next_level,
@@ -966,16 +976,49 @@ class COBALT_FS:
             inventory=getattr(self, 'inventory', [])
         )
         self.player_level = next_level
-
-        if len(self.route_history) >= 5:
-            self.current_ending           = self.ending_manager.evaluate(self.route_history)
-            self.badges['Normal Ending']  = self.current_ending == 'ENDING_NORMAL'
-            self.badges['Good Ending']    = self.current_ending == 'ENDING_GOOD'
-            self.badges['Bad Ending']     = self.current_ending == 'ENDING_BAD'
-            self.badges['???']            = self.current_ending == 'ENDING_TRUE'
-
         self._open_darkhats()
 
+    def _open_final_mission(self, mission_name, route_name):
+        clear()
+        print(f"{Fore.CYAN}[*] Carregando missão final: {mission_name}...{Style.RESET_ALL}")
+        sleep(1.5)
+
+        if mission_name == "Eco Final":
+            from Game.Missions.EcoFinal import run as final_run
+        elif mission_name == "Cláusula Final":
+            from Game.Missions.ClausulaFinal import run as final_run
+        elif mission_name == "Preço Final":
+            from Game.Missions.PrecoFinal import run as final_run
+        else:
+            return
+
+        saved           = self.route_manager.load_progress(self.badges)
+        mission_history = list(saved.get('mission_history', [])) + [mission_name]
+        route_history   = list(saved.get('route_history', self.route_history)) + [route_name]
+        ending          = self.ending_manager.evaluate(route_history)
+
+        self.route_manager.save_progress(
+            self.badges, route_history, ending,
+            mission_history, level=5,
+            tasks=self.stats.get('tasks', 0),
+            chests=self.stats.get('chests', 0),
+            rebirths=self.stats.get('rebirths', 0),
+            inventory=getattr(self, 'inventory', [])
+        )
+
+        self.route_history  = route_history
+        self.current_ending = ending
+        self.player_level   = 5
+
+        final_run(route_history=route_history)
+
+        saved             = self.route_manager.load_progress(self.badges)
+        self.player_level = int(saved.get('level', 5))
+        self.route_history = list(saved.get('route_history', route_history))
+
+        clear()
+        print(f"{Fore.YELLOW}[!] Missão final concluída. Retornando ao COBALT...{Style.RESET_ALL}")
+        sleep(2)
 
     def _open_badge(self, badge_name):
         clear()
