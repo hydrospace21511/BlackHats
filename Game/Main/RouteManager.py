@@ -2,6 +2,7 @@ import json
 import os
 import random
 from pathlib import Path
+import sys
 
 
 class EndingManager:
@@ -59,20 +60,26 @@ class RouteManager:
         import sys
         import shutil
         if getattr(sys, 'frozen', False):
-            exe_dir = Path(sys.executable).parent
-            self.progress_path = exe_dir / "DataStore.json"
-            self.legacy_progress_path = exe_dir / "route_progress.json"
-            
-            if not self.progress_path.exists():
-                bundled_template = Path(sys._MEIPASS) / "Game" / "Main" / "DataStore.json"
-                if bundled_template.exists():
-                    try:
-                        shutil.copy(bundled_template, self.progress_path)
-                    except Exception:
-                        pass
-        else:
-            self.progress_path = Path(__file__).with_name("DataStore.json")
-            self.legacy_progress_path = Path(__file__).with_name("route_progress.json")
+            if sys.platform == "win32":
+                base = os.getenv("APPDATA") or os.path.expanduser("~")
+            else:
+                base = os.getenv("XDG_CONFIG_HOME") or os.path.join(os.path.expanduser("~"), ".config")
+            save_dir = Path(base) / "DarkHats"
+            save_dir.mkdir(parents=True, exist_ok=True)
+
+        self.progress_path = save_dir / "DataStore.json"
+        self.legacy_progress_path = save_dir / "route_progress.json"
+
+        if not self.progress_path.exists():
+            bundled_template = Path(sys._MEIPASS) / "Game" / "Main" / "DataStore.json"
+            if bundled_template.exists():
+                try:
+                    shutil.copy(bundled_template, self.progress_path)
+                except Exception:
+                    pass
+            else:
+                self.progress_path = Path(__file__).with_name("DataStore.json")
+                self.legacy_progress_path = Path(__file__).with_name("route_progress.json")
 
 
     def get_choices_for_level(self, level=None):

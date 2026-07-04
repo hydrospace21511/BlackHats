@@ -1,5 +1,5 @@
 {
-  "level": 2,
+  "level": 3,
   "badges": {
     "Social Engineer": false,
     "Hardware Specialist": false,
@@ -11,17 +11,22 @@
     "Good Ending": false,
     "Bad Ending": false,
     "???": false,
-    "DarkHats": false
+    "DarkHats": false,
+    "Platina": false
   },
   "route_history": [
-    "TRUE"
+    "TRUE",
+    "BAD"
   ],
   "mission_history": [
-    "Linha Partida"
+    "Linha Partida",
+    "Cart\u00e3o Raspado"
   ],
-  "inventory": [],
-  "tasks": 0,
-  "chests": 0,
+  "inventory": [
+    "Test"
+  ],
+  "tasks": 1,
+  "chests": 1,
   "ending": "",
   "seed": 7,
   "rebirths": 0

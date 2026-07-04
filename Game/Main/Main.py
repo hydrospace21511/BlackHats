@@ -13,7 +13,7 @@ init(autoreset=True)
 
 def main():
     sistema = COBALT()
-    sistema._check_space()
+    #sistema._check_space()
     explorer = COBALT_FS()
     explorer.run()
     sistema.start()
