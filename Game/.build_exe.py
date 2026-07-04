@@ -148,7 +148,6 @@ def build_exe():
             "PyInstaller",
             "DarkHats.spec",
             "--clean",
-            "--onefile",
             "--noconfirm",
         ], check=True)
 
