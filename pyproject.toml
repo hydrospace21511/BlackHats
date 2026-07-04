@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "darkhats"
+version = "0.1.0"
+description = "ARG Game"
+authors = ["Hydro"]
+readme = "README.md"
+packages = [
+  { include = "Game" }
+]
+
+[tool.poetry.dependencies]
+python = ">=3.10,<4.0"
+colorama = "^0.4.6"
+rich = "^15.0.0"
+keyboard = "^0.13.5"
+pygame-ce = "^2.5.7"
+
+windows-curses = { version = "^2.4.0", markers = "sys_platform == 'win32'" }
+
+[tool.poetry.dev-dependencies]
+pyinstaller = "^5.14"
+
+[build-system]
+requires = ["poetry-core>=1.8.0"]
+build-backend = "poetry.core.masonry.api"

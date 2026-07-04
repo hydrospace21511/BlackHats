@@ -318,7 +318,7 @@ class COBALT:
 
     def _Load_Menu(self):
         G = Fore.GREEN
-        for i in range(1, 4):
+        for i in range(0, 6):
             clear()
             self._print_menu(0)
             print(f"{G}                                 Starting COBALT" + ("." * i))
@@ -532,7 +532,8 @@ class COBALT_FS:
             "Social Engineer": "Sobreviva 2 tasks.",
             "Reverse Engineer": "Sobreviva 10 tasks.",
             "Hardware Specialist": "Abra 5 baús.",
-            "Security Bypass": "Complete a task: placeholder insano.",
+            "Security Bypass": "Complete uma task: placeholder insano.",
+            "Security Analytic": "Complete 3 auditorias de sistema.",
             "Mr.Robot": "Complete o final bom.",
             "Normal Ending": "Eu não ligo sobre as minhas ações.",
             "Good Ending": "Ajude-os. Deixe pacífico.",
@@ -546,6 +547,7 @@ class COBALT_FS:
             "Hardware Specialist": False,
             "Security Bypass": False,
             "Reverse Engineer": False,
+            "Security Analytic": False,
             "Mr.Robot": False,
             "Good Ending": False,
             "Bad Ending": False,
@@ -604,6 +606,7 @@ class COBALT_FS:
             "Hardware Specialist": saved_badges.get("Hardware Specialist", False) or (self.stats.get("chests", 0) >= 5),
             "Security Bypass":   saved_badges.get("Security Bypass", False)   or (self.stats.get("tasks", 0) >= 1),
             "Reverse Engineer":  saved_badges.get("Reverse Engineer", False)  or (self.stats.get("tasks", 0) >= 10),
+            "Security Analytic": saved_badges.get("Security Analytic", False) or (self.stats.get("tasks", 0) >= 3),
             "Mr.Robot":          saved_badges.get("Mr.Robot", False),
             "Normal Ending":     saved_badges.get("Normal Ending", False),
             "Good Ending":       saved_badges.get("Good Ending", False),
@@ -638,8 +641,9 @@ class COBALT_FS:
                     "name": fname, "type": "FILE", "icon": "📄",
                     "color": info["color"], "preview": info["preview"],
                 })
+
         if lvl >= 4:
-            for fname in ("Lembranças.txt", "Trabalho.txt", "A Raiz.txt"):
+            for fname in ("Lembranças.txt", "A Raiz.txt"):
                 info = lore_files[fname]
                 docs.append({
                     "name": fname, "type": "FILE", "icon": "📄",
@@ -796,8 +800,8 @@ class COBALT_FS:
                 f" Status: {len(self.files)} itens | "
                 f"Player Lvl: {self.player_level} | "
                 f"Tasks: {self.stats.get('tasks', 0)} | "
-                f"Baús: {self.stats.get('chests', 0)} | "
-                f"Rebirths: {self.stats.get('rebirths', 0)}"
+                f"Baús: {self.stats.get('chests', 0)} "
+                #f"Rebirths: {self.stats.get('rebirths', 0)}"
             )
         pad_status = self.inner_w - visual_width(status)
         print(f"{C_BORDER}║{Fore.LIGHTBLACK_EX}{status}{' ' * pad_status}{C_BORDER}║")

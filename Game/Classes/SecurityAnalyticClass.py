@@ -1,4 +1,5 @@
 from colorama import Fore
+
 class SecurityAnalyticClass:
 
     def __init__(self):
@@ -9,20 +10,20 @@ class SecurityAnalyticClass:
         self.Defense = 20
         self.Regen = 0
         self.ui_color = Fore.GREEN
+        self.Items = "None"
         self.Attacks = {
-            "Firewall": (30, 3),
-            "Security Patch": (28, 3),
+            "Firewall":      (30, 3),
+            "Security Patch":(28, 3),
             "Weakness View": (26, 4),
-            "Punch": (32, 2),
-            "God's Hand": (45, 5),
-            "Pneumoultramicroscopicsilicovolcanoconiotic": 'ball cancer'
+            "Punch":         (32, 2),
+            "God's Hand":    (45, 5),
+            "Pneumoultramicroscopicsilicovolcanoconiotic": "ball cancer",
         }
-
         self.Cooldowns = {
-            "Firewall": 8,
-            "Security Patch": 3,
+            "Firewall":      8,
+            "Security Patch":3,
             "Weakness View": 3,
-            "God's Hand": 999999
+            "God's Hand":    12,
         }
 
     def RaceName(self):
@@ -39,7 +40,3 @@ class SecurityAnalyticClass:
 
     def MostraAtaques(self):
         return list(self.Attacks.keys())
-
-class SecurityAnalytic(SecurityAnalyticClass):
-    """Compatibility wrapper for the battle-balance tests and runtime usage."""
-    pass

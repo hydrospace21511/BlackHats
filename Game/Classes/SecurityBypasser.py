@@ -1,6 +1,7 @@
 from colorama import Fore, Back, Style, init
+
 class SecurityBypasserClass:
-     
+
     def __init__(self):
         self.raceName = "Security Bypasser"
         self.tier = 1
@@ -8,17 +9,18 @@ class SecurityBypasserClass:
         self.Integrity = 200
         self.Defense = -10
         self.Regen = 0
-        self.ui_color = Fore.GREEN        
+        self.ui_color = Fore.GREEN
+        self.Items = "None"
         self.Attacks = {
-            "Firewall Bypass": (18, 4),
-            "System Override": (22, 5),
-            "Backdoor Implant": (20, 6),
-            "Stealth Access": (28, 5),
-            "Punch": (16, 3)
+            "Firewall Bypass":  (32, 4),
+            "System Override":  (38, 5),
+            "Backdoor Implant": (35, 5),
+            "Stealth Access":   (44, 6),
+            "Punch":            (22, 2),
         }
-        self.active_cooldowns = {
-            "Firewall Bypass": 3,
-            "System Override": 3,
-            "Backdoor Implant": 3,
-            "Stealth Access": 3
+        self.Cooldowns = {
+            "Firewall Bypass":  2,
+            "System Override":  3,
+            "Backdoor Implant": 2,
+            "Stealth Access":   4,
         }

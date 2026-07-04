@@ -27,6 +27,16 @@ def install_deps():
 def generate_spec():
     print("=== [2/3] Gerando arquivo de configuracao do PyInstaller (DarkHats.spec) ===")
     
+    project_root = os.path.abspath(os.getcwd())
+    icon_candidates = [
+        os.path.join(project_root, 'Game', 'darkhats_icon.ico'),
+        os.path.join(project_root, 'icon.ico'),
+        os.path.join(project_root, 'Game', 'logo.ico'),
+    ]
+    icon_path = next((path for path in icon_candidates if os.path.exists(path)), None)
+
+    icon_line = f"    icon={repr(icon_path)}" if icon_path else "    icon=None"
+
     spec_content = """# -*- mode: python ; coding: utf-8 -*-
 
 import os
@@ -37,11 +47,14 @@ project_root = os.path.abspath(os.getcwd())
 datas = [
     (os.path.join('Game', 'Sounds'), os.path.join('Game', 'Sounds')),
     (os.path.join('Game', 'Main', 'DataStore.json'), os.path.join('Game', 'Main')),
+    (os.path.join('Game', 'Main', 'DataStore copy.json'), os.path.join('Game', 'Main')),
+    (os.path.join('Game', 'VERSION.txt'), os.path.join('Game')),
+    (os.path.join('Game', 'temp_py_version.txt'), os.path.join('Game')),
+    (os.path.join('Game', 'ItemsLib', 'Items'), os.path.join('Game', 'ItemsLib', 'Items')),
 ]
 
 optional_files = [
     (os.path.join('Game', 'Backup', 'Admin', 'HoneyPot.txt'), os.path.join('Game', 'Backup', 'Admin')),
-    (os.path.join('Game', 'ItemsLib', 'Items', 'items.txt'), os.path.join('Game', 'ItemsLib', 'Items')),
 ]
 
 for src, dest in optional_files:
@@ -98,9 +111,10 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=os.path.join(project_root, 'logo.ico') if os.path.exists(os.path.join(project_root, 'logo.ico')) else None,
+__ICON_LINE__,
 )
 """
+    spec_content = spec_content.replace('__ICON_LINE__', icon_line)
     
     with open("DarkHats.spec", "w", encoding="utf-8") as f:
         f.write(spec_content)
@@ -128,7 +142,15 @@ def build_exe():
     
     try:
         print("Executando compilacao...")
-        subprocess.run([sys.executable, "-m", "PyInstaller", "DarkHats.spec", "--clean"], check=True)
+        subprocess.run([
+            sys.executable,
+            "-m",
+            "PyInstaller",
+            "DarkHats.spec",
+            "--clean",
+            "--onefile",
+            "--noconfirm",
+        ], check=True)
 
         ext = ".exe" if os.name == 'nt' else ""
         src_path = os.path.abspath(os.path.join("dist", f"DarkHats{ext}"))

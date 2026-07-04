@@ -10,6 +10,8 @@ pyinstaller \
   --icon "$ICON_PATH" \
   --add-data "Game/Sounds:Sounds" \
   --add-data "Game/Main/DataStore.json:Game/Main" \
+  --add-data "Game/ItemsLib/Items/items.txt:Game/ItemsLib/Items" \
+  --add-data "Game/Backup/Admin/HoneyPot.txt:Game/Backup/Admin" \
   "$PROJECT_ROOT/Game/Main/Main.py"
 
 mkdir -p "$PROJECT_ROOT/dist"

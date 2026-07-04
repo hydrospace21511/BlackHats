@@ -1,5 +1,7 @@
 from colorama import Fore
+
 class ReverseEngineerClass:
+
     def __init__(self):
         self.raceName = "Reverse Engineer"
         self.tier = 4
@@ -12,27 +14,27 @@ class ReverseEngineerClass:
         self.stun = 0
         self.ui_color = Fore.GREEN
         self.Decompiled = False
-        
+        self.Items = "None"
+
         self.Attacks = {
-            "Decompiler": (42, 4),
+            "Decompiler":        (42, 4),
             "Protection Bypass": (50, 5),
-            "Algorithm Clone": (36, 4),
-            "ROP Chain": (44, 5),
-            "Punch": (30, 3)
+            "Algorithm Clone":   (36, 4),
+            "ROP Chain":         (44, 5),
+            "Punch":             (30, 3),
         }
 
         self.OriginalAttacks = {
-            "Decompiler": 60,
-            "Protection Bypass": 100,
-            "Algorithm Clone": 40,
-            "ROP Chain": 80,
-            "Punch": 50
+            "Decompiler":        (42, 5),
+            "Protection Bypass": (50, 5),
+            "Algorithm Clone":   (36, 4),
+            "ROP Chain":         (44, 5),
+            "Punch":             (30, 3),
         }
 
         self.Cooldowns = {
-            "Decompiler": 3,
+            "Decompiler":        3,
             "Protection Bypass": 5,
-            "Algorithm Clone": 2,
-            "ROP Chain": 3
+            "Algorithm Clone":   2,
+            "ROP Chain":         3,
         }
-    

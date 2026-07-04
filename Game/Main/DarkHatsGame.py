@@ -20,7 +20,6 @@ from Game.Main.UI import enemy_life, display_battle_ui
 from Game.Classes.HackerClass import HackerClass
 from Game.Classes.SocialEngineerClass import SocialEngineerClass
 from Game.Classes.ReverseEngineerClass import ReverseEngineerClass
-from Game.Classes.Classes import Classes
 from Game.Classes.SecurityBypasser import SecurityBypasserClass
 from Game.Classes.HardwareSpecialistClass import HardwareSpecialistClass
 from Game.Classes.SecretClasses.Hatsune import HatsuneMikuClass
@@ -35,6 +34,7 @@ from Game.Main.Enemy import Enemy
 from Game.Main.RouteManager import RouteManager
 from colorama import Fore, Back, Style, init
 from Game.Main.Color import cText
+from Game.Classes.ClassesMenu import classes_menu
 
 init(autoreset=True)
 
@@ -99,26 +99,34 @@ def Damage(D, Defense):
 
 
 LEVEL_UP_DATA = {
+
     2: {
         "title":    "ATUALIZAÇÃO v2.0 — NOVOS ARQUIVOS DETECTADOS",
         "new_docs": ["Diário.txt", "Morgan.txt"],
         "hint":     "Você pode vê-los na aba 'Documentos' do sistema.",
         "badges":   [],
     },
+
     3: {
-        "title":    "ATUALIZAÇÃO v3.0 — ARQUIVO CORROMPIDO RECUPERADO",
-        "new_docs": ["A Raiz.txt"],
-        "hint":     "Um fragmento antigo ressurgiu em 'Documentos'.",
+        "title":    "ATUALIZAÇÃO v3.0 — NOVOS ARQUIVOS DETECTADOS",
+        "new_docs": ["Relato.txt", "Morgan2.txt"],
+        "hint":     "Você recebeu algumas notícias em 'Documentos'.",
         "badges":   [],
     },
     4: {
-        "title":    "ATUALIZAÇÃO v4.0 — PROCESSO DESCONHECIDO DETECTADO",
+        "title":    "ATUALIZAÇÃO v4.0 — ARQUIVO CORROMPIDO RECUPERADO",
+        "new_docs": ["Lembranças.txt", "A Raiz.txt"],
+        "hint":     "Um fragmento antigo ressurgiu em 'Documentos'.",
+        "badges":   [],
+    },
+    5: {
+        "title":    "ATUALIZAÇÃO v5.0 — PROCESSO DESCONHECIDO DETECTADO",
         "new_docs": ["NULL.txt"],
         "hint":     "Algo escreveu em 'Documentos'. Não foi você.",
         "badges":   [],
     },
-    5: {
-        "title":    "ATUALIZAÇÃO v5.0 — PARTIÇÃO FINAL MONTADA",
+    6: {
+        "title":    "ATUALIZAÇÃO v6.0 — PARTIÇÃO FINAL MONTADA",
         "new_docs": ["SHEOL.txt"],
         "hint":     "O último registro está em 'Documentos'.",
         "badges":   ["DarkHats"],
@@ -126,12 +134,38 @@ LEVEL_UP_DATA = {
 }
 
 
-def _show_level_up(player_level: int, badges: dict):
-    """
-    Exibe a tela de level-up após cada missão concluída.
-    Mostra: barra de progresso de atualização, documentos novos e conquistas.
-    """
+def _compute_effective_badges(raw_badges: dict, tasks: int, chests: int) -> dict:
+    effective = dict(raw_badges or {})
+    effective.setdefault("Social Engineer", False)
+    effective.setdefault("Hardware Specialist", False)
+    effective.setdefault("Security Bypass", False)
+    effective.setdefault("Reverse Engineer", False)
+    effective.setdefault("Security Analytic", False)
+    effective.setdefault("Mr.Robot", False)
+    effective.setdefault("Normal Ending", False)
+    effective.setdefault("Good Ending", False)
+    effective.setdefault("Bad Ending", False)
+    effective.setdefault("???", False)
+    effective.setdefault("DarkHats", False)
+
+    effective["Social Engineer"] = effective["Social Engineer"] or (tasks >= 2)
+    effective["Security Bypass"] = effective["Security Bypass"] or (tasks >= 1)
+    effective["Security Analytic"] = effective["Security Analytic"] or (tasks >= 3)
+    effective["Reverse Engineer"] = effective["Reverse Engineer"] or (tasks >= 10)
+    effective["Hardware Specialist"] = effective["Hardware Specialist"] or (chests >= 5)
+    effective["DarkHats"] = effective["DarkHats"] or (
+        effective["Normal Ending"] and
+        effective["Good Ending"] and
+        effective["Bad Ending"] and
+        effective["???"]
+    )
+    return effective
+
+
+def _show_level_up(player_level: int, old_state: dict, new_state: dict):
     data = LEVEL_UP_DATA.get(player_level)
+    old_badges = _compute_effective_badges(old_state.get("badges", {}), old_state.get("tasks", 0), old_state.get("chests", 0))
+    new_badges = _compute_effective_badges(new_state.get("badges", {}), new_state.get("tasks", 0), new_state.get("chests", 0))
 
     clear()
     cText(f"A versão do seu sistema ({player_level - 1}.0) está atualmente desatualizada.", "error")
@@ -154,7 +188,6 @@ def _show_level_up(player_level: int, badges: dict):
 
     sleep(1)
     clear()
-    sleep(0.5)
     cText(f" Sistema atualizado com sucesso. Versão {player_level}.0 instalada.", "positive")
     sleep(1.5)
     input(f"\n  {Fore.LIGHTBLACK_EX}[ Pressione ENTER para ver as novidades ]{Style.RESET_ALL}")
@@ -183,14 +216,18 @@ def _show_level_up(player_level: int, badges: dict):
         print()
         cText(f"  {data['hint']}", "warn")
 
-    unlocked_badges = [b for b in data.get("badges", []) if badges.get(b, False)]
+    unlocked_badges = [
+        i for i, unlocked in new_badges.items()
+        if unlocked and not old_badges.get(i, False)
+        and i not in ("Normal Ending", "Good Ending", "Bad Ending", "???")
+    ]
     if unlocked_badges:
-        sleep(0.6)
+        sleep(1)
         print()
-        cText("  [ CONQUISTA DESBLOQUEADA ]", "yellow")
-        for b in unlocked_badges:
+        cText("  [ CONQUISTAS DESBLOQUEADAS ]", "yellow")
+        for i in unlocked_badges:
             sleep(0.5)
-            cText(f"    🏅  {b}", "yellow")
+            cText(f"    🏅  {i}", "yellow")
 
     print()
     input(f"\n  {Fore.LIGHTBLACK_EX}[ Pressione ENTER para sair ]{Style.RESET_ALL}")
@@ -198,7 +235,6 @@ def _show_level_up(player_level: int, badges: dict):
 
 class DarkHatsGame:
     def __init__(self):
-        self.ClassesMenu          = Classes()
         self.Hacker               = HackerClass()
         self.Rimuru               = RimuruClass()
         self.SecurityAnalytic     = SecurityAnalyticClass()
@@ -230,123 +266,31 @@ class DarkHatsGame:
 
     def start(self):
         clear()
-        self.ClassesMenu._Classes()
-        ClassPage = 1
+        badges = RouteManager().load_progress({}, update_stats=False).get("badges", {})
+        chosen = classes_menu(badges=badges)
 
-        while True:
-            while True:
-                if self.Player.Class == self.CorruptedHatsuneMiku:
-                    cText("▶  Digite sua classe >>", "red")
-                else:
-                    cText("▶  Digite sua classe >>", "green")
+        if chosen is None or chosen == "EXIT":
+            return
 
-                PlayerClassInput = str(input("").strip().upper())
+        class_map = {
+            "HACKER":               self.Hacker,
+            "SECURITY ANALYTIC":    self.SecurityAnalytic,
+            "SOCIAL ENGINEER":      self.SocialEngineer,
+            "REVERSE ENGINEER":     self.ReverseEngineer,
+            "HARDWARE SPECIALIST":  self.HardwareSpecialist,
+            "SECURITY BYPASSER":    self.SecurityBypasser,
+            "HATSUNE MIKU":         self.Vocaloid,
+            "LAMBDA":               self.Lambda,
+        }
+        PlayerClass = class_map.get(chosen)
+        if not PlayerClass:
+            return
 
-                match PlayerClassInput:
-                    case "EXIT":
-                        print("\n        Initializing exit sequence...")
-                        sleep(2)
-                        print("            Exiting darkhats.flat...")
-                        sleep(1)
-                        clear()
-                        return
-
-                    case "SECURITY ANALYTIC" | "2":
-                        PlayerClass = self.SecurityAnalytic
-                        break
-                    case "REVERSE ENGINEER" | "4":
-                        PlayerClass = self.ReverseEngineer
-                        break
-                    case "HACKER" | "1":
-                        PlayerClass = self.Hacker
-                        break
-                    case "SOCIAL ENGINEER" | "3":
-                        PlayerClass = self.SocialEngineer
-                        break
-                    case "HARDWARE SPECIALIST" | "5":
-                        PlayerClass = self.HardwareSpecialist
-                        break
-                    case "SECURITY BYPASSER" | "6":
-                        PlayerClass = self.SecurityBypasser
-                        break
-                    case "HATSUNE MIKU" | "CV01":
-                        PlayerClass = self.Vocaloid
-                        break
-                    case "RIMURU" | "SLIME":
-                        PlayerClass = self.Rimuru
-                        break
-                    case "LAMBDA":
-                        PlayerClass = self.Lambda
-                        break
-
-                    case "SECRET" | "666":
-                        clear()
-                        cText("⚠  ERROR 666: Secret Activated", "red")
-                        sleep(2)
-                        cText("Yes, there are secret classes", "red")
-                        sleep(1.5)
-                        while True:
-                            clear()
-                            cText("Wanna a hint? (Y/N)", "cyan")
-                            hint = str(input("").strip().upper())
-                            match hint:
-                                case "YES" | "Y":
-                                    clear()
-                                    cText("https://pastebin.com/2snJpKM9", "cyan")
-                                    sleep(5)
-                                    clear()
-                                    self.ClassesMenu._Classes()
-                                    break
-                                case "NO" | "N":
-                                    clear()
-                                    self.ClassesMenu._Classes()
-                                    break
-                                case _:
-                                    clear()
-                                    cText("⚠  ERROR 04: Response not found", "red")
-                                    sleep(1)
-                                    continue
-
-                    case "NEXT PAGE" | "NEXT" | "PAGE":
-                        clear()
-                        if ClassPage == 1:
-                            self.ClassesMenu._Classes2()
-                            ClassPage = 2
-                        elif ClassPage == 2:
-                            self.ClassesMenu._Classes3()
-                            ClassPage = 3
-                        elif ClassPage == 3:
-                            self.ClassesMenu._Classes()
-                            ClassPage = 1
-
-                    case "PREVIOUS PAGE" | "PREVIOUS" | "BACK":
-                        clear()
-                        if ClassPage == 1:
-                            self.ClassesMenu._Classes3()
-                            ClassPage = 3
-                        elif ClassPage == 2:
-                            self.ClassesMenu._Classes()
-                            ClassPage = 1
-                        elif ClassPage == 3:
-                            self.ClassesMenu._Classes2()
-                            ClassPage = 2
-
-                    case _:
-                        clear()
-                        if ClassPage == 1:   self.ClassesMenu._Classes()
-                        elif ClassPage == 2: self.ClassesMenu._Classes2()
-                        elif ClassPage == 3: self.ClassesMenu._Classes3()
-                        cText("⚠  ERRO 04: Classe não encontrada", "red")
-                        continue
-
-            cText("▶  Digite seu nome >>", "green")
-            self.Player.Name = input("")
-            if self.Player.Name == "Return":
-                print("Retornando para a seleção de classe...")
-                clear()
-                continue
-            else:
-                break
+        cText("▶  Digite seu nome >>", "green")
+        self.Player.Name = input("")
+        if self.Player.Name == "Return":
+            clear()
+            return
 
         self.Player.Class     = PlayerClass
         self.Player.Integrity = self.Player.Class.Integrity
@@ -377,7 +321,6 @@ class DarkHatsGame:
         mission_name   = getattr(self, 'mission_name', None)
         current_enemy  = Enemy.create_phase_enemy(route_choice, self.Player.Level, mission_name=mission_name)
         current_enemy.set_phase(max(1, (self.Player.Level // 2) + 1))
-        current_enemy.MaxHealth += int(self.Player.Level * 15)
         current_enemy.Health     = current_enemy.MaxHealth
         active_cooldowns = {}
 
@@ -573,9 +516,21 @@ class DarkHatsGame:
 
                     saved_now   = RouteManager().load_progress({}, update_stats=False)
                     badges_now  = saved_now.get('badges', {})
+                    tasks_now   = int(saved_now.get('tasks', 0))
+                    chests_now  = int(saved_now.get('chests', 0))
+                    previous_state = {
+                        'badges': saved_progress.get('badges', {}),
+                        'tasks': int(saved_progress.get('tasks', 0)),
+                        'chests': int(saved_progress.get('chests', 0)),
+                    }
+                    new_state = {
+                        'badges': badges_now,
+                        'tasks': tasks_now,
+                        'chests': chests_now,
+                    }
                     level_now   = int(saved_now.get('level', self.Player.Level))
 
-                    _show_level_up(level_now, badges_now)
+                    _show_level_up(level_now, previous_state, new_state)
 
                     return
 
