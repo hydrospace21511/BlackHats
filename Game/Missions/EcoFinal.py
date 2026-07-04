@@ -56,13 +56,13 @@ def _ending_home():
         console.clear()
         console.print(Panel(
             Text(f"\n{text}\n", style=style),
-            box=box.SQUARE, border_style="white", padding=(0, 2)
+            box=box.SQUARE, border_style="cyan", padding=(0, 2)
         ))
         sleep(pause)
 
     console.clear()
     console.print(Panel(
         Text("\n\n  [ ECO FINAL ]\n\n", style="bold white"),
-        box=box.SQUARE, border_style="white", padding=(1, 4)
+        box=box.SQUARE, border_style="cyan", padding=(1, 4)
     ))
     sleep(4)
