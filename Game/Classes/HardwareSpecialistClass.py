@@ -16,7 +16,7 @@ class HardwareSpecialistClass:
             "Hardware Exploit":     (36, 4),
             "Firmware Corruption":  (33, 3),
             "Power Surge":          (40, 4),
-            "Punch":                (18, 2),
+            "Hack":                (18, 2),
         }
         self.Cooldowns = {
             "Overclock":           2,

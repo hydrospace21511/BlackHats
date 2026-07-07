@@ -123,7 +123,6 @@ frames = [
 LINE_COUNT = 8 
 
 def slash_animation():
-    # Imprime o primeiro frame
     print_frame(frames[0])
 
     for frame in frames[1:]:

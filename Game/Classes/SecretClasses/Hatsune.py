@@ -2,7 +2,7 @@ from colorama import Fore
 class HatsuneMikuClass:
     def __init__(self):
         self.raceName = "Vocaloid"
-        self.Integrity = 2007
+        self.Integrity = 200
         self.Regen = 0
         self.Items = set()
         self.Defense = 45
@@ -12,8 +12,8 @@ class HatsuneMikuClass:
             "Tell Your World": (75, 50),
             "Miku Miku Beam": (5, 0.3),
             "Microphone Throw": (80, 20),
-            "Give Damage": 207 * 9,
-            "Arrebatamento": (9999, 0)
+           # "Give Damage": 207 * 9,
+           # "Arrebatamento": (9999, 0)
         }
         self.Cooldowns = {
             "World Is Mine": 2,

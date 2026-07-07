@@ -7,35 +7,31 @@ import os
 
 console = Console()
 
-# ==========================================
-# DEFINIÇÃO DAS CLASSES
-# ==========================================
-
 CLASSES = [
     {
         "id": "1",
         "name": "HACKER",
         "input": ["HACKER", "1"],
-        "focus": "Raw damage & system exploitation.",
+        "focus": "Dano bruto & exploiting de sistemas.",
         "description": (
-            "The Hacker is a pure offensive class, specialized in breaking "
-            "through enemy defenses with brute force and raw system attacks. "
-            "High damage output, low defense. Best for aggressive players."
+            "O Hacker é uma classe puramente ofensiva, especializada em quebrar"
+            "as defesas inimigas com força bruta e ataques diretos ao sistema."
+            "Alto dano, baixa defesa. Ideal para jogadores agressivos."
         ),
-        "stats": {"Integrity": "High", "Defense": "Low", "Regen": "None"},
+        "stats": {"Integridade": "Alta", "Defesa": "Baixa", "Regeneração": "Nenhuma"},
         "badge_required": None,
     },
     {
         "id": "2",
         "name": "SECURITY ANALYTIC",
         "input": ["SECURITY ANALYTIC", "2"],
-        "focus": "Ironclad defense & node integrity.",
+        "focus": "Defesa inquebrável & integridade de nodes",
         "description": (
-            "The Security Analytic excels at protecting systems and sustaining "
-            "long battles. Passive defense bonuses and integrity restoration "
-            "make this class ideal for cautious players."
+            "O Security Analytic se destaca na proteção de sistemas e na sustentação de "
+            "longas batalhas. Bônus de defesa passiva e restauração de integridade "
+            "tornam esta classe ideal para jogadores cautelosos."
         ),
-        "stats": {"Integrity": "Medium", "Defense": "High", "Regen": "Low"},
+        "stats": {"Integridade": "Média", "Defesa": "Alta", "Regeneração": "Pouca"},
         "badge_required": "Security Analytic",
         "locked_msg": "Complete a conquista 'Security Analytic' para desbloquear.",
     },
@@ -43,13 +39,13 @@ CLASSES = [
         "id": "3",
         "name": "SOCIAL ENGINEER",
         "input": ["SOCIAL ENGINEER", "3"],
-        "focus": "Manipulation, regen & bypass.",
+        "focus": "Manipulação, regeneração & bypass.",
         "description": (
-            "The Social Engineer wins battles through psychological warfare "
-            "and resource manipulation. Cooldown management and turn skipping "
-            "give this class a unique edge in prolonged conflicts."
+            "O Social Engineer vence batalhas através de guerra psicológica "
+            "e manipulação de recursos. Gestão de cooldown e pulando turnos "
+            "dão a esta classe uma vantagem única em conflitos prolongados."
         ),
-        "stats": {"Integrity": "Medium", "Defense": "Medium", "Regen": "High"},
+        "stats": {"Integridade": "Média", "Defesa": "Média", "Regeneração": "Alta"},
         "badge_required": "Social Engineer",
         "locked_msg": "Complete a conquista 'Social Engineer' para desbloquear.",
     },
@@ -57,13 +53,13 @@ CLASSES = [
         "id": "4",
         "name": "REVERSE ENGINEER",
         "input": ["REVERSE ENGINEER", "4"],
-        "focus": "Decompilation & adaptive attacks.",
+        "focus": "Descompilação e ataques adaptativos.",
         "description": (
-            "The Reverse Engineer can dismantle enemy systems and turn their "
-            "own tools against them. A complex class that rewards players who "
-            "understand the mechanics deeply."
+            "O Reverse Engineer pode desmantelar sistemas inimigos e tornar as "
+            "próprias armas deles contra eles. Uma classe complexa, mas recompensadora para aqueles que"
+            "entendem profundamente as mecânicas dela."
         ),
-        "stats": {"Integrity": "Medium", "Defense": "Low", "Regen": "None"},
+        "stats": {"Integridade": "Média", "Defesa": "Baixa", "Regeneração": "Nenhuma"},
         "badge_required": "Reverse Engineer",
         "locked_msg": "Complete a conquista 'Reverse Engineer' para desbloquear.",
     },
@@ -71,13 +67,13 @@ CLASSES = [
         "id": "5",
         "name": "HARDWARE SPECIALIST",
         "input": ["HARDWARE SPECIALIST", "5"],
-        "focus": "Hardware manipulation & optimization.",
+        "focus": "Manipulação de hardware & otimização.",
         "description": (
-            "The Hardware Specialist operates at the physical layer of systems, "
-            "dealing consistent damage while optimizing their own stats over time. "
-            "Unique buff mechanics make this class grow stronger mid-battle."
+            "O Hardware Specialist opera na camada física dos sistemas, "
+            "causando dano consistente enquanto otimiza suas próprias estatísticas ao longo do tempo. "
+            "Mecânicas únicas de buff fazem desta classe crescer mais forte durante a batalha."
         ),
-        "stats": {"Integrity": "High", "Defense": "Medium", "Regen": "None"},
+        "stats": {"Integridade": "Alta", "Defesa": "Média", "Regeneração": "Nenhuma"},
         "badge_required": "Hardware Specialist",
         "locked_msg": "Complete a conquista 'Hardware Specialist' para desbloquear.",
     },
@@ -85,13 +81,13 @@ CLASSES = [
         "id": "6",
         "name": "SECURITY BYPASSER",
         "input": ["SECURITY BYPASSER", "6"],
-        "focus": "Bypassing security measures & stealth.",
+        "focus": "Ignora medidas de segurança & stealth.",
         "description": (
-            "The Security Bypasser specializes in ignoring enemy defenses "
-            "entirely. Stealth-based attacks deal true damage, making this class "
-            "the bane of high-defense enemies."
+            "O Security Bypasser se especializa em ignorar completamente as defesas inimigas. "
+            "Ataques baseados em furtividade causam dano real, tornando esta classe "
+            "o inferno dos inimigos com alta defesa."
         ),
-        "stats": {"Integrity": "Low", "Defense": "Low", "Regen": "Medium"},
+        "stats": {"Integridade": "Baixa", "Defesa": "Baixa", "Regeneração": "Média"},
         "badge_required": "Security Bypass",
         "locked_msg": "Complete a conquista 'Security Bypass' para desbloquear.",
     },
@@ -99,39 +95,44 @@ CLASSES = [
         "id": "CV01",
         "name": "HATSUNE MIKU",
         "input": ["HATSUNE MIKU", "CV01"],
-        "focus": "Sonic attacks & rhythm-based combos.",
+        "focus": "Ataques sonoros & combos baseados em ritmo.",
         "description": (
-            "A secret class unlocked through a hidden badge. "
-            "Miku attacks using sound frequencies and musical patterns, "
-            "dealing massive burst damage with unique combo mechanics."
+            "Uma classe secreta desbloqueada através de uma badge oculta. "
+            "Miku ataca usando frequências sonoras e padrões musicais, "
+            "causando dano massivo com mecânicas de combo únicas."
         ),
-        "stats": {"Integrity": "Medium", "Defense": "Low", "Regen": "Medium"},
-        "badge_required": "Mr.Robot",
-        "locked_msg": "Complete a conquista 'Mr.Robot' para desbloquear.",
+        "stats": {"Integridade": "Alta", "Defesa": "Alta", "Regeneração": "Alta"},
+        "badge_required": "DarkHats",
+        "locked_msg": "Complete a conquista 'DarkHats' para desbloquear.",
     },
     {
         "id": "LAMBDA",
         "name": "LAMBDA",
         "input": ["LAMBDA"],
-        "focus": "Unknown.",
+        "focus": "Desconhecido.",
         "description": (
-            "A class shrouded in mystery. Its attacks defy conventional "
-            "classification. Only those who've seen everything will understand it."
+            "Uma classe envolvida no desconhecido. Seus ataques desafiam a "
+            "classificação convencional. Apenas aqueles que viram de tudo a entenderão."
         ),
-        "stats": {"Integrity": "???", "Defense": "???", "Regen": "???"},
+        "stats": {"Integridade": "???", "Defesa": "???", "Regeneração": "???"},
         "badge_required": "???",
         "locked_msg": "Complete a conquista '???' para desbloquear.",
     },
 ]
 
 STATS_COLOR = {
-    "High":   "bold green",
-    "Medium": "bold yellow",
-    "Low":    "bold red",
-    "None":   "dim",
+    "Alto":   "bold green",
+    "Alta":   "bold green",
+    "Médio": "bold yellow",
+    "Média": "bold yellow",
+    "Baixo":    "bold red",
+    "Baixa":    "bold red",
+    "Nenhum":   "dim",
+    "Nenhuma":   "dim",
     "???":    "dim magenta",
 }
-
+def clear():
+    os.system('cls' if os.name == 'nt' else 'clear')
 PER_PAGE = 6
 
 
@@ -183,14 +184,8 @@ def get_key():
         finally:
             termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
 
-
-# ==========================================
-# RENDERIZADORES
-# ==========================================
-
-
 def render_class_list(classes_page, cursor, badges, page, total_pages):
-    console.clear()
+    clear()
 
     title = Text()
     title.append(" ■ ", style="green")
@@ -243,7 +238,7 @@ def render_class_list(classes_page, cursor, badges, page, total_pages):
 
 
 def render_class_detail(cls, badges):
-    console.clear()
+    clear()
 
     is_locked = cls.get("badge_required") and not badges.get(cls["badge_required"], False)
 
@@ -260,12 +255,12 @@ def render_class_detail(cls, badges):
     info = Table.grid(padding=(1, 2), expand=True)
     info.add_column(ratio=3)
     info.add_column(ratio=2)
-    info.add_row(desc, Panel(stats_table, title="STATS", title_align="left", box=box.SQUARE, border_style="dim"))
+    info.add_row(desc, Panel(stats_table, title="STATUS", title_align="left", box=box.SQUARE, border_style="dim"))
 
     title = Text()
     title.append(f" {cls['name']} ", style="bold white")
     if is_locked:
-        title.append("[LOCKED]", style="bold bright_black")
+        title.append("[BLOQUEADO]", style="bold bright_black")
     else:
         title.append(f"[{cls['id']}]", style="bold green")
 
@@ -299,11 +294,7 @@ def render_class_detail(cls, badges):
 
 
 def classes_menu(badges=None):
-    """
-    Retorna o input string da classe escolhida (ex: "HACKER", "CV01")
-    ou None se o player sair.
-    Para adicionar uma nova classe: basta inserir um novo dict em CLASSES.
-    """
+
     if badges is None:
         badges = {}
 

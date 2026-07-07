@@ -17,8 +17,8 @@ class SocialEngineerClass:
             "Phishing":        (24, 3),
             "Pretexting":      (30, 4),
             "Baiting":         (20, 2),
-            "Punch":           (22, 1),
-            "God's Hand":      (50, 5),
+            "Hack":           (22, 1),
+        #    "God's Hand":      (50, 5),
         }
         self.Cooldowns = {
             "Internal Access": 1,

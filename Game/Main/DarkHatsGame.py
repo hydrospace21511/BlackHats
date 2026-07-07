@@ -98,6 +98,51 @@ def Damage(D, Defense):
     return D * (1 - Defense / 100)
 
 
+def apply_item_buffs(player, player_class):
+    base_integrity = int(getattr(player_class, 'Integrity', 0))
+    base_defense = int(getattr(player_class, 'Defense', 0))
+    base_regen = int(getattr(player_class, 'Regen', 0))
+    base_attack_power = int(getattr(player_class, 'attack_power', 0))
+
+    total_defense = base_defense
+    total_regen = base_regen
+    total_attack_power = base_attack_power
+
+    items = getattr(player_class, 'Items', None)
+    if items in (None, 'None'):
+        items = set()
+
+    total_integrity_bonus = 0
+    for item in items or []:
+        total_integrity_bonus += int(getattr(item, 'Integrity', 0))
+        total_defense += int(getattr(item, 'Defense', 0))
+        total_regen += int(getattr(item, 'Regen', 0))
+        total_attack_power += int(getattr(item, 'AttackPower', 0))
+
+    previous_max = int(getattr(player, 'max_integrity', base_integrity))
+    max_integrity = base_integrity + total_integrity_bonus
+
+    current_integrity = int(getattr(player, 'Integrity', max_integrity))
+    if current_integrity <= 0:
+        current_integrity = max_integrity
+    elif previous_max > 0 and max_integrity > 0:
+        ratio = current_integrity / previous_max if previous_max > 0 else 1.0
+        current_integrity = int(max_integrity * ratio)
+    current_integrity = max(0, min(current_integrity, max_integrity))
+
+    player.Integrity = current_integrity
+    player.Defense = total_defense
+    player.Regen = total_regen
+    player.attack_power = total_attack_power
+
+    player_class.Integrity = max_integrity
+    player_class.Defense = base_defense
+    player_class.Regen = base_regen
+    player_class.attack_power = base_attack_power
+    player_class.max_integrity = max_integrity
+    return player, player_class
+
+
 LEVEL_UP_DATA = {
 
     2: {
@@ -126,7 +171,7 @@ LEVEL_UP_DATA = {
         "badges":   [],
     },
     6: {
-        "title":    "ATUALIZAÇÃO v6.0 — PARTIÇÃO FINAL MONTADA",
+        "title":    "ERROR v6.0 — PARTIÇÃO FINAL MONTADA",
         "new_docs": ["SHEOL.txt"],
         "hint":     "O último registro está em 'Documentos'.",
         "badges":   ["DarkHats"],
@@ -151,14 +196,10 @@ def _compute_effective_badges(raw_badges: dict, tasks: int, chests: int) -> dict
     effective["Social Engineer"] = effective["Social Engineer"] or (tasks >= 2)
     effective["Security Bypass"] = effective["Security Bypass"] or (tasks >= 1)
     effective["Security Analytic"] = effective["Security Analytic"] or (tasks >= 3)
-    effective["Reverse Engineer"] = effective["Reverse Engineer"] or (tasks >= 10)
-    effective["Hardware Specialist"] = effective["Hardware Specialist"] or (chests >= 5)
-    effective["DarkHats"] = effective["DarkHats"] or (
-        effective["Normal Ending"] and
-        effective["Good Ending"] and
-        effective["Bad Ending"] and
-        effective["???"]
-    )
+    effective["Reverse Engineer"] = effective["Reverse Engineer"] or (tasks >= 5)
+    effective["Hardware Specialist"] = effective["Hardware Specialist"] or (chests >= 3)
+    effective["???"] = effective["???"] or (tasks >= 6)
+    effective["DarkHats"] = effective["DarkHats"] or (tasks >= 6 and chests >= 5)
     return effective
 
 
@@ -246,6 +287,7 @@ class DarkHatsGame:
         self.ReverseEngineer      = ReverseEngineerClass()
         self.CorruptedHatsuneMiku = CorruptedHatsuneMikuClass()
         self.Player               = PlayerModule.Player()
+        self.custom_boss_config = None
 
         self.attack_functions = {
             "Decompiler":                               DecompilerAttack,
@@ -263,6 +305,42 @@ class DarkHatsGame:
             "Negative Space":                           NegativeSpaceAttack,
             "System Override":                          SystemOverrideAttack,
         }
+
+    def set_custom_boss(self, name=None, max_health=None, defense=0, regen=0, attacks=None, phase=1):
+        self.custom_boss_config = {
+            "name": name or "CUSTOM BOSS",
+            "max_health": int(max_health) if max_health is not None else 500,
+            "defense": int(defense),
+            "regen": int(regen),
+            "attacks": dict(attacks or {}),
+            "phase": int(phase),
+        }
+        return self
+
+    def clear_custom_boss(self):
+        self.custom_boss_config = None
+        return self
+
+    def _build_current_enemy(self, route_choice, player_level, mission_name=None):
+        if self.custom_boss_config:
+            boss_cfg = self.custom_boss_config
+            enemy = Enemy(
+                name=boss_cfg["name"],
+                max_health=boss_cfg["max_health"],
+                defense=boss_cfg["defense"],
+                regen=boss_cfg["regen"],
+                attacks=boss_cfg["attacks"] or {"SYSTEM COLLAPSE": 50},
+            )
+            enemy.route = str(route_choice).upper().strip()
+            enemy.phase = max(1, int(boss_cfg.get("phase", 1)))
+            enemy.max_hp = enemy.MaxHealth
+            enemy.Health = enemy.MaxHealth
+            return enemy
+
+        current_enemy = Enemy.create_phase_enemy(route_choice, player_level, mission_name=mission_name)
+        current_enemy.set_phase(max(1, (player_level // 2) + 1))
+        current_enemy.Health = current_enemy.MaxHealth
+        return current_enemy
 
     def start(self):
         clear()
@@ -293,9 +371,6 @@ class DarkHatsGame:
             return
 
         self.Player.Class     = PlayerClass
-        self.Player.Integrity = self.Player.Class.Integrity
-        self.Player.Defense   = self.Player.Class.Defense
-        self.Player.Regen     = self.Player.Class.Regen
 
         if not hasattr(self.Player.Class, 'Items') or self.Player.Class.Items in (None, 'None'):
             self.Player.Class.Items = set()
@@ -307,8 +382,8 @@ class DarkHatsGame:
                 item = open_chest.__globals__['get_item_by_name'](item_name)
                 if item is not None:
                     self.Player.Class.Items.add(item)
-                    self.Player.Integrity += getattr(item, 'Integrity', 0)
-                    self.Player.Defense   += getattr(item, 'Defense', 0)
+
+        apply_item_buffs(self.Player, self.Player.Class)
 
         clear()
         cText(f">> Welcome {self.Player.Name}!", "green")
@@ -319,9 +394,7 @@ class DarkHatsGame:
 
         route_choice   = getattr(self, 'route_choice', 'BAD')
         mission_name   = getattr(self, 'mission_name', None)
-        current_enemy  = Enemy.create_phase_enemy(route_choice, self.Player.Level, mission_name=mission_name)
-        current_enemy.set_phase(max(1, (self.Player.Level // 2) + 1))
-        current_enemy.Health     = current_enemy.MaxHealth
+        current_enemy  = self._build_current_enemy(route_choice, self.Player.Level, mission_name=mission_name)
         active_cooldowns = {}
 
         while True:
@@ -336,7 +409,7 @@ class DarkHatsGame:
                     enemy_life(current_enemy)
                     display_battle_ui(
                         player_integrity=self.Player.Integrity,
-                        max_integrity=self.Player.Class.Integrity,
+                        max_integrity=getattr(self.Player.Class, 'max_integrity', self.Player.Class.Integrity),
                         player_defense=self.Player.Defense,
                         available_attacks=attack_list,
                         ui_color=self.Player.Class.ui_color,
@@ -360,7 +433,7 @@ class DarkHatsGame:
                 clear()
                 enemy_life(current_enemy)
                 display_battle_ui(
-                    self.Player.Integrity, self.Player.Class.Integrity,
+                    self.Player.Integrity, getattr(self.Player.Class, 'max_integrity', self.Player.Class.Integrity),
                     self.Player.Defense, self.Player.Class.Attacks.keys(),
                     self.Player.Class.ui_color,
                     player_name=self.Player.Name, class_name=PlayerClass.raceName,
@@ -373,15 +446,15 @@ class DarkHatsGame:
                     clear()
                     enemy_life(current_enemy)
                     display_battle_ui(
-                        self.Player.Integrity, self.Player.Class.Integrity,
+                        self.Player.Integrity, getattr(self.Player.Class, 'max_integrity', self.Player.Class.Integrity),
                         self.Player.Defense, self.Player.Class.Attacks.keys(),
                         self.Player.Class.ui_color,
                         player_name=self.Player.Name, class_name=PlayerClass.raceName,
                         selected_index=actual_selection
                     )
-                    cText(" Reversing the decompilation...", "warn")
+                    cText(" Invertendo a descompilação...", "warn")
                     sleep(2)
-                    cText(" Decompilation reversed! Your original stats and attacks were restored!", "positive")
+                    cText(" Descompilação invertida! Seus status e ataques originais foram restaurados!", "positive")
                     sleep(2)
                     self.Player.Class.Decompiled = False
                     self.Player.Class.Attacks    = self.Player.Class.OriginalAttacks
@@ -393,7 +466,7 @@ class DarkHatsGame:
                     clear()
                     enemy_life(current_enemy)
                     display_battle_ui(
-                        self.Player.Integrity, self.Player.Class.Integrity,
+                        self.Player.Integrity, getattr(self.Player.Class, 'max_integrity', self.Player.Class.Integrity),
                         self.Player.Defense, self.Player.Class.Attacks.keys(),
                         self.Player.Class.ui_color,
                         player_name=self.Player.Name, class_name=PlayerClass.raceName,
@@ -407,7 +480,7 @@ class DarkHatsGame:
                     clear()
                     enemy_life(current_enemy)
                     display_battle_ui(
-                        self.Player.Integrity, self.Player.Class.Integrity,
+                        self.Player.Integrity, getattr(self.Player.Class, 'max_integrity', self.Player.Class.Integrity),
                         self.Player.Defense, self.Player.Class.Attacks.keys(),
                         self.Player.Class.ui_color,
                         player_name=self.Player.Name, class_name=PlayerClass.raceName,
@@ -450,7 +523,7 @@ class DarkHatsGame:
                     clear()
                     enemy_life(current_enemy)
                     display_battle_ui(
-                        self.Player.Integrity, self.Player.Class.Integrity,
+                        self.Player.Integrity, getattr(self.Player.Class, 'max_integrity', self.Player.Class.Integrity),
                         self.Player.Defense, self.Player.Class.Attacks.keys(),
                         self.Player.Class.ui_color,
                         player_name=self.Player.Name, class_name=PlayerClass.raceName,
@@ -461,7 +534,7 @@ class DarkHatsGame:
                     clear()
                     enemy_life(current_enemy)
                     display_battle_ui(
-                        self.Player.Integrity, self.Player.Class.Integrity,
+                        self.Player.Integrity, getattr(self.Player.Class, 'max_integrity', self.Player.Class.Integrity),
                         self.Player.Defense, self.Player.Class.Attacks.keys(),
                         self.Player.Class.ui_color,
                         player_name=self.Player.Name, class_name=PlayerClass.raceName,
@@ -497,12 +570,26 @@ class DarkHatsGame:
                     if chest_opened and hasattr(chest_opened, 'itemName'):
                         inventory_names.append(chest_opened.itemName)
                     inventory_names = list(dict.fromkeys(inventory_names))
+
+                    route_history = list(saved_progress.get('route_history', []))
+                    mission_history = list(saved_progress.get('mission_history', []))
+
+                    if route_choice and route_choice not in ("None", ""):
+                        route_history.append(route_choice)
+                    if mission_name:
+                        mission_history.append(mission_name)
+
+                    if mission_name == "DarkHats":
+                        next_level = 6
+                    else:
+                        next_level = min(5, len(route_history) + 1)
+
                     RouteManager().save_progress(
                         saved_progress.get('badges', {}),
-                        saved_progress.get('route_history', []),
-                        saved_progress.get('ending', 'ENDING_NORMAL'),
-                        saved_progress.get('mission_history', []),
-                        level=saved_progress.get('level', 1),
+                        route_history,
+                        None,
+                        mission_history,
+                        level=next_level,
                         inventory=inventory_names,
                         tasks=PlayerStats.get_lifetime_tasks(),
                         chests=PlayerStats.get_lifetime_chests()
@@ -540,7 +627,7 @@ class DarkHatsGame:
             enemy_attack_name, enemy_attack_dmg = current_enemy.random_attack()
             enemy_final_damage = Damage(enemy_attack_dmg, self.Player.Defense)
             self.Player.Integrity -= enemy_final_damage
-            cText(f" >> {current_enemy.Name} retaliates with [{enemy_attack_name}]! You took {enemy_final_damage:.1f} damage!", "error")
+            cText(f" >> {current_enemy.Name} executou [{enemy_attack_name}]! Você levou {enemy_final_damage:.1f} de dano!", "error")
             sleep(2.5)
 
             if self.Player.Integrity <= 0:
@@ -567,7 +654,7 @@ class DarkHatsGame:
             clear()
             enemy_life(current_enemy)
             display_battle_ui(
-                self.Player.Integrity, self.Player.Class.Integrity,
+                self.Player.Integrity, getattr(self.Player.Class, 'max_integrity', self.Player.Class.Integrity),
                 self.Player.Defense, self.Player.Class.Attacks.keys(),
                 self.Player.Class.ui_color,
                 player_name=self.Player.Name, class_name=PlayerClass.raceName,

@@ -16,7 +16,7 @@ class SecurityBypasserClass:
             "System Override":  (38, 5),
             "Backdoor Implant": (35, 5),
             "Stealth Access":   (44, 6),
-            "Punch":            (22, 2),
+            "Hack":            (22, 2),
         }
         self.Cooldowns = {
             "Firewall Bypass":  2,

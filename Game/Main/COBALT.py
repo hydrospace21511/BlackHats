@@ -284,11 +284,11 @@ lore_files = {
 
 
 def _menu_border_color(player_level: int) -> str:
-    if player_level >= 5:
+    if player_level >= 6:
         return Fore.MAGENTA
-    if player_level >= 4:
+    if player_level >= 5:
         return Fore.RED
-    if player_level >= 3:
+    if player_level >= 4:
         return Fore.YELLOW
     return Fore.GREEN
 
@@ -309,16 +309,16 @@ class COBALT:
            ║        | |_| | (_| | |  |   <|  _  | (_| | |_\__ \       ║
            ║        |____/ \__,_|_|  |_|\_\_| |_|\__,_|\__|___/       ║
            ║                                                          ║
-           ║            > SYSTEM BOOT SEQUENCE INITIATED...           ║
+           ║            > SYSTEM BOOT SEQUENCE INITIATED.             ║
            ║                                                          ║
-           ║                  [ PRESS SPACE TO HACK ]                 ║
+           ║            [ PRESSIONE ENTER PARA HACKEAR ]              ║
            ║                                                          ║
            ╚══════════════════════════════════════════════════════════╝
             """)
 
     def _Load_Menu(self):
         G = Fore.GREEN
-        for i in range(0, 6):
+        for i in range(1, 4):
             clear()
             self._print_menu(0)
             print(f"{G}                                 Starting COBALT" + ("." * i))
@@ -530,17 +530,17 @@ class COBALT_FS:
         self.inner_w = 80
         self.desc_badges = {
             "Social Engineer": "Sobreviva 2 tasks.",
-            "Reverse Engineer": "Sobreviva 10 tasks.",
-            "Hardware Specialist": "Abra 5 baús.",
-            "Security Bypass": "Complete uma task: placeholder insano.",
-            "Security Analytic": "Complete 3 auditorias de sistema.",
-            "Mr.Robot": "Complete o final bom.",
-            "Normal Ending": "Eu não ligo sobre as minhas ações.",
-            "Good Ending": "Ajude-os. Deixe pacífico.",
-            "Bad Ending": "Destrua tudo. Não deixe um traço.",
-            "???": "Requisito desconhecido...",
-            "DarkHats": "Você completou o jogo!"
-        }
+            "Reverse Engineer": "Sobreviva 5 tasks.",
+            "Hardware Specialist": "Abra 3 baús.",
+            "Security Bypass": "Complete uma task.",
+            "Security Analytic": "Complete 3 tasks.",
+            #"Mr.Robot": "Complete o final bom.",
+            #"Normal Ending": "Eu não ligo sobre as minhas ações.",
+            #"Good Ending": "Ajude-os. Deixe pacífico.",            #se vc é curioso e ta lendo isso, então saiba: o jogo era pra ter 3 finais, cada um contando uma perspectiva diferente da história, porém com o curto prazo de entrega, acabou que ficou apenas com o final True, se divirta!
+            #"Bad Ending": "Destrua tudo. Não deixe um traço.",
+            "???": "Você matou o último boss.",
+            "DarkHats": "Você platinou o jogo! (6 tasks e 5 baús)"
+        }                     
         self.stats = PlayerStats.get_lifetime_stats()
         self.badges = {
             "Social Engineer": False,
@@ -548,10 +548,10 @@ class COBALT_FS:
             "Security Bypass": False,
             "Reverse Engineer": False,
             "Security Analytic": False,
-            "Mr.Robot": False,
-            "Good Ending": False,
-            "Bad Ending": False,
-            "Normal Ending": False,
+            #"Mr.Robot": False,
+            #"Good Ending": False,
+            #"Bad Ending": False,
+            #"Normal Ending": False,
             "???": False,
             "DarkHats": False
         }
@@ -603,16 +603,16 @@ class COBALT_FS:
         saved_badges = saved.get("badges", {})
         self.badges = {
             "Social Engineer":   saved_badges.get("Social Engineer", False)   or (self.stats.get("tasks", 0) >= 2),
-            "Hardware Specialist": saved_badges.get("Hardware Specialist", False) or (self.stats.get("chests", 0) >= 5),
+            "Hardware Specialist": saved_badges.get("Hardware Specialist", False) or (self.stats.get("chests", 0) >= 3),
             "Security Bypass":   saved_badges.get("Security Bypass", False)   or (self.stats.get("tasks", 0) >= 1),
-            "Reverse Engineer":  saved_badges.get("Reverse Engineer", False)  or (self.stats.get("tasks", 0) >= 10),
+            "Reverse Engineer":  saved_badges.get("Reverse Engineer", False)  or (self.stats.get("tasks", 0) >= 5),
             "Security Analytic": saved_badges.get("Security Analytic", False) or (self.stats.get("tasks", 0) >= 3),
-            "Mr.Robot":          saved_badges.get("Mr.Robot", False),
-            "Normal Ending":     saved_badges.get("Normal Ending", False),
-            "Good Ending":       saved_badges.get("Good Ending", False),
-            "Bad Ending":        saved_badges.get("Bad Ending", False),
-            "???":               saved_badges.get("???", False),
-            "DarkHats":          saved_badges.get("DarkHats", False),
+            #"Mr.Robot":          saved_badges.get("Mr.Robot", False),
+            #"Normal Ending":     saved_badges.get("Normal Ending", False),
+            #"Good Ending":       saved_badges.get("Good Ending", False),
+            #"Bad Ending":        saved_badges.get("Bad Ending", False),
+            "???":               saved_badges.get("???", False) or (self.stats.get("tasks", 0) >= 6),
+            "DarkHats":          saved_badges.get("DarkHats", False) or (self.stats.get("tasks", 0) >= 6 and self.stats.get("chests", 0) >= 5)
         }
 
         docs = [
@@ -696,7 +696,7 @@ class COBALT_FS:
             "root/Jogos": [
                 {"name": "..",               "type": "BACK", "icon": "🔙",  "color": Fore.YELLOW, "target": "root"},
                 {"name": "SnakeGame.flat",   "type": "EXEC", "icon": "⚙️", "color": Fore.WHITE},
-                {"name": "RobuxGen_v2.exe",  "type": "EXEC", "icon": "⚙️", "color": Fore.WHITE},
+                {"name": "FakeRobuxGen_v2.exe",  "type": "EXEC", "icon": "⚙️", "color": Fore.WHITE},
             ],
 
             "root/Conquistas": paste_achievements,
@@ -733,7 +733,7 @@ class COBALT_FS:
                 self.file_system["root/DarkHats"].append({
                     "name": f"[{numero}] {choice['mission']}",
                     "type": "ROUTE",
-                    "icon": "⚙️ ",
+                    "icon": "⚙️",
                     "color": Fore.WHITE,
                     "route": choice['route'],
                     "mission": choice['mission'],
@@ -743,6 +743,31 @@ class COBALT_FS:
             self.file_system["root/DarkHats"].append(
                 {"name": "───────────────────────", "type": "INFO", "icon": "", "color": Fore.LIGHTBLACK_EX}
             )
+
+        FINAL_MISSIONS = ["Cláusula Final", "Eco Final", "Preço Final"]
+        mission_history = self.route_manager.load_progress(
+            self.badges, update_stats=False
+        ).get("mission_history", [])
+
+        final_missions_done = [m for m in FINAL_MISSIONS if m in mission_history]
+
+        if len(final_missions_done) >= 1 and self.player_level >= 5:
+            if "DarkHats" not in mission_history:
+                self.file_system["root/DarkHats"] = [
+                    {"name": "..",       "type": "BACK", "icon": "🔙", "color": Fore.YELLOW, "target": "root"},
+                    {"name": f">> Nível {self.player_level}/5", "type": "INFO", "icon": "💾", "color": Fore.CYAN},
+                    {"name": "───────────────────────", "type": "INFO", "icon": "", "color": Fore.LIGHTBLACK_EX},
+                    {"name":   "DarkHats","type":   "FINAL","icon":   "⚙️","color":  Fore.RED,"route":  self.current_ending.replace("ENDING_", ""),"mission": "DarkHats","level":  5,"display_position": 0,},
+                    {"name": "───────────────────────", "type": "INFO", "icon": "", "color": Fore.LIGHTBLACK_EX},
+                ]
+            else:
+                self.file_system["root/DarkHats"] = [
+                    {"name": "..",       "type": "BACK", "icon": "🔙", "color": Fore.YELLOW, "target": "root"},
+                    {"name": f">> Nível {self.player_level}/5", "type": "INFO", "icon": "💾", "color": Fore.CYAN},
+                    {"name": "───────────────────────", "type": "INFO", "icon": "", "color": Fore.LIGHTBLACK_EX},
+                    {"name": "[COMPLETO] DarkHats finalizado!", "type": "INFO", "icon": "🏆", "color": Fore.GREEN},
+                    {"name": "───────────────────────", "type": "INFO", "icon": "", "color": Fore.LIGHTBLACK_EX},
+                ]
 
         self.files = self.file_system[self.current_dir]
         if self.cursor >= len(self.files):
@@ -830,11 +855,14 @@ class COBALT_FS:
             self.cursor = 0
             return
 
-        if ftype == "ROUTE":
+        if ftype in ("ROUTE", "FINAL"):
             self._open_route_mission(file)
 
         elif ftype == "EXEC" and name == "SnakeGame.flat":
             self._open_snake_game()
+
+        elif ftype == "INFO" and name == "[COMPLETO] DarkHats finalizado!":
+            self._open_completed_darkhats_boss()
 
         elif ftype == "BADGE":
             self._open_badge(file['raw_name'])
@@ -851,7 +879,7 @@ class COBALT_FS:
         elif ftype == "FILE" and name == "DarkHats.txt":
             self._open_DarkHatsText()
 
-        elif ftype == "EXEC" and name == "RobuxGen_v2.exe":
+        elif ftype == "EXEC" and name == "FakeRobuxGen_v2.exe":
             from Game.Main.Games.RobuxGame import robux_game
             robux_game()
 
@@ -926,7 +954,7 @@ class COBALT_FS:
         game = DarkHatsGame()
         game.route_choice    = getattr(self, 'selected_route', 'BAD')
         game.mission_name    = getattr(self, 'selected_mission_name', None)
-        game.Player.Level    = self.player_level
+        game.Player.Level    = min(5, self.player_level + 1)
         sleep(2)
         dih = COBALT(player_level=self.player_level)
         dih.start()
@@ -951,6 +979,10 @@ class COBALT_FS:
             "Preço Final":    "GOOD",
         }
 
+        if mission_name == "DarkHats":
+            self._open_sheol()
+            return
+
         if mission_name in FINAL_MISSIONS:
             self._open_final_mission(mission_name, route_name)
             return
@@ -959,24 +991,35 @@ class COBALT_FS:
         print(f"{Fore.CYAN}[*] Carregando rota: {route_name} missão: {mission_name}...{Style.RESET_ALL}")
         sleep(1)
 
-        saved = self.route_manager.load_progress(self.badges)
-        mission_history = list(saved.get('mission_history', [])) + [mission_name]
-
         self.selected_route       = route_name
         self.selected_mission_name = mission_name
-        self.route_history        = list(saved.get('route_history', self.route_history)) + [route_name]
-        self.current_ending       = self.ending_manager.evaluate(self.route_history)
-        next_level = min(5, len(self.route_history) + 1)
-        self.route_manager.save_progress(
-            self.badges, self.route_history, self.current_ending,
-            mission_history, level=next_level,
-            tasks=self.stats.get('tasks', 0),
-            chests=self.stats.get('chests', 0),
-            rebirths=self.stats.get('rebirths', 0),
-            inventory=getattr(self, 'inventory', [])
-        )
-        self.player_level = next_level
+
         self._open_darkhats()
+
+    def _open_sheol(self):
+        clear()
+        print(f"{Fore.RED}[!] Carregando MOM No.2...{Style.RESET_ALL}")
+        sleep(2)
+
+        from Game.Main.DarkHatsGame import DarkHatsGame
+        game = DarkHatsGame()
+        game.route_choice      = self.current_ending.replace("ENDING_", "") or "BAD"
+        game.mission_name      = "DarkHats"
+        game.Player.Level      = self.player_level
+        game.is_final_boss     = True
+
+        from Game.Main.COBALT import COBALT
+        dih = COBALT()
+        dih.start()
+        game.start()
+
+        saved = self.route_manager.load_progress(self.badges)
+        self.player_level  = int(saved.get("level", 1))
+        self.route_history = list(saved.get('route_history', self.route_history))
+
+        clear()
+        print(f"{Fore.RED}[!] MOM No.2 concluído.{Style.RESET_ALL}")
+        sleep(2)
 
     def _open_final_mission(self, mission_name, route_name):
         clear()
@@ -993,32 +1036,32 @@ class COBALT_FS:
             return
 
         saved           = self.route_manager.load_progress(self.badges)
-        mission_history = list(saved.get('mission_history', [])) + [mission_name]
         route_history   = list(saved.get('route_history', self.route_history)) + [route_name]
-        ending          = self.ending_manager.evaluate(route_history)
 
-        self.route_manager.save_progress(
-            self.badges, route_history, ending,
-            mission_history, level=5,
-            tasks=self.stats.get('tasks', 0),
-            chests=self.stats.get('chests', 0),
-            rebirths=self.stats.get('rebirths', 0),
-            inventory=getattr(self, 'inventory', [])
-        )
+        if final_run(route_history=route_history):
+            mission_history = list(saved.get('mission_history', [])) + [mission_name]
+            ending          = self.ending_manager.evaluate(route_history)
 
-        self.route_history  = route_history
-        self.current_ending = ending
-        self.player_level   = 5
+            self.route_manager.save_progress(
+                self.badges, route_history, ending,
+                mission_history, level=5,
+                tasks=self.stats.get('tasks', 0),
+                chests=self.stats.get('chests', 0),
+                rebirths=self.stats.get('rebirths', 0),
+                inventory=getattr(self, 'inventory', [])
+            )
 
-        final_run(route_history=route_history)
+            self.route_history  = route_history
+            self.current_ending = ending
+            self.player_level   = 5
 
-        saved             = self.route_manager.load_progress(self.badges)
-        self.player_level = int(saved.get('level', 5))
-        self.route_history = list(saved.get('route_history', route_history))
-
-        clear()
-        print(f"{Fore.YELLOW}[!] Missão final concluída. Retornando ao COBALT...{Style.RESET_ALL}")
-        sleep(2)
+            clear()
+            print(f"{Fore.YELLOW}[!] Missão final concluída. Retornando ao COBALT...{Style.RESET_ALL}")
+            sleep(2)
+        else:
+            clear()
+            print(f"{Fore.YELLOW}[!] Missão final abortada. Retornando ao COBALT...{Style.RESET_ALL}")
+            sleep(2)
 
     def _open_badge(self, badge_name):
         clear()
@@ -1060,10 +1103,11 @@ class COBALT_FS:
             f"• Navegação: Use as setas do teclado para se mover e ENTER para selecionar.\n"
             f"• Missões: Na aba 'DarkHats', você encontrará as tarefas que eu te passarei e o seu progresso atual.\n"
             f"• Recompensas: Concluir missões rende baús com itens para os personagens e upgrades no sistema!\n"
-            f"Lembre-se, o sistema possui um assistente virtual, em cada aba, você deve encontrá-lo.\n\n"
-            f"Ah, e fique de olho: seu sistema receberá atualizações constantes.\n"
-            f"OBS: Esta mensagem aparecerá apenas uma vez.\n"
-            f"Aperte ENTER para fechar e começar."
+            f"Lembre-se, o sistema possui um assistente virtual, na aba 'Ajuda', você deve encontrá-lo.\n\n"
+            f"Ah, e fique de olho: seu sistema receberá atualizações constantes, além disso,\n"
+            f"algumas missões podem ser mais fáceis ou mais difíceis."
+            f"\n"
+            f"Aperte ENTER para sair e começar."
         )
         text(message, "GREEN", "GREEN")
         self.player_level = 1
@@ -1117,7 +1161,31 @@ class COBALT_FS:
         sleep(1)
 
 
-    def _open_boss(self):
+    def _open_custom_boss(self, name, max_health, defense=0, regen=0, attacks=None):
+        self._open_boss({
+            "name": name,
+            "max_health": max_health,
+            "defense": defense,
+            "regen": regen,
+            "attacks": attacks or {},
+        })
+
+    def _open_completed_darkhats_boss(self):
+        self._open_custom_boss(
+            name="Discord-chan",
+            max_health=10000,
+            defense=0,
+            regen=0,
+            attacks={
+                "Ping Storm": 220,
+                "DM Spam": 260,
+                "Emoji Burst": 300,
+                "Mute Protocol": 340,
+                "Server Crash": 380,
+            },
+        )
+
+    def _open_boss(self, boss_config=None):
         clear()
         print(f"{Fore.RED}╔════════════════════════════════════════════╗")
         line_1 = f" {Fore.YELLOW}⚠️  WARNING: SYSTEM AT RISK"
@@ -1134,6 +1202,8 @@ class COBALT_FS:
         sleep(2)
         from Game.Main.DarkHatsGame import DarkHatsGame
         game = DarkHatsGame()
+        if boss_config:
+            game.set_custom_boss(**boss_config)
         game.Player.Level = self.player_level
         game.start()
         self.player_level = game.Player.Level
@@ -1206,7 +1276,7 @@ class COBALT_FS:
             f"Cada uma é uma missão diferente. Escolha uma e pressione ENTER!\n"
             f"\n"
             f"CLASSES\n"
-            f"Para navegar entre as classes, digite 'next' ou 'previous'.\n"
+            f"Para navegar entre as classes, pressione as setas ↑↓ para mover e ←→ para mudar as páginas.\n"
             f"Algumas classes precisam de uma conquista específica para serem desbloqueadas.\n"
             f"\n"
             f"NOME DE USUÁRIO\n"

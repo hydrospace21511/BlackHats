@@ -48,6 +48,23 @@ class Enemy:
 
     @classmethod
     def create_phase_enemy(cls, route_name, level, mission_name=None):
+        if mission_name == "DarkHats":
+            enemy = cls(
+                name="MOM No.2",
+                max_health=2000,
+                defense=40,
+                regen=0,
+                attacks={
+                    "SYSTEM COLLAPSE": 80,
+                    "MEMORY WIPE":     60,
+                    "ROOT ACCESS":     100,
+                }
+            )
+            enemy.route = str(route_name).upper().strip()
+            enemy.phase = 5
+            enemy.max_hp = enemy.MaxHealth
+            return enemy
+
         route = str(route_name).upper().strip()
         phase_index = max(0, min(4, int(level) - 1))
         phase_data = cls.PHASE_DATA.get(route, cls.PHASE_DATA['BAD'])[phase_index]

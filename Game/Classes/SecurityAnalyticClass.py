@@ -15,9 +15,9 @@ class SecurityAnalyticClass:
             "Firewall":      (30, 3),
             "Security Patch":(28, 3),
             "Weakness View": (26, 4),
-            "Punch":         (32, 2),
-            "God's Hand":    (45, 5),
-            "Pneumoultramicroscopicsilicovolcanoconiotic": "ball cancer",
+            "Hack":         (32, 2),
+            #"God's Hand":    (45, 5),
+           # "Pneumoultramicroscopicsilicovolcanoconiotic": "ball cancer",
         }
         self.Cooldowns = {
             "Firewall":      8,

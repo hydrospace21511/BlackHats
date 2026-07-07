@@ -21,7 +21,7 @@ class ReverseEngineerClass:
             "Protection Bypass": (50, 5),
             "Algorithm Clone":   (36, 4),
             "ROP Chain":         (44, 5),
-            "Punch":             (30, 3),
+            "Hack":             (30, 3),
         }
 
         self.OriginalAttacks = {
@@ -29,7 +29,7 @@ class ReverseEngineerClass:
             "Protection Bypass": (50, 5),
             "Algorithm Clone":   (36, 4),
             "ROP Chain":         (44, 5),
-            "Punch":             (30, 3),
+            "Hack":             (30, 3),
         }
 
         self.Cooldowns = {

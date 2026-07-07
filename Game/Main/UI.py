@@ -166,7 +166,7 @@ def display_battle_ui(player_integrity, max_integrity, player_defense, available
         console.print(top_layout)
         console.print()
         console.print(bottom_layout)
-        console.print(Text("\n  COBALT MAINFRAME v1.0.4  |  SYSTEM NODE OVERVIEW", style="dim black on black"), justify="left")
+        console.print(Text("\n  COBALT MAINFRAME v1.0.4  |  SYSTEM NODE OVERVIEW", style="dim black"), justify="left")
 
 def enemy_life(current_enemy):
     name = str(current_enemy.Name)
