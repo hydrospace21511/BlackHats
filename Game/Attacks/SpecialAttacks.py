@@ -86,6 +86,7 @@ def DecompilerAttack(Player, current_enemy, Attack_Info, display_battle_ui, inte
         sleep(2)
         current_enemy.Health -= final_damage
         Player.Class.Decompiled = True
+
     else:
         current_enemy.Health -= final_damage
         cText(f" >> You executed {Attack}! {current_enemy.Name} took {final_damage:.1f} damage!", "positive")
@@ -128,8 +129,32 @@ def InternalAccessAttack(Player, current_enemy, Attack_Info, display_battle_ui, 
         print(f"Defense: {defense_bar(Player.Defense)}")
 
 def MikuMikuBeamAttack(Player, current_enemy, Attack_Info, display_battle_ui, integrity_bar, defense_bar, Damage, Attack, PlayerClass):
-    # Hatsune Miku attacks disabled
-    pass
+    i = 0
+    #PlayerClass.Defense = 0
+    while i < 100:
+        clear()
+        if i < 50:
+            cText(f"Miku Miku Beam is charging... {i}%", "red")
+        elif i < 80:
+            cText(f"Miku Miku Beam is charging... {i}%", "yellow") # tentei usar case mas fiquei com preguiça, ent vai ficar assim mesmo (pq vc ta lendo isso, thalles?)
+        elif i <= 100:
+            cText(f"Miku Miku Beam is charging... {i}%", "green")
+            sleep(0.03)
+            i += 1
+        if i >= 100:
+            clear()
+            cText("Miku Miku Beam is fully charged!", "positive")
+            sleep(1)
+            clear()
+            x = 0
+            while x <= 100:
+                clear()
+                final_damage = Damage(Attack_Info, current_enemy.Defense)
+                cText(f"-{final_damage} life! ({x}%)", "red")
+                current_enemy.Health -= final_damage
+                print(f"Integrity: {integrity_bar(current_enemy.Health, current_enemy.MaxHealth)}")
+                sleep(0.03)
+                x += 1
 
 def NegativeSpaceAttack(Player, current_enemy, Attack_Info, display_battle_ui, integrity_bar, defense_bar, Damage, Attack, PlayerClass):
     clear()

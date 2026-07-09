@@ -13,10 +13,10 @@ class SocialEngineerClass:
         self.ui_color = Fore.GREEN
         self.Items = "None"
         self.Attacks = {
-            "Internal Access": (18, 2),
+            "Internal Access": (4, 2),
             "Phishing":        (24, 3),
             "Pretexting":      (30, 4),
-            "Baiting":         (20, 2),
+            "Baiting":         (4, 2),
             "Hack":           (22, 1),
         #    "God's Hand":      (50, 5),
         }

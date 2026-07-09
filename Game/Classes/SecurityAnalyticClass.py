@@ -12,18 +12,15 @@ class SecurityAnalyticClass:
         self.ui_color = Fore.GREEN
         self.Items = "None"
         self.Attacks = {
-            "Firewall":      (30, 3),
+            "Firewall":      (4, 3),
             "Security Patch":(28, 3),
             "Weakness View": (26, 4),
             "Hack":         (32, 2),
-            #"God's Hand":    (45, 5),
-           # "Pneumoultramicroscopicsilicovolcanoconiotic": "ball cancer",
         }
         self.Cooldowns = {
             "Firewall":      8,
             "Security Patch":3,
-            "Weakness View": 3,
-            "God's Hand":    12,
+            "Weakness View": 3
         }
 
     def RaceName(self):
